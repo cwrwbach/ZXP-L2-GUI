@@ -587,7 +587,7 @@ painter.setFont(Font);
         painter.drawLine(x, 0, x, y);
     }
 
-printf(" FREQUENCY STAIRS %d \n",__LINE__);
+//printf(" FREQUENCY STAIRS %d \n",__LINE__);
     // draw frequency values
     //  makeFrequencyStrs();
     painter.setPen(QColor(0xD8,0xBA,0xA1,0xFF));

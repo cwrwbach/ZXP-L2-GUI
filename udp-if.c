@@ -15,13 +15,25 @@
 #include <alsa/asoundlib.h>
 #include <time.h>
 
-#define SERVER "45.66.38.105"
-//#define SERVER "192.168.2.2"
+//#define SERVER "45.66.38.105"
+#define SERVER "192.168.2.2"
 #define PORT 11361	
 #define FFT_SIZE 1024
 #define BLOCK_SIZE 1024
 #define CIRC_SIZE BLOCK_SIZE*4
+#define AUDIO_SR 7812
 #define AR_DELTA -10
+
+#define MAX_PAK_LEN 1024+42
+#define PAK_LEN 1024
+#define FFT_HEAD_LEN 16
+#define AUDIO_HEAD_LEN 18
+#define IQ_HEAD_LEN 20
+#define FFT_LEN PAK_LEN+FFT_HEAD_LEN
+#define AUDIO_LEN PAK_LEN+AUDIO_HEAD_LEN
+#define IQ_LEN PACK_LEN+IQ_HEAD_LEN
+
+
 
 char fft_circ_buf[FFT_SIZE];
 
@@ -48,41 +60,160 @@ extern struct g72x_state dec_state;
 
 int sock_fd;
 
+int audio_rxd_count;
+
 //===
 
 void * server_callback(void)
 {
 int i;
 unsigned int fft_count;
-int sock_ret;
+int rxd_pak_len;
 float audio;
-float _Complex lq_y;
-double see_p, see_q,see,log_out, log_fft[FFT_SIZE];
-int decim_phase;
+//float _Complex lq_y;
+//double see_p, see_q,see,log_out, log_fft[FFT_SIZE];
+//int decim_phase;
 int rbi;
-double fmax,show_max,fmax_hold,fmax_avg;
+//double fmax,show_max,fmax_hold,fmax_avg;
 
-decim_phase=0;
-fft_count = 0;
-rbi=0;
+//decim_phase=0;
+//fft_count = 0;
+//rbi=0;
 
-while(1)
-    {
    
-    //get incoming samples from stream 
-    while(1) 
+//get incoming samples from stream 
+while(1) 
+    {
+    rxd_pak_len=recv(sock_fd, fft_video_buf ,MAX_PAK_LEN ,0); //CPX_DATA_SIZE
+    switch(rxd_pak_len)
         {
-        sock_ret=recv(sock_fd, fft_video_buf ,FFT_SIZE ,0); //CPX_DATA_SIZE
-        //printf("sockret = %d \n",sock_ret);
-       
-        if(sock_ret==1024)
-            {
-           // printf(" Incoming FFT\n");
-            stream_flag = true;
-            }
+        case FFT_LEN:
+        stream_flag = true;
+        break;
+           
+        case AUDIO_LEN:
+//stream_flag = false;
+//        printf(" Audio pak rxd  %d \n",audio_rxd_count++);   
+        break;
+            
+        default:
+        break;
         }
-     }
+    }
 }
+
+//---
+
+
+void update_pitaya_cf(int cf)
+{
+float ppm_factor, freq;
+int new_data;
+
+freq = cf; //8000000; //5505000;
+//ppm_factor = 0; 
+freq = (int)floor(freq*(1.0 + ppm_factor *1.0e-6) + 0.5);
+printf(" new freq: %f \n",freq);
+new_data = (int) freq;
+
+printf(" done changing F \n");
+}	
+
+void update_pitaya_sr(int sr)
+{
+int new_data;
+
+printf(" update pitaya sample rate: %d  \n ",sr);	
+new_data = 0x10000000;
+new_data |= (sr & 0x0007);
+printf (" --> 0x%0x \n",new_data);
+}	
+
+//---
+
+void update_pitaya_decim(int decim)
+{
+int new_data;
+new_data = decim;
+//no setting for Harware decimation is available (as yet?)
+printf(" Nothing to do %d\n",new_data);
+}
+
+//---
+
+
+void die(char *s)
+{
+	perror(s);
+	exit(1);
+}
+
+//---
+
+int setup_network() 
+{ 
+int new_data;
+struct sockaddr_in si_other;
+int slen=sizeof(si_other);
+char message[80];
+int pkt_size;
+
+strcpy(message,"CLIENT calling ");
+if ( (sock_fd=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
+	die("socket");
+	
+memset((char *) &si_other, 0, sizeof(si_other));
+si_other.sin_family = AF_INET;
+si_other.sin_port = htons(PORT);
+
+//convert ip address to network byte order	
+if (inet_aton(SERVER , &si_other.sin_addr) == 0) 
+	{
+		fprintf(stderr, "inet_aton() failed\n");
+		exit(1);
+	}
+
+if (sendto(sock_fd, message, strlen(message) , 0 , (struct sockaddr *) &si_other, slen)==-1)
+    die("sendto()");
+
+printf(" Connected to the server:\n"); 
+return 0;
+} 
+
+//---
+
+void start_server_stream()
+{
+pthread_t callback_id;
+int err;
+int num_stages;
+int ret;
+int  freq;
+freq = 198000;
+
+audio_sr = AUDIO_SR;
+audio_sr_delta = AR_DELTA; //correction to let audio run a tad slower to keep its buffer filled.
+
+err = snd_pcm_open(&audio_device, alsa_device, SND_PCM_STREAM_PLAYBACK, 0);
+if(err !=0)
+    printf("Error opening Sound Device\n");
+err = snd_pcm_set_params(audio_device,SND_PCM_FORMAT_S16_LE, SND_PCM_ACCESS_RW_INTERLEAVED,1,audio_sr+audio_sr_delta,1,400000); //latency in uS - Could be dynamic to reduce (unwanted) latency?
+if(err !=0)
+    printf("Error with Audio parameters\n"); //audio 
+
+setup_network();
+printf(" Network started \n");
+usleep(10000);	
+
+//Create a callback thread
+ret=pthread_create(&callback_id,NULL, (void *) server_callback,NULL);
+if(ret==0)
+	printf("Thread created successfully.\n");
+else
+	printf("Thread not created.\n");
+}
+
+//=======
 
 /*
     //reorder the FFT
@@ -166,116 +297,8 @@ while(1)
   //  }//while 1
 //
 
-//---
 
 
-void update_pitaya_cf(int cf)
-{
-float ppm_factor, freq;
-int new_data;
-
-freq = cf; //8000000; //5505000;
-ppm_factor = 0; 
-freq = (int)floor(freq*(1.0 + ppm_factor *1.0e-6) + 0.5);
-printf(" new freq: %f \n",freq);
-new_data = (int) freq;
-
-printf(" done changing F \n");
-}	
-
-void update_pitaya_sr(int sr)
-{
-int new_data;
-
-printf(" update pitaya sample rate: %d  \n ",sr);	
-new_data = 0x10000000;
-new_data |= (sr & 0x0007);
-printf (" --> 0x%0x \n",new_data);
-}	
-
-//---
-
-void update_pitaya_decim(int decim)
-{
-int new_data;
-new_data = decim;
-//no setting for Harware decimation is available (as yet?)
-printf(" Nothing to do %d\n",new_data);
-}
-
-//---
-
-
-void die(char *s)
-{
-	perror(s);
-	exit(1);
-}
-
-//---
-
-int setup_network() 
-{ 
-int new_data;
-struct sockaddr_in si_other;
-int slen=sizeof(si_other);
-char message[80];
-int pkt_size;
-
-strcpy(message,"CLIENT calling ");
-if ( (sock_fd=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
-	die("socket");
-	
-memset((char *) &si_other, 0, sizeof(si_other));
-si_other.sin_family = AF_INET;
-si_other.sin_port = htons(PORT);
-
-//convert ip address to network byte order	
-if (inet_aton(SERVER , &si_other.sin_addr) == 0) 
-	{
-		fprintf(stderr, "inet_aton() failed\n");
-		exit(1);
-	}
-
-if (sendto(sock_fd, message, strlen(message) , 0 , (struct sockaddr *) &si_other, slen)==-1)
-    die("sendto()");
-
-printf(" Connected to the server:\n"); 
-return 0;
-} 
-
-//---
-
-void start_server_stream()
-{
-pthread_t callback_id;
-int err;
-int num_stages;
-int ret;
-int  freq;
-freq = 198000;
-
-audio_sr_delta = AR_DELTA; //correction to let audio run a tad slower to keep its buffer filled.
-err = snd_pcm_open(&audio_device, alsa_device, SND_PCM_STREAM_PLAYBACK, 0);
-if(err !=0)
-    printf("Error opening Sound Device\n");
-err = snd_pcm_set_params(audio_device,SND_PCM_FORMAT_S16_LE, SND_PCM_ACCESS_RW_INTERLEAVED,1,audio_sr+audio_sr_delta,1,400000); //latency in uS - Could be dynamic to reduce (unwanted) latency?
-if(err !=0)
-    printf("Error with Audio parameters\n"); //audio 
-
-setup_network();
-printf(" Network started \n");
-usleep(10000);	
-
-//Create a callback thread
-ret=pthread_create(&callback_id,NULL, (void *) server_callback,NULL);
-if(ret==0)
-	printf("Thread created successfully.\n");
-else
-	printf("Thread not created.\n");
-}
-
-//=======
 /*
 cb_in(int num_samples)
 {
