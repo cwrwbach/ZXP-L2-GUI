@@ -19,6 +19,9 @@
 #define SERVER "192.168.2.2"
 #define PORT 11361	
 #define FFT_SIZE 1024
+
+#define G711_SIZE 1024
+
 #define BLOCK_SIZE 1024
 #define CIRC_SIZE BLOCK_SIZE*4
 #define AUDIO_SR 7812
@@ -27,11 +30,14 @@
 #define MAX_PAK_LEN 1024+42
 #define PAK_LEN 1024
 #define FFT_HEAD_LEN 16
-#define AUDIO_HEAD_LEN 18
+//#define AUDIO_HEAD_LEN 18
+#define G711_HEAD_LEN 18
 #define IQ_HEAD_LEN 20
 #define FFT_LEN PAK_LEN+FFT_HEAD_LEN
-#define AUDIO_LEN PAK_LEN+AUDIO_HEAD_LEN
+//#define AUDIO_LEN PAK_LEN+AUDIO_HEAD_LEN
 #define IQ_LEN PACK_LEN+IQ_HEAD_LEN
+
+#define G711_LEN PAK_LEN+G711_HEAD_LEN
 
 
 
@@ -41,11 +47,16 @@ int cb_in_ptr;
 int cb_out_ptr;
 
 bool stream_flag;
+bool audio_flag;
+
 extern double centerFreqVal;
 static char *alsa_device = "default";  
 snd_pcm_t *audio_device;
 short audio_buffer[2048];
+
+char in_pak_buf[MAX_PAK_LEN];
 char fft_video_buf[FFT_SIZE];
+short g711_xfer_buf[G711_SIZE];
 int status[10];
 int audio_sr;
 int audio_sr_delta;
@@ -64,41 +75,61 @@ int audio_rxd_count;
 
 //===
 
+void * do_audio_pak(void)
+{
+while(1)
+    {
+    usleep(1000);
+    if(audio_flag ==true)
+        { //printf(" *\n");
+        audio_flag = false;
+        int snd_err = snd_pcm_writei(audio_device, g711_xfer_buf, 1024);	
+        if(snd_err < 0 )
+        {      
+            printf(" Under run \n");
+            snd_pcm_recover(audio_device, snd_err, 1); //catch underruns (silent flag set)
+            usleep(1000);
+            }
+        }
+    }
+}
+
 void * server_callback(void)
 {
 int i;
 unsigned int fft_count;
 int rxd_pak_len;
 float audio;
-//float _Complex lq_y;
-//double see_p, see_q,see,log_out, log_fft[FFT_SIZE];
-//int decim_phase;
 int rbi;
-//double fmax,show_max,fmax_hold,fmax_avg;
-
-//decim_phase=0;
-//fft_count = 0;
-//rbi=0;
-
    
 //get incoming samples from stream 
 while(1) 
     {
-    rxd_pak_len=recv(sock_fd, fft_video_buf ,MAX_PAK_LEN ,0); //CPX_DATA_SIZE
+    rxd_pak_len=recv(sock_fd, in_pak_buf ,MAX_PAK_LEN ,0); //CPX_DATA_SIZE
     switch(rxd_pak_len)
         {
         case FFT_LEN:
-        stream_flag = true;
+
+        for(int i=0; i<1024;i++)
+            fft_video_buf[i] = in_pak_buf[i];
+  
+        stream_flag = true; //if I don't flag the FFT the CPU usage becomes 100% FIXME
         break;
            
-        case AUDIO_LEN:
-//stream_flag = false;
-//        printf(" Audio pak rxd  %d \n",audio_rxd_count++);   
+        case G711_LEN:
+
+        for(int i=0 ;i<1024;i++)
+            {
+            g711_xfer_buf[i] = alaw2linear(in_pak_buf[i]);
+            }
+        audio_flag = true;
         break;
             
         default:
         break;
         }
+
+    usleep(1000);
     }
 }
 
@@ -184,20 +215,20 @@ return 0;
 
 void start_server_stream()
 {
-pthread_t callback_id;
+pthread_t callback_id,audio_cb_id;
 int err;
 int num_stages;
 int ret;
 int  freq;
 freq = 198000;
-
+audio_flag = false;
 audio_sr = AUDIO_SR;
 audio_sr_delta = AR_DELTA; //correction to let audio run a tad slower to keep its buffer filled.
 
 err = snd_pcm_open(&audio_device, alsa_device, SND_PCM_STREAM_PLAYBACK, 0);
 if(err !=0)
     printf("Error opening Sound Device\n");
-err = snd_pcm_set_params(audio_device,SND_PCM_FORMAT_S16_LE, SND_PCM_ACCESS_RW_INTERLEAVED,1,audio_sr+audio_sr_delta,1,400000); //latency in uS - Could be dynamic to reduce (unwanted) latency?
+err = snd_pcm_set_params(audio_device,SND_PCM_FORMAT_S16_LE, SND_PCM_ACCESS_RW_INTERLEAVED,1,64000,1,400000); //latency in uS - Could be dynamic to reduce (unwanted) latency?
 if(err !=0)
     printf("Error with Audio parameters\n"); //audio 
 
@@ -207,6 +238,9 @@ usleep(10000);
 
 //Create a callback thread
 ret=pthread_create(&callback_id,NULL, (void *) server_callback,NULL);
+
+ret=pthread_create(&audio_cb_id,NULL, (void *)do_audio_pak,NULL);
+
 if(ret==0)
 	printf("Thread created successfully.\n");
 else
@@ -214,127 +248,5 @@ else
 }
 
 //=======
-
-/*
-    //reorder the FFT
-    for(int i = 0;i<FFT_SIZE/2;i++)
-        fft_video_buf[i] = -100 +(short) log_fft[(FFT_SIZE/2)+i];
-    for(int i = FFT_SIZE/2,j=0; i<FFT_SIZE;i++,j++)
-       fft_video_buf[i] = -100 +(short)log_fft[j];
-*/
-
-//temp insertion of fft video compression
-
-//G721 encode
-  //      for(int i=0;i<FFT_SIZE;i++)
-  //          {
-   //         g721_buf[i] = (char) g721_encoder((fft_video_buf[i]*256), & enc_state);
-   //         }
-
-//G721 decode
-    //    for(int i=0;i<FFT_SIZE;i++)
-     //       {
-      //      fft_video_buf[i] = (short)( g721_decoder(g721_buf[i], & dec_state))/256;
-     //       }
-
-//end of temp
-
-
-
-
-/*
-        {     
-        rbi=0;   
- 	    //audio demod
-	    for(i=0;i<BLOCK_SIZE; i++) 
-            {
-	        lq_y =  resamp_buf[i] * 32768;
-		    ampmodem_demodulate(demod, lq_y, &audio); //demodulate to audio
-		    audio_buffer[i] = (short)(audio * 1024) ;
-	        }
- */
-/*a law encode/decode
-        char a_byte;
-        for(int i=0;i<BLOCK_SIZE;i++)
-            {
-            a_byte = linear2alaw(audio_buffer[i]);
-            audio_buffer[i] = alaw2linear(a_byte);
-            }
-*/
-
-/*
-//temporary insertion of G721 encoder and decode to test
-//G721 encode
-        for(int i=0;i<BLOCK_SIZE;i++)
-            {
-            g721_buf[i] = (char) g721_encoder(audio_buffer[i], & enc_state);
-            }
-
-//G721 decode
-        for(int i=0;i<BLOCK_SIZE;i++)
-            {
-            audio_buffer[i] = (short) g721_decoder(g721_buf[i], & dec_state);
-            }
-//end of g721 test
-*/
-
-/*
-        int snd_err = snd_pcm_writei(audio_device, audio_buffer, BLOCK_SIZE);	
-        if(snd_err < 0 )
-            {
-            snd_pcm_recover(audio_device, snd_err, 1); //catch underruns (silent flag set)
-	        usleep(1000);
-		    }
-        }//decim phase		
-*/
-    //if(fft_count >1) //timer needed? or rely on MainWindow timer?
-        
- 
-    //Show via GUI stream
- //   status[1] = (int) show*1000;
- 
-  //  stream_flag = true;
-  //  }//while 1
-//
-
-
-
-/*
-cb_in(int num_samples)
-{
-int n;
-for(n=0;n<num_samples;n++)
-    {
-    cb_in_ptr++;
-    cb_in_ptr &= CIRC_SIZE-1; //roll over
-    }
-}
-
-cb_out(int num_samples)
-{
-int n;
-for(n=0;n<BLOCK_SIZE;n++)
-    {
-    cb_out_ptr++;
-    cb_out_ptr &= CIRC_SIZE-1; //roll over
-
-fft_video_buf[n] = fft_circ_buf[cb_out_ptr];
-printf(" cb_out %d \n",cb_out_ptr);
-
-    }
-}
-
-int cb_delta()
-{
-int ret;
-ret = cb_in_ptr - cb_out_ptr;
-if ( ret < 0) 
-    ret += CIRC_SIZE;
-printf(" cb_delta %d \n",ret);
-
-return ret;
-}
-
-*/
 
 

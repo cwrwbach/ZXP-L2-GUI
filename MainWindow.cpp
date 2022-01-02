@@ -168,7 +168,8 @@ while(stream_flag == false)
 	{
 	QCoreApplication::processEvents();
 	}
-
+stream_flag=false;
+//printf(" MANIWIN %d \n",__LINE__);
 sprintf(str_1,"Test 1: %d ",status[1]);
 sprintf(str_2,"Test 2: %d ",status[2]);
 sprintf(str_3,"Test 3: %d ",status[3]);
@@ -183,10 +184,13 @@ ui->stat_4->setText(str_4);
 ui->stat_5->setText(str_5);
 ui->stat_6->setText(str_6);
 
+//printf(" MW str flag loop %d\n",__LINE__); 
 
 for(i=0;i<FFT_POINTS;i++)
     display_buf[i] = (int) fft_video_buf[i] ;
-	ui->alpha_plotter->draw_trace(display_buf,0,1024,-1500,-200); //(left,Num points,lower,upper)
-	ui->wf_plotter->draw_trace(display_buf,0,1024,-4500,-200);
-	stream_flag=false;
+	
+ui->alpha_plotter->draw_trace(display_buf,0,1024,-1500,-200); //(left,Num points,lower,upper)
+ui->wf_plotter->draw_trace(display_buf,0,1024,-4500,-200);
+//stream_flag=false;
+    
 }
