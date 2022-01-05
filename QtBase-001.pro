@@ -12,7 +12,7 @@ QT += core gui
 QT += widgets
 
 TEMPLATE = app
-TARGET = demo
+TARGET = gui
 INCLUDEPATH += .
 
 INCLUDEPATH += /usr/include/qt5/QtWidgets /usr/include/qt5/qwt/
