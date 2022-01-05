@@ -15,8 +15,8 @@
 #include <alsa/asoundlib.h>
 #include <time.h>
 
-//#define SERVER "45.66.38.105"
-#define SERVER "192.168.2.2"
+#define SERVER "45.66.38.105"
+//#define SERVER "192.168.2.2"
 #define PORT 11361	
 #define FFT_SIZE 1024
 
