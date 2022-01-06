@@ -39,7 +39,7 @@
 
 #define G711_LEN PAK_LEN+G711_HEAD_LEN
 
-
+int g_audio_sample_rate;
 
 char fft_circ_buf[FFT_SIZE];
 
@@ -220,15 +220,19 @@ int err;
 int num_stages;
 int ret;
 int  freq;
+
+read_conf();
+
+
 freq = 198000;
 audio_flag = false;
-audio_sr = AUDIO_SR;
+audio_sr = g_audio_sample_rate;
 audio_sr_delta = AR_DELTA; //correction to let audio run a tad slower to keep its buffer filled.
 
 err = snd_pcm_open(&audio_device, alsa_device, SND_PCM_STREAM_PLAYBACK, 0);
 if(err !=0)
     printf("Error opening Sound Device\n");
-err = snd_pcm_set_params(audio_device,SND_PCM_FORMAT_S16_LE, SND_PCM_ACCESS_RW_INTERLEAVED,1,64000,1,400000); //latency in uS - Could be dynamic to reduce (unwanted) latency?
+err = snd_pcm_set_params(audio_device,SND_PCM_FORMAT_S16_LE, SND_PCM_ACCESS_RW_INTERLEAVED,1,audio_sr,1,400000); //latency in uS - Could be dynamic to reduce (unwanted) latency?
 if(err !=0)
     printf("Error with Audio parameters\n"); //audio 
 

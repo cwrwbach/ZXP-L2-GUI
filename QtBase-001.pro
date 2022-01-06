@@ -30,4 +30,4 @@ QMAKE_CXXFLAGS_WARN_OFF -= -Wunused-parameter
 # Input
 HEADERS += MainWindow.h ScopePlotter.h cfreqctrl.h
 FORMS += QtBase-001.ui
-SOURCES += Main.cpp MainWindow.cpp ScopePlotter.cpp udp-if.c adpcm.c cfreqctrl.cpp
+SOURCES += Main.cpp MainWindow.cpp ScopePlotter.cpp udp-if.c adpcm.c read-config.c cfreqctrl.cpp
