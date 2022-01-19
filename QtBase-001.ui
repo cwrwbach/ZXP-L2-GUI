@@ -676,8 +676,8 @@
      <rect>
       <x>1010</x>
       <y>670</y>
-      <width>151</width>
-      <height>161</height>
+      <width>181</width>
+      <height>151</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -690,7 +690,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>40</y>
+       <y>30</y>
        <width>106</width>
        <height>22</height>
       </rect>
@@ -703,7 +703,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>70</y>
+       <y>50</y>
        <width>106</width>
        <height>22</height>
       </rect>
@@ -716,7 +716,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>100</y>
+       <y>70</y>
        <width>106</width>
        <height>22</height>
       </rect>
@@ -729,19 +729,19 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>130</y>
+       <y>90</y>
        <width>106</width>
        <height>22</height>
       </rect>
      </property>
      <property name="text">
-      <string>Pitaya</string>
+      <string>Pitaya-14</string>
      </property>
     </widget>
     <widget class="QLabel" name="label">
      <property name="geometry">
       <rect>
-       <x>40</x>
+       <x>50</x>
        <y>10</y>
        <width>64</width>
        <height>17</height>
@@ -749,6 +749,19 @@
      </property>
      <property name="text">
       <string>Server </string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="ip5">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>110</y>
+       <width>106</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Pitaya-16</string>
      </property>
     </widget>
    </widget>
