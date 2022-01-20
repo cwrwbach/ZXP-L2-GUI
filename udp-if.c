@@ -199,6 +199,16 @@ send_control_packet(ARATE,ar);
 printf(" Audio rate = %d\n",ar);
 }
 
+
+void update_pitaya_demod(int demod)
+{
+
+send_control_packet(DMOD,demod);
+
+printf(" Demod type = %d\n",demod);
+
+}
+
 //---
 
 

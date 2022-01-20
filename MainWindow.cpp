@@ -20,6 +20,11 @@
 extern "C" void start_server_stream();
 extern "C" void update_pitaya_cf(int);
 extern "C" void update_pitaya_sr(int);
+extern "C" void update_pitaya_ar(int);
+extern "C" void update_pitaya_demod(int);
+
+
+
 extern "C" void update_pitaya_decim(int);
 extern bool stream_flag;
 bool down_convert_flag;
@@ -150,6 +155,32 @@ printf(" aacf: %d \n ",send_cf);
 update_pitaya_cf(send_cf);
 
 }
+
+
+
+void MainWindow::set_sr0(){ update_pitaya_sr(0);}
+void MainWindow::set_sr1(){ update_pitaya_sr(1);}
+void MainWindow::set_sr2(){ update_pitaya_sr(2);}
+void MainWindow::set_sr3(){ update_pitaya_sr(3);}
+void MainWindow::set_sr4(){ update_pitaya_sr(4);}
+void MainWindow::set_sr5(){ update_pitaya_sr(5);}
+
+void MainWindow::set_ar0(){ update_pitaya_ar(0);}
+void MainWindow::set_ar1(){ update_pitaya_ar(1);}
+void MainWindow::set_ar2(){ update_pitaya_ar(2);}
+void MainWindow::set_ar3(){ update_pitaya_ar(3);}
+
+void MainWindow::set_dsb(){ update_pitaya_demod(1);}
+void MainWindow::set_usb(){ update_pitaya_demod(2);}
+void MainWindow::set_lsb(){ update_pitaya_demod(3);}
+
+
+
+
+
+
+
+
 
 /*
 void MainWindow::set_pitaya_cf()

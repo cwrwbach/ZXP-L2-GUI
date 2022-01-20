@@ -64,6 +64,23 @@ void setNewFrequency(qint64 );
 void hardware_setup();
 void show_enable();
 
+void set_sr0();
+void set_sr1();
+void set_sr2();
+void set_sr3();
+void set_sr4();
+void set_sr5();
+
+void set_ar0();
+void set_ar1();
+void set_ar2();
+void set_ar3();
+//void set_ar4();
+
+void set_dsb();
+void set_usb();
+void set_lsb();
+
 /*
 void set_sr2M();
 void set_sr4M();
