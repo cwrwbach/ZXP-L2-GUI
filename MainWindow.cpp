@@ -72,11 +72,41 @@ QObject::connect(ui->setupRsp, SIGNAL(clicked()), this, SLOT(hardware_setup()));
  
 connect(ui->freqCtrl, SIGNAL(newFrequency(qint64)), this, SLOT(setNewFrequency(qint64)));
 
+connect(ui->dsb, SIGNAL(clicked()), this, SLOT(set_dsb()));
+connect(ui->usb, SIGNAL(clicked()), this, SLOT(set_usb()));
+connect(ui->lsb, SIGNAL(clicked()), this, SLOT(set_lsb()));
+
+connect(ui->sr0, SIGNAL(clicked()), this, SLOT(set_sr0()));
+connect(ui->sr1, SIGNAL(clicked()), this, SLOT(set_sr1()));
+connect(ui->sr2, SIGNAL(clicked()), this, SLOT(set_sr2()));
+connect(ui->sr3, SIGNAL(clicked()), this, SLOT(set_sr3()));
+connect(ui->sr4, SIGNAL(clicked()), this, SLOT(set_sr4()));
+connect(ui->sr5, SIGNAL(clicked()), this, SLOT(set_sr5()));
+connect(ui->sr6, SIGNAL(clicked()), this, SLOT(set_sr6()));
+
+connect(ui->ar0, SIGNAL(clicked()), this, SLOT(set_ar0()));
+connect(ui->ar1, SIGNAL(clicked()), this, SLOT(set_ar1()));
+connect(ui->ar2, SIGNAL(clicked()), this, SLOT(set_ar2()));
+connect(ui->ar3, SIGNAL(clicked()), this, SLOT(set_ar3()));
+
+//connect(ui->ip0, SIGNAL(clicked()), this, SLOT(set_ip0()));
+connect(ui->ip1, SIGNAL(clicked()), this, SLOT(set_ip1()));
+connect(ui->ip2, SIGNAL(clicked()), this, SLOT(set_ip2()));
+connect(ui->ip3, SIGNAL(clicked()), this, SLOT(set_ip3()));
+connect(ui->ip4, SIGNAL(clicked()), this, SLOT(set_ip4()));
+connect(ui->ip5, SIGNAL(clicked()), this, SLOT(set_ip5()));
+
+
+
+
+
+
+
 fft_timer = new QTimer(this);
 connect(fft_timer, SIGNAL(timeout()), this, SLOT(show_enable()));
 fft_timer->start(200); //milli secs
 
-ui->freqCtrl->setFrequency(5500000);
+//ui->freqCtrl->setFrequency(5500000);
 
 ui->Bar->setValue(128); // = 128;
 
@@ -115,24 +145,26 @@ int send_cf;
 
 send_cf = ui->freqCtrl->getFrequency();
 
-printf(" cf: %d \n ",send_cf);
+printf(" aacf: %d \n ",send_cf);
 
 update_pitaya_cf(send_cf);
 
 }
 
-
+/*
 void MainWindow::set_pitaya_cf()
 {
 int send_cf;	
 
 send_cf = ui->freqCtrl->getFrequency();
 
-printf(" cf: %d \n ",send_cf);
+printf(" bbcf: %d \n ",send_cf);
 
 update_pitaya_cf(send_cf);
 
 }
+*/
+
 /*
 void MainWindow::set_sr2M(){ update_pitaya_sr(0);resample_factor = 2;}
 void MainWindow::set_sr4M(){ update_pitaya_sr(1);resample_factor = 5;}

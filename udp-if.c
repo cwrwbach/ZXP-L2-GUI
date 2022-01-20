@@ -15,6 +15,14 @@
 #include <alsa/asoundlib.h>
 #include <time.h>
 
+#define FREQ 4
+#define SRATE 5
+#define ARATE 6
+#define RFG 7
+#define AFG 8
+#define DMOD 9
+#define SSEL 10
+
 
 //#define SERVER "45.66.38.105"
 #define SERVER "192.168.2.222"
@@ -55,6 +63,10 @@ static char *alsa_device = "default";
 snd_pcm_t *audio_device;
 short audio_buffer[2048];
 
+int control_packet[32];
+struct sockaddr_in si_other;
+int slen=sizeof(si_other);
+
 char in_pak_buf[MAX_PAK_LEN];
 char fft_video_buf[FFT_SIZE];
 short g711_xfer_buf[G711_SIZE];
@@ -75,6 +87,22 @@ int sock_fd;
 int audio_rxd_count;
 
 //===
+
+
+void send_control_packet(int type, int val)
+{
+
+
+control_packet[type] = val;
+
+if (sendto(sock_fd, control_packet, sizeof(control_packet) , 0 , (struct sockaddr *) &si_other, slen)==-1)
+    die("control message");
+
+
+
+}
+
+//---
 
 void * do_audio_pak(void)
 {
@@ -142,36 +170,38 @@ void update_pitaya_cf(int cf)
 float ppm_factor, freq;
 int new_data;
 
-freq = cf; //8000000; //5505000;
-//ppm_factor = 0; 
+freq = cf;
 freq = (int)floor(freq*(1.0 + ppm_factor *1.0e-6) + 0.5);
 printf(" new freq: %f \n",freq);
 new_data = (int) freq;
+
+send_control_packet(FREQ,new_data);
+
 
 printf(" done changing F \n");
 }	
 
 void update_pitaya_sr(int sr)
 {
-int new_data;
 
 printf(" update pitaya sample rate: %d  \n ",sr);	
-new_data = 0x10000000;
-new_data |= (sr & 0x0007);
-printf (" --> 0x%0x \n",new_data);
+
+send_control_packet(SRATE,sr);
 }	
 
 //---
 
-void update_pitaya_decim(int decim)
+void update_pitaya_ar(int ar)
 {
-int new_data;
-new_data = decim;
-//no setting for Harware decimation is available (as yet?)
-printf(" Nothing to do %d\n",new_data);
+
+send_control_packet(ARATE,ar);
+
+printf(" Audio rate = %d\n",ar);
 }
 
 //---
+
+
 
 
 void die(char *s)
@@ -185,8 +215,7 @@ void die(char *s)
 int setup_network() 
 { 
 int new_data;
-struct sockaddr_in si_other;
-int slen=sizeof(si_other);
+
 char message[80];
 int pkt_size;
 

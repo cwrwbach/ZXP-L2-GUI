@@ -59,7 +59,7 @@ private slots:
 
 
 void set_cf();
-void set_pitaya_cf();
+//void set_pitaya_cf();
 void setNewFrequency(qint64 );
 void hardware_setup();
 void show_enable();
