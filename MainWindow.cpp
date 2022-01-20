@@ -23,9 +23,12 @@ extern "C" void update_pitaya_sr(int);
 extern "C" void update_pitaya_ar(int);
 extern "C" void update_pitaya_demod(int);
 
+extern "C" void update_pitaya_rfg(int);
+extern "C" void update_pitaya_afg(int);
+
+//extern "C" void update_pitaya_decim(int);
 
 
-extern "C" void update_pitaya_decim(int);
 extern bool stream_flag;
 bool down_convert_flag;
 
@@ -101,9 +104,8 @@ connect(ui->ip3, SIGNAL(clicked()), this, SLOT(set_ip3()));
 connect(ui->ip4, SIGNAL(clicked()), this, SLOT(set_ip4()));
 connect(ui->ip5, SIGNAL(clicked()), this, SLOT(set_ip5()));
 
-
-
-
+connect(ui->rf_gain, SIGNAL(valueChanged(int)), this, SLOT(set_rfg(int)));
+connect(ui->af_gain, SIGNAL(valueChanged(int)), this, SLOT(set_afg(int)));
 
 
 
@@ -156,7 +158,18 @@ update_pitaya_cf(send_cf);
 
 }
 
+void MainWindow::set_rfg(int gain)
+{
+update_pitaya_rfg(gain);
+printf(" rf gain: %d \n");
+}
 
+
+void MainWindow::set_afg(int gain)
+{
+update_pitaya_afg(gain);
+printf(" af gain: %d \n");
+}
 
 void MainWindow::set_sr0(){ update_pitaya_sr(0);}
 void MainWindow::set_sr1(){ update_pitaya_sr(1);}
@@ -173,11 +186,6 @@ void MainWindow::set_ar3(){ update_pitaya_ar(3);}
 void MainWindow::set_dsb(){ update_pitaya_demod(1);}
 void MainWindow::set_usb(){ update_pitaya_demod(2);}
 void MainWindow::set_lsb(){ update_pitaya_demod(3);}
-
-
-
-
-
 
 
 

@@ -81,6 +81,10 @@ void set_dsb();
 void set_usb();
 void set_lsb();
 
+
+void set_rfg(int);
+void set_afg(int);
+
 /*
 void set_sr2M();
 void set_sr4M();

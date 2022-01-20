@@ -209,6 +209,19 @@ printf(" Demod type = %d\n",demod);
 
 }
 
+void update_pitaya_rfg(int gain)
+{
+printf(" rf gain type = %d\n",gain);
+
+}
+
+void update_pitaya_afg(int gain)
+{
+printf(" AF gain type = %d\n",gain);
+
+}
+
+
 //---
 
 
