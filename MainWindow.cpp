@@ -161,14 +161,14 @@ update_pitaya_cf(send_cf);
 void MainWindow::set_rfg(int gain)
 {
 update_pitaya_rfg(gain);
-printf(" rf gain: %d \n");
+
 }
 
 
 void MainWindow::set_afg(int gain)
 {
 update_pitaya_afg(gain);
-printf(" af gain: %d \n");
+
 }
 
 void MainWindow::set_sr0(){ update_pitaya_sr(0);}
