@@ -1,4 +1,4 @@
 #config file
 
 
-g_audio_sample_rate=15625
+g_audio_sample_rate=7812 //15625
