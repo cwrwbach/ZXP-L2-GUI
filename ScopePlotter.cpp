@@ -18,8 +18,8 @@
 
 #define PLOT_WIDTH 1024
 #define PLOT_HEIGHT 500
-#define PLOT_VER_DIVS 13
-#define PLOT_HOR_DIVS 20
+//#define PLOT_VER_DIVS 13
+//#define PLOT_HOR_DIVS 20
 #define CUR_CUT_DELTA 5		//cursor capture delta in pixels
 
 #define FFT_MIN_DB     -160.f
@@ -48,9 +48,31 @@ ScopePlotter::ScopePlotter(QWidget *parent) : QFrame(parent) //Constructor
     setAttribute(Qt::WA_NoSystemBackground, true);
     setMouseTracking(true);
 
+//added 24 jan 
+//FIXME JUST BODGE NUMBERS
+    m_FreqUnits = 100;
+    m_StartFreqAdj = 5000000 - 250000; //Center - (FreqPerDiv * (HorDivs/2))
+    m_FreqPerDiv = 25000; //Sample rate/HorDivs
+
+    m_FftCenter = 0;
+    //m_CenterFreq = 144500000;
+    m_DemodCenterFreq = 144500000;
+
+    m_HorDivs = 20;
+    m_VerDivs = 13;
+    m_PandMaxdB = m_WfMaxdB = 0.f;
+    m_PandMindB = m_WfMindB = -150.f;
+
+    
+  //  m_CursorCaptured = NOCAP;
+    m_Running = false;
+    m_DrawOverlay = true;
+
+
     m_MaxdB = -30;
     m_MindB = -130;
     m_dBStepSize = 10; //abs(m_MaxdB-m_MindB)/m_VerDivs;
+//end 24 jan
 
     m_Running = false;
     m_DrawOverlay = true;
@@ -252,12 +274,19 @@ update(); // trigger a new paintEvent
 // and frequency units.
 // Places in QString array m_HDivText
 // Keeps all strings the same fractional length
+//FIXME THIS IS ALL A BIG BODGE
+
 void ScopePlotter::makeFrequencyStrs()
 {
     qint64  StartFreq = m_StartFreqAdj;
     float   freq;
     int     i,j;
-    if ((1 == m_FreqUnits) || (m_FreqDigits == 0))
+
+
+printf(" StartFrq: %d Units: %d h_divs: %d \n",StartFreq,m_FreqDigits,m_HorDivs);
+
+
+    if (0)//((1 == m_FreqUnits) || (m_FreqDigits == 0)) //FIXM BODGE
     {
         // if units is Hz then just output integer freq
         for (int i = 0; i <= m_HorDivs; i++)
@@ -272,7 +301,7 @@ void ScopePlotter::makeFrequencyStrs()
     // so create max sized text based on frequency units
     for (int i = 0; i <= m_HorDivs; i++)
     {
-        freq = (float)StartFreq / (float)m_FreqUnits;
+        freq = (float)StartFreq / (float)1000000; //(float)m_FreqUnits;
         m_HDivText[i].setNum(freq,'f', m_FreqDigits);
         StartFreq += m_FreqPerDiv;
     }
@@ -290,13 +319,13 @@ void ScopePlotter::makeFrequencyStrs()
         }
         if ((j - dp) > max)
             max = j - dp;
-    }
+    } max = 3;
     // truncate all strings to maximum fractional length
     StartFreq = m_StartFreqAdj;
     for (i = 0; i <= m_HorDivs; i++)
     {
         freq = (float)StartFreq/(float)m_FreqUnits;
-        m_HDivText[i].setNum(freq,'f', max);
+        m_HDivText[i].setNum(freq/10000,'f', max); //FIXME BODGE
         StartFreq += m_FreqPerDiv;
     }
 }//make freq strs
@@ -553,8 +582,8 @@ QPainter painter(&m_OverlayPixmap);
 painter.initFrom(this);
 
 //Grids
-plot_VerDivs = PLOT_VER_DIVS ; 
-plot_HorDivs = PLOT_HOR_DIVS ; 
+plot_VerDivs = m_VerDivs; //PLOT_VER_DIVS ; 
+plot_HorDivs = m_HorDivs ; //PLOT_HOR_DIVS ; 
 
 painter.setPen(QPen(QColor(0xF0,0xF0,0xF0,0x30), 1, Qt::DotLine));
 //Draw a centre line (later for cursor line)
@@ -589,7 +618,7 @@ painter.setFont(Font);
 
 //printf(" FREQUENCY STAIRS %d \n",__LINE__);
     // draw frequency values
-    //  makeFrequencyStrs();
+      makeFrequencyStrs();
     painter.setPen(QColor(0xD8,0xBA,0xA1,0xFF));
     y = plot_height - (plot_height/plot_VerDivs);
     m_XAxisYCenter = plot_height - metrics.height()/2;

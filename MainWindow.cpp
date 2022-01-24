@@ -90,7 +90,7 @@ connect(ui->sr2, SIGNAL(clicked()), this, SLOT(set_sr2()));
 connect(ui->sr3, SIGNAL(clicked()), this, SLOT(set_sr3()));
 connect(ui->sr4, SIGNAL(clicked()), this, SLOT(set_sr4()));
 connect(ui->sr5, SIGNAL(clicked()), this, SLOT(set_sr5()));
-connect(ui->sr6, SIGNAL(clicked()), this, SLOT(set_sr6()));
+//connect(ui->sr6, SIGNAL(clicked()), this, SLOT(set_sr6()));
 
 connect(ui->ar0, SIGNAL(clicked()), this, SLOT(set_ar0()));
 connect(ui->ar1, SIGNAL(clicked()), this, SLOT(set_ar1()));
@@ -98,11 +98,11 @@ connect(ui->ar2, SIGNAL(clicked()), this, SLOT(set_ar2()));
 connect(ui->ar3, SIGNAL(clicked()), this, SLOT(set_ar3()));
 
 //connect(ui->ip0, SIGNAL(clicked()), this, SLOT(set_ip0()));
-connect(ui->ip1, SIGNAL(clicked()), this, SLOT(set_ip1()));
-connect(ui->ip2, SIGNAL(clicked()), this, SLOT(set_ip2()));
-connect(ui->ip3, SIGNAL(clicked()), this, SLOT(set_ip3()));
-connect(ui->ip4, SIGNAL(clicked()), this, SLOT(set_ip4()));
-connect(ui->ip5, SIGNAL(clicked()), this, SLOT(set_ip5()));
+//connect(ui->ip1, SIGNAL(clicked()), this, SLOT(set_ip1()));
+//connect(ui->ip2, SIGNAL(clicked()), this, SLOT(set_ip2()));
+//connect(ui->ip3, SIGNAL(clicked()), this, SLOT(set_ip3()));
+//connect(ui->ip4, SIGNAL(clicked()), this, SLOT(set_ip4()));
+//connect(ui->ip5, SIGNAL(clicked()), this, SLOT(set_ip5()));
 
 connect(ui->rf_gain, SIGNAL(valueChanged(int)), this, SLOT(set_rfg(int)));
 connect(ui->af_gain, SIGNAL(valueChanged(int)), this, SLOT(set_afg(int)));
