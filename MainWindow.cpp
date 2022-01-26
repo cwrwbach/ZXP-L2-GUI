@@ -10,64 +10,46 @@
 #include "ui_QtBase-001.h"
 
 #define VERSION "QT5 Scope"
-#define RX_BUF_SIZE 1000000
 #define FFT_POINTS 1024
-
-#define DEFAULT_SAMPLE_RATE		2.0
-#define ONE_MEG 1048576
-#define PI 3.141592654
+#define RX_BUF_SIZE 1024
 
 extern "C" void start_server_stream();
 extern "C" void update_pitaya_cf(int);
 extern "C" void update_pitaya_sr(int);
 extern "C" void update_pitaya_ar(int);
 extern "C" void update_pitaya_demod(int);
-
 extern "C" void update_pitaya_rfg(int);
 extern "C" void update_pitaya_afg(int);
 
-//extern "C" void update_pitaya_decim(int);
-
-
 extern bool stream_flag;
-bool down_convert_flag;
-
 extern int resample_factor;
-
 extern float xfer_buf_p[];
 extern float xfer_buf_q[];
-
 extern char fft_video_buf[];
 extern int status[];
 
+bool down_convert_flag;
 bool gain_flag = 0;
 double centerFreqVal;
-double sampleRateVal = DEFAULT_SAMPLE_RATE;
+
 int decimVal;
 int srVal;
-
 
 ulong rxbuf_x = 0;
 ulong chunk_x = 0;
 
 int devModel = 1;
-
 int display_buf[RX_BUF_SIZE]; 
 int gri_val;
-
 int atten_val;
 int ifBandWidth = 1536;
 int ifType = 0;
-
-
-
 int shift = 30000;
 double freq = 0.0;
 int show_count = 0;
-
 int samplesPerPacket;
 int packs_rxd;
-float fft_window[FFT_POINTS];
+//float fft_window[FFT_POINTS];
 //---
 
 MainWindow::MainWindow(const QString cfgfile, bool edit_conf, QWidget *parent) :
@@ -107,16 +89,11 @@ connect(ui->ar3, SIGNAL(clicked()), this, SLOT(set_ar3()));
 connect(ui->rf_gain, SIGNAL(valueChanged(int)), this, SLOT(set_rfg(int)));
 connect(ui->af_gain, SIGNAL(valueChanged(int)), this, SLOT(set_afg(int)));
 
-
-
 fft_timer = new QTimer(this);
 connect(fft_timer, SIGNAL(timeout()), this, SLOT(show_enable()));
 fft_timer->start(200); //milli secs
 
-//ui->freqCtrl->setFrequency(5500000);
-
 ui->Bar->setValue(128); // = 128;
-
 }
 
 //---
@@ -134,41 +111,25 @@ void MainWindow::hardware_setup()
 {
 printf("hardware setup started... \n");
 start_server_stream();
-//set_sr();
-set_cf();
-
 }	
-
-//---
-
-void MainWindow::set_cf()
-{
-
-}
 
 void MainWindow::setNewFrequency(qint64 )
 {
 int send_cf;	
 
 send_cf = ui->freqCtrl->getFrequency();
-
 printf(" aacf: %d \n ",send_cf);
-
 update_pitaya_cf(send_cf);
-
 }
 
 void MainWindow::set_rfg(int gain)
 {
 update_pitaya_rfg(gain);
-
 }
-
 
 void MainWindow::set_afg(int gain)
 {
 update_pitaya_afg(gain);
-
 }
 
 void MainWindow::set_sr0(){ update_pitaya_sr(0);}
@@ -186,23 +147,6 @@ void MainWindow::set_ar3(){ update_pitaya_ar(3);}
 void MainWindow::set_dsb(){ update_pitaya_demod(1);}
 void MainWindow::set_usb(){ update_pitaya_demod(2);}
 void MainWindow::set_lsb(){ update_pitaya_demod(3);}
-
-
-
-
-/*
-void MainWindow::set_pitaya_cf()
-{
-int send_cf;	
-
-send_cf = ui->freqCtrl->getFrequency();
-
-printf(" bbcf: %d \n ",send_cf);
-
-update_pitaya_cf(send_cf);
-
-}
-*/
 
 /*
 void MainWindow::set_sr2M(){ update_pitaya_sr(0);resample_factor = 2;}
@@ -223,11 +167,7 @@ void MainWindow::set_decim32(){ decimVal = 32 ;update_pitaya_decim(5);}
 
 void MainWindow::show_enable() // displays stream data
 {
-uint i,j;
-double see_p, see_q,see, normalise, log_see[1024];
-int N;
-static int count;
-
+uint i;
 char str_1[20];
 char str_2[20];
 char str_3[20];
@@ -240,7 +180,6 @@ while(stream_flag == false)
 	QCoreApplication::processEvents();
 	}
 stream_flag=false;
-//printf(" MANIWIN %d \n",__LINE__);
 sprintf(str_1,"Test 1: %d ",status[1]);
 sprintf(str_2,"Test 2: %d ",status[2]);
 sprintf(str_3,"Test 3: %d ",status[3]);
@@ -255,13 +194,9 @@ ui->stat_4->setText(str_4);
 ui->stat_5->setText(str_5);
 ui->stat_6->setText(str_6);
 
-//printf(" MW str flag loop %d\n",__LINE__); 
-
 for(i=0;i<FFT_POINTS;i++)
     display_buf[i] = (int) fft_video_buf[i] ;
 	
 ui->alpha_plotter->draw_trace(display_buf,0,1024,-1500,-200); //(left,Num points,lower,upper)
-ui->wf_plotter->draw_trace(display_buf,0,1024,-4500,-200);
-//stream_flag=false;
-    
+
 }

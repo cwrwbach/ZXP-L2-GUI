@@ -1,4 +1,3 @@
-
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -11,12 +10,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
-
-//#include "mirsdrapi-rsp.h"
-
 #define MAX_FFT_SIZE 512
-
-
 
 namespace Ui {
     class MainWindow;  /*! The main window UI */
@@ -31,10 +25,6 @@ public:
 
     ~MainWindow();
 
-
-
-
-
     bool configOk; /*!< Main app uses this flag to know whether we should abort or continue. */
 
 signals:
@@ -44,7 +34,6 @@ signals:
 
 public slots:
  //   void setNewFrequency(qint64 rx_freq);
-
 	
 private:
     Ui::MainWindow *ui;
@@ -54,12 +43,8 @@ private:
   
     QTimer   *fft_timer;
 
-
 private slots:
 
-
-void set_cf();
-//void set_pitaya_cf();
 void setNewFrequency(qint64 );
 void hardware_setup();
 void show_enable();
@@ -80,28 +65,8 @@ void set_ar3();
 void set_dsb();
 void set_usb();
 void set_lsb();
-
-
 void set_rfg(int);
 void set_afg(int);
-
-/*
-void set_sr2M();
-void set_sr4M();
-void set_sr5M();
-void set_sr6M();
-void set_sr8M();
-void set_sr10M();
-
-
-void set_decim0();
-void set_decim2();
-void set_decim4();
-void set_decim8();
-void set_decim16();
-void set_decim32();
-*/
-
 
 };
 
