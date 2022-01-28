@@ -1,6 +1,5 @@
-/*
- * Frequency controller widget (originally from CuteSDR)
- */
+//Frequency controller widget (originally from CuteSDR)
+ 
 #pragma once
 
 #include <QFrame>
@@ -8,7 +7,7 @@
 #include <QtGui>
 
 enum FctlUnit {
-    FCTL_UNIT_NONE,            // Freq displayed without unit: 14.236.000
+    FCTL_UNIT_NONE,            // Freq displayed without unit
     FCTL_UNIT_HZ,
     FCTL_UNIT_KHZ,
     FCTL_UNIT_MHZ,

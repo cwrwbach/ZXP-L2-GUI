@@ -30,7 +30,7 @@ extern int status[];
 
 bool down_convert_flag;
 bool gain_flag = 0;
-double centerFreqVal;
+//double centerFreqVal;
 
 int decimVal;
 int srVal;
@@ -118,6 +118,10 @@ void MainWindow::setNewFrequency(qint64 )
 int send_cf;	
 
 send_cf = ui->freqCtrl->getFrequency();
+
+ui->alpha_plotter->setCenterFreq(send_cf);
+
+
 printf(" aacf: %d \n ",send_cf);
 update_pitaya_cf(send_cf);
 }

@@ -147,7 +147,7 @@ public:
     void setNewFftData(float *fftData, int size);
     void setNewFftData(float *fftData, float *wfData, int size);
 
-    void setCenterFreq(quint64 f);
+   // void setCenterFreq(quint64 f);
     void setFreqUnits(qint32 unit) { m_FreqUnits = unit; }
 
     void setDemodCenterFreq(quint64 f) { m_DemodCenterFreq = f; }
@@ -252,6 +252,8 @@ public slots:
     void setWaterfallRange(float min, float max);
     void setPeakDetection(bool enabled, float c);
    // void updateOverlay();
+
+    void setCenterFreq(quint64 f);
 
     void setPercent2DScreen(int percent)
     {

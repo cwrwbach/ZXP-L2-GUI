@@ -25,7 +25,7 @@
 
 
 //#define SERVER "45.66.38.105"
-#define SERVER "192.168.2.222"
+#define SERVER "192.168.2.2" //222"
 #define PORT 11361	
 #define FFT_SIZE 1024
 
@@ -130,6 +130,13 @@ unsigned int fft_count;
 int rxd_pak_len;
 float audio;
 int rbi;
+static int local_count;
+int rxd_count;
+union c4
+{
+int iii;
+char ccc[4];
+}c4;
    
 //get incoming samples from stream 
 while(1) 
@@ -151,6 +158,15 @@ while(1)
             {
             g711_xfer_buf[i] = alaw2linear(in_pak_buf[i]);
             }
+
+c4.ccc[0] = in_pak_buf[1030];
+c4.ccc[1] = in_pak_buf[1031];
+c4.ccc[2] = in_pak_buf[1032];
+c4.ccc[3] = in_pak_buf[1033];
+
+printf(" rxd pak: %d local: %d \n",c4.iii,local_count++);
+
+
         audio_flag = true;
         break;
             

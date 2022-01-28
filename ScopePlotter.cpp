@@ -199,7 +199,7 @@ ScopePlotter::ScopePlotter(QWidget *parent) : QFrame(parent) //Constructor
     m_2DPixmap = QPixmap(0,0);
     m_OverlayPixmap = QPixmap(0,0);
   
-    m_Percent2DScreen = 80;	//FINDME  //percent of screen used for 2D display
+    m_Percent2DScreen = 77;	//FINDME  //percent of screen used for 2D display
 
     m_FontSize = 9;
     m_VdivDelta = 100;
@@ -224,23 +224,18 @@ QSize ScopePlotter::sizeHint() const
 }
 
 
-/*
-// Sizing interface
-QSize ScopePlotter::minimumSizeHint() const
-{
-    return QSize(50, 50);
-}
-
-QSize ScopePlotter::sizeHint() const
-{
-    return QSize(180, 180);
-}
-
-*/
-
 void ScopePlotter::mouseMoveEvent(QMouseEvent* event)
 {
+int mx,my;	
+
+return;
+
 QPoint pt = event->pos();
+mx = pt.x();
+my = pt.y();
+
+printf(" x: %d y: %d \n",mx,my);
+
 }
 
 void ScopePlotter::mousePressEvent(QMouseEvent * event)
@@ -249,7 +244,10 @@ int mx,my;
 QPoint pt = event->pos();
 mx = pt.x();
 my = pt.y();
-printf(" x: %d y: %d \n",mx,my);
+printf(" x: %d y: %d Ln: %d \n",mx,my,__LINE__);
+
+freqFromX(mx);
+
 }
 
 
@@ -257,6 +255,8 @@ printf(" x: %d y: %d \n",mx,my);
 void ScopePlotter::mouseReleaseEvent(QMouseEvent * event)
 {
 QPoint pt = event->pos();
+
+return; 
 
 if (!m_OverlayPixmap.rect().contains(pt))
     { 
@@ -282,7 +282,7 @@ printf("Mouse wheelie workie \n");
 void ScopePlotter::resizeEvent(QResizeEvent* )
 {
 	
-	printf(" *** RESIZE IN PROGRESS  *** \n");
+//	printf(" *** RESIZE IN PROGRESS  *** \n");
 
     if (!size().isValid())
         return;
@@ -396,7 +396,7 @@ xmax = 1010;
 
             int inx = 100+trace_buf[i];
             //col_inx *=-2;
-            printf(" %d \n",inx);
+           // printf(" %d \n",inx);
 
             painter1.setPen(QColor(turbo[inx][0],turbo[inx][1],turbo[inx][2]));
 
@@ -503,7 +503,8 @@ printf(" StartFrq: %d Units: %d h_divs: %d \n",StartFreq,m_FreqDigits,m_HorDivs)
 
 //---
 
-// Convert from screen coordinate to frequency
+
+// Convert from frequency to screen coordinate
 int ScopePlotter::xFromFreq(qint64 freq)
 {
     int w = m_OverlayPixmap.width();
@@ -516,13 +517,18 @@ int ScopePlotter::xFromFreq(qint64 freq)
     return x;
 }
 
-// Convert from frequency to screen coordinate
+// Convert from screen coordinate to frequency
 qint64 ScopePlotter::freqFromX(int x)
 {
-    int w = m_OverlayPixmap.width();
-    qint64 StartFreq = m_CenterFreq + m_FftCenter - m_Span / 2;
-    qint64 f = (qint64)(StartFreq + (float)m_Span * (float)x / (float)w);
-    return f;
+int w = m_OverlayPixmap.width();
+qint64 StartFreq = m_CenterFreq + m_FftCenter - m_Span / 2;
+qint64 f = (qint64)(StartFreq + (float)m_Span * (float)x / (float)w);
+
+printf(" CenterF %d FftCenter %d Span %d ",m_CenterFreq,m_FftCenter, m_Span);
+printf(" W %d StartF %d Frq %d Ln %d \n",w,StartFreq,f,__LINE__);
+
+
+return f;
 }
 
 /** Calculate time offset of a given line on the waterfall */
@@ -580,17 +586,15 @@ void ScopePlotter::setDemodRanges(int FLowCmin, int FLowCmax,
 
 void ScopePlotter::setCenterFreq(quint64 f)
 {
-    if((quint64)m_CenterFreq == f)
-        return;
+m_CenterFreq = f;
 
-    qint64 offset = m_CenterFreq - m_DemodCenterFreq;
-
-    m_CenterFreq = f;
-    m_DemodCenterFreq = m_CenterFreq - offset;
-
-    updateOverlay();
-
-    m_PeakHoldValid = false;
+ //   if((quint64)m_CenterFreq == f)
+  //      return;
+ //   qint64 offset = m_CenterFreq - m_DemodCenterFreq;
+ //   
+ //   m_DemodCenterFreq = m_CenterFreq - offset;
+ //   updateOverlay();
+ //   m_PeakHoldValid = false;
 }
 
 

@@ -40,8 +40,8 @@
     </property>
     <property name="sizePolicy">
      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-      <horstretch>255</horstretch>
-      <verstretch>255</verstretch>
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
      </sizepolicy>
     </property>
     <property name="sizeIncrement">
@@ -512,7 +512,7 @@
    <widget class="CFreqCtrl" name="freqCtrl">
     <property name="geometry">
      <rect>
-      <x>330</x>
+      <x>570</x>
       <y>730</y>
       <width>351</width>
       <height>61</height>
@@ -528,7 +528,7 @@
    <widget class="QPushButton" name="setupRsp">
     <property name="geometry">
      <rect>
-      <x>800</x>
+      <x>970</x>
       <y>730</y>
       <width>83</width>
       <height>61</height>
@@ -784,6 +784,22 @@
      <string>RF Gain</string>
     </property>
    </widget>
+   <widget class="CMeter" name="sMeter">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>730</y>
+      <width>251</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -808,6 +824,12 @@
    <class>CFreqCtrl</class>
    <extends>QFrame</extends>
    <header location="global">cfreqctrl.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CMeter</class>
+   <extends>QFrame</extends>
+   <header location="global">meter.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
