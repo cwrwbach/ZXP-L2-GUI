@@ -49,8 +49,11 @@
 #define G711_LEN PAK_LEN+G711_HEAD_LEN
 
 int g_audio_sample_rate;
+int g_sample_rate;
+int g_fft_size;
+int g_center_frequency;
 
-char fft_circ_buf[FFT_SIZE];
+//char fft_circ_buf[FFT_SIZE];
 
 int cb_in_ptr;
 int cb_out_ptr;
@@ -164,7 +167,7 @@ c4.ccc[1] = in_pak_buf[1031];
 c4.ccc[2] = in_pak_buf[1032];
 c4.ccc[3] = in_pak_buf[1033];
 
-printf(" rxd pak: %d local: %d \n",c4.iii,local_count++);
+//printf(" rxd pak: %d local: %d \n",c4.iii,local_count++);
 
 
         audio_flag = true;
@@ -294,6 +297,8 @@ int  freq;
 
 read_conf();
 
+g_sample_rate = 500000;
+g_fft_size = FFT_SIZE;
 
 freq = 198000;
 audio_flag = false;
