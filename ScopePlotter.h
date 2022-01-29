@@ -151,18 +151,19 @@ public:
     void setFreqUnits(qint32 unit) { m_FreqUnits = unit; }
 
     void setDemodCenterFreq(quint64 f) { m_DemodCenterFreq = f; }
-
-    /*! \brief Move the filter to freq_hz from center. */
+/*
+    // \brief Move the filter to freq_hz from center. 
     void setFilterOffset(qint64 freq_hz)
     {
         m_DemodCenterFreq = m_CenterFreq + freq_hz;
         drawOverlay();
     }
+
     qint64 getFilterOffset(void)
     {
         return m_DemodCenterFreq - m_CenterFreq;
     }
-
+*/
     int getFilterBw()
     {
         return m_DemodHiCutFreq - m_DemodLowCutFreq;
@@ -232,15 +233,15 @@ signals:
   //  void newHighCutFreq(int f);
    // void newFilterFreq(int low, int high);  /* substitute for NewLow / NewHigh */
     void pandapterRangeChanged(float min, float max);
-    void newZoomLevel(float level);
+ //   void newZoomLevel(float level);
     void newSize();
 
 public slots:
     // zoom functions
-    void resetHorizontalZoom(void);
+ //   void resetHorizontalZoom(void);
     void moveToCenterFreq(void);
-    void moveToDemodFreq(void);
-    void zoomOnXAxis(float level);
+//    void moveToDemodFreq(void);
+//    void zoomOnXAxis(float level);
 
     // other FFT slots
     void setFftPlotColor(const QColor color);
@@ -286,7 +287,7 @@ private:
     void        makeFrequencyStrs();
     int         xFromFreq(qint64 freq);
     qint64      freqFromX(int x);
-    void        zoomStepX(float factor, int x);
+//    void        zoomStepX(float factor, int x);
     qint64      roundFreq(qint64 freq, int resolution);
     quint64     msecFromY(int y);
     void        clampDemodParameters();
@@ -323,7 +324,7 @@ private:
   //  QString     m_HDivText[HORZ_DIVS_MAX+1];
   //  bool        m_Running;
   //  bool        m_DrawOverlay;
-    qint64      m_CenterFreq;       // The HW frequency
+//    qint64      m_CenterFreq;       // The HW frequency
     qint64      m_FftCenter;        // Center freq in the -span ... +span range
     qint64      m_DemodCenterFreq;
     qint64      m_StartFreqAdj;

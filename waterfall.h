@@ -113,6 +113,125 @@ unsigned char plasma[256][3] = {
 };
 
 
+/*
+//set color table FIXME - move or loose this
+for (i = 0; i < 256; i++)
+        {
+            // level 0: black background
+            if (i < 20)
+                m_ColorTbl[i].setRgb(0, 0, 0);
+            // level 1: black -> blue
+            else if ((i >= 20) && (i < 70))
+                m_ColorTbl[i].setRgb(0, 0, 140*(i-20)/50);
+            // level 2: blue -> light-blue / greenish
+            else if ((i >= 70) && (i < 100))
+                m_ColorTbl[i].setRgb(60*(i-70)/30, 125*(i-70)/30, 115*(i-70)/30 + 140);
+            // level 3: light blue -> yellow
+            else if ((i >= 100) && (i < 150))
+                m_ColorTbl[i].setRgb(195*(i-100)/50 + 60, 130*(i-100)/50 + 125, 255-(255*(i-100)/50));
+            // level 4: yellow -> red
+            else if ((i >= 150) && (i < 250))
+                m_ColorTbl[i].setRgb(255, 255-255*(i-150)/100, 0);
+            // level 5: red -> white
+            else if (i >= 250)
+                m_ColorTbl[i].setRgb(255, 255*(i-250)/5, 255*(i-250)/5);
+        }
+*/
+
+/*
+//Reset horizontal zoom to 100% and centered around 0. 
+void ScopePlotter::resetHorizontalZoom(void)
+{
+    setFftCenterFreq(0);
+    setSpanFreq((qint32)m_SampleFreq);
+}
+*/
+
+/*
+// Clamp demod freqeuency limits of m_DemodCenterFreq
+void ScopePlotter::clampDemodParameters()
+{
+    if(m_DemodLowCutFreq < m_FLowCmin)
+        m_DemodLowCutFreq = m_FLowCmin;
+    if(m_DemodLowCutFreq > m_FLowCmax)
+        m_DemodLowCutFreq = m_FLowCmax;
+
+    if(m_DemodHiCutFreq < m_FHiCmin)
+        m_DemodHiCutFreq = m_FHiCmin;
+    if(m_DemodHiCutFreq > m_FHiCmax)
+        m_DemodHiCutFreq = m_FHiCmax;
+}
+
+void ScopePlotter::setDemodRanges(int FLowCmin, int FLowCmax,
+                              int FHiCmin, int FHiCmax,
+                              bool symetric)
+{
+    m_FLowCmin=FLowCmin;
+    m_FLowCmax=FLowCmax;
+    m_FHiCmin=FHiCmin;
+    m_FHiCmax=FHiCmax;
+    m_symetric=symetric;
+    clampDemodParameters();
+    updateOverlay();
+}
+*/
+
+/*
+// Center FFT plot around the demodulator frequency. 
+void ScopePlotter::moveToDemodFreq(void)
+{
+    setFftCenterFreq(m_DemodCenterFreq-m_CenterFreq);
+    updateOverlay();
+
+    m_PeakHoldValid = false;
+}
+*/
+
+
+/*
+// Make a single zoom step on the X axis.
+void ScopePlotter::zoomStepX(float step, int x)
+{
+    // calculate new range shown on FFT
+    float new_range = qBound(10.0f, m_Span * step, m_SampleFreq * 10.0f);
+
+    // Frequency where event occured is kept fixed under mouse
+    float ratio = (float)x / (float)m_OverlayPixmap.width();
+    float fixed_hz = freqFromX(x);
+    float f_max = fixed_hz + (1.0 - ratio) * new_range;
+    float f_min = f_max - new_range;
+
+    // ensure we don't go beyond the rangelimits
+    if (f_min < m_CenterFreq - m_SampleFreq / 2.f)
+        f_min = m_CenterFreq - m_SampleFreq / 2.f;
+
+    if (f_max > m_CenterFreq + m_SampleFreq / 2.f)
+        f_max = m_CenterFreq + m_SampleFreq / 2.f;
+    new_range = f_max - f_min;
+
+    qint64 fc = (qint64)(f_min + (f_max - f_min) / 2.0);
+
+    setFftCenterFreq(fc - m_CenterFreq);
+    setSpanFreq((quint32)new_range);
+
+    float factor = (float)m_SampleFreq / (float)m_Span;
+    emit newZoomLevel(factor);
+    qDebug() << QString("Spectrum zoom: %1x").arg(factor, 0, 'f', 1);
+
+    m_PeakHoldValid = false;
+}
+
+void ScopePlotter::zoomOnXAxis(float level)
+{
+    float current_level = (float)m_SampleFreq / (float)m_Span;
+
+    zoomStepX(current_level / level, xFromFreq(m_DemodCenterFreq));
+}
+
+*/
+
+
+
 
 /*
 #ifdef NEWDRAW

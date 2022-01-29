@@ -11,17 +11,9 @@
 #include "ScopePlotter.h"
 #include "waterfall.h"
 
-
-
-//#define NEWDRAW
-
-#define PLOTTER_DEBUG
-
-
 #define PLOT_WIDTH 1024
 #define PLOT_HEIGHT 500
-//#define PLOT_VER_DIVS 13
-//#define PLOT_HOR_DIVS 20
+
 #define CUR_CUT_DELTA 5		//cursor capture delta in pixels
 
 #define FFT_MIN_DB     -160.f
@@ -30,7 +22,6 @@
 // Colors of type QRgb in 0xAARRGGBB format (unsigned int)
 //#define PLOTTER_BGD_COLOR           0xFF1F1D1D
 #define PLOTTER_BGD_COLOR           0xFF00002f
-
 #define PLOTTER_GRID_COLOR          0xFF444242
 #define PLOTTER_TEXT_COLOR          0xFFDADADA
 #define PLOTTER_CENTER_LINE_COLOR   0xFF788296
@@ -38,14 +29,10 @@
 #define PLOTTER_FILTER_BOX_COLOR    0xFFA0A0A4
 #define VERT_DIVS_MIN 5
 
-
 extern int g_audio_sample_rate;
 extern int g_sample_rate;
 extern int g_fft_size;
 extern int g_center_frequency;
-
-
-
 
 ScopePlotter::ScopePlotter(QWidget *parent) : QFrame(parent) //Constructor
 {
@@ -74,11 +61,8 @@ ScopePlotter::ScopePlotter(QWidget *parent) : QFrame(parent) //Constructor
     m_PandMaxdB = m_WfMaxdB = 0.f;
     m_PandMindB = m_WfMindB = -150.f;
 
-    
-  //  m_CursorCaptured = NOCAP;
     m_Running = false;
     m_DrawOverlay = true;
-
 
     m_MaxdB = -30;
     m_MindB = -130;
@@ -224,31 +208,6 @@ int h;
 int xmin, xmax;
 double y_scale;
 double ph,lw;
-
-
-
-//set color table FIXME - move or loose this
-for (i = 0; i < 256; i++)
-        {
-            // level 0: black background
-            if (i < 20)
-                m_ColorTbl[i].setRgb(0, 0, 0);
-            // level 1: black -> blue
-            else if ((i >= 20) && (i < 70))
-                m_ColorTbl[i].setRgb(0, 0, 140*(i-20)/50);
-            // level 2: blue -> light-blue / greenish
-            else if ((i >= 70) && (i < 100))
-                m_ColorTbl[i].setRgb(60*(i-70)/30, 125*(i-70)/30, 115*(i-70)/30 + 140);
-            // level 3: light blue -> yellow
-            else if ((i >= 100) && (i < 150))
-                m_ColorTbl[i].setRgb(195*(i-100)/50 + 60, 130*(i-100)/50 + 125, 255-(255*(i-100)/50));
-            // level 4: yellow -> red
-            else if ((i >= 150) && (i < 250))
-                m_ColorTbl[i].setRgb(255, 255-255*(i-150)/100, 0);
-            // level 5: red -> white
-            else if (i >= 250)
-                m_ColorTbl[i].setRgb(255, 255*(i-250)/5, 255*(i-250)/5);
-        }
 
 
 if (m_DrawOverlay)
@@ -399,7 +358,7 @@ printf(" StartFrq: %d Units: %d h_divs: %d \n",StartFreq,m_FreqDigits,m_HorDivs)
 int ScopePlotter::xFromFreq(qint64 freq)
 {
     int w = m_OverlayPixmap.width();
-    qint64 StartFreq = m_CenterFreq + m_FftCenter - m_Span/2;
+    qint64 StartFreq = g_center_frequency + m_FftCenter - m_Span/2;
     int x = (int) w * ((float)freq - StartFreq)/(float)m_Span;
     if (x < 0)
         return 0;
@@ -411,16 +370,23 @@ int ScopePlotter::xFromFreq(qint64 freq)
 // Convert from screen coordinate to frequency
 qint64 ScopePlotter::freqFromX(int x)
 {
-int w = m_OverlayPixmap.width();
-qint64 StartFreq = m_CenterFreq + m_FftCenter - m_Span / 2;
-qint64 f = (qint64)(StartFreq + (float)m_Span * (float)x / (float)w);
+int freq;
+float width = (float) m_OverlayPixmap.width();
+float pix_per_bin = width / g_fft_size;
+float bin_step = (float) g_sample_rate / g_fft_size;
+int start_freq = g_center_frequency - g_sample_rate / 2;
+
+//qint64 freq = (qint64)(StartFreq + (float)m_Span * (float)x / (float)w);
 
 //printf(" CenterF %d FftCenter %d Span %d ",m_CenterFreq,m_FftCenter, m_Span);
 //printf(" W %d StartF %d Frq %d Ln %d \n",w,StartFreq,f,__LINE__);
 
-printf(" G sample rate: %d \n",g_sample_rate);
+freq = (int) roundf( start_freq + (x * pix_per_bin) * bin_step);
 
-return f;
+
+printf(" G sample rate: %d frq: %d \n",g_sample_rate,freq);
+
+return freq;
 }
 
 /** Calculate time offset of a given line on the waterfall */
@@ -449,36 +415,9 @@ qint64 ScopePlotter::roundFreq(qint64 freq, int resolution)
         return (freq - (freq + delta_2) % delta - delta_2);
 }
 
-// Clamp demod freqeuency limits of m_DemodCenterFreq
-void ScopePlotter::clampDemodParameters()
-{
-    if(m_DemodLowCutFreq < m_FLowCmin)
-        m_DemodLowCutFreq = m_FLowCmin;
-    if(m_DemodLowCutFreq > m_FLowCmax)
-        m_DemodLowCutFreq = m_FLowCmax;
-
-    if(m_DemodHiCutFreq < m_FHiCmin)
-        m_DemodHiCutFreq = m_FHiCmin;
-    if(m_DemodHiCutFreq > m_FHiCmax)
-        m_DemodHiCutFreq = m_FHiCmax;
-}
-
-void ScopePlotter::setDemodRanges(int FLowCmin, int FLowCmax,
-                              int FHiCmin, int FHiCmax,
-                              bool symetric)
-{
-    m_FLowCmin=FLowCmin;
-    m_FLowCmax=FLowCmax;
-    m_FHiCmin=FHiCmin;
-    m_FHiCmax=FHiCmax;
-    m_symetric=symetric;
-    clampDemodParameters();
-    updateOverlay();
-}
-
 void ScopePlotter::setCenterFreq(quint64 f)
 {
-m_CenterFreq = f;
+g_center_frequency = f;
 
  //   if((quint64)m_CenterFreq == f)
   //      return;
@@ -518,47 +457,6 @@ void ScopePlotter::setWaterfallRange(float min, float max)
 }
 
 
-// Make a single zoom step on the X axis.
-void ScopePlotter::zoomStepX(float step, int x)
-{
-    // calculate new range shown on FFT
-    float new_range = qBound(10.0f, m_Span * step, m_SampleFreq * 10.0f);
-
-    // Frequency where event occured is kept fixed under mouse
-    float ratio = (float)x / (float)m_OverlayPixmap.width();
-    float fixed_hz = freqFromX(x);
-    float f_max = fixed_hz + (1.0 - ratio) * new_range;
-    float f_min = f_max - new_range;
-
-    // ensure we don't go beyond the rangelimits
-    if (f_min < m_CenterFreq - m_SampleFreq / 2.f)
-        f_min = m_CenterFreq - m_SampleFreq / 2.f;
-
-    if (f_max > m_CenterFreq + m_SampleFreq / 2.f)
-        f_max = m_CenterFreq + m_SampleFreq / 2.f;
-    new_range = f_max - f_min;
-
-    qint64 fc = (qint64)(f_min + (f_max - f_min) / 2.0);
-
-    setFftCenterFreq(fc - m_CenterFreq);
-    setSpanFreq((quint32)new_range);
-
-    float factor = (float)m_SampleFreq / (float)m_Span;
-    emit newZoomLevel(factor);
-    qDebug() << QString("Spectrum zoom: %1x").arg(factor, 0, 'f', 1);
-
-    m_PeakHoldValid = false;
-}
-
-void ScopePlotter::zoomOnXAxis(float level)
-{
-    float current_level = (float)m_SampleFreq / (float)m_Span;
-
-    zoomStepX(current_level / level, xFromFreq(m_DemodCenterFreq));
-}
-
-
-
 
 // Ensure overlay is updated by either scheduling or forcing a redraw
 //void ScopePlotter::updateOverlay()
@@ -569,27 +467,13 @@ void ScopePlotter::zoomOnXAxis(float level)
     //    drawOverlay();
 //}
 
-/** Reset horizontal zoom to 100% and centered around 0. */
-void ScopePlotter::resetHorizontalZoom(void)
-{
-    setFftCenterFreq(0);
-    setSpanFreq((qint32)m_SampleFreq);
-}
+
 
 /** Center FFT plot around 0 (corresponds to center freq). */
 void ScopePlotter::moveToCenterFreq(void)
 {
     setFftCenterFreq(0);
     updateOverlay();
-    m_PeakHoldValid = false;
-}
-
-/** Center FFT plot around the demodulator frequency. */
-void ScopePlotter::moveToDemodFreq(void)
-{
-    setFftCenterFreq(m_DemodCenterFreq-m_CenterFreq);
-    updateOverlay();
-
     m_PeakHoldValid = false;
 }
 
@@ -741,11 +625,6 @@ painter.setFont(Font);
 
 void ScopePlotter::calcDivSize (qint64 low, qint64 high, int divswanted, qint64 &adjlow, qint64 &step, int& divs)
 {
-#ifdef PLOTTER_DEBUG
-    qDebug() << "low: " << low;
-    qDebug() << "high: " << high;
-    qDebug() << "divswanted: " << divswanted;
-#endif
 
     if (divswanted == 0)
         return;
@@ -773,11 +652,6 @@ void ScopePlotter::calcDivSize (qint64 low, qint64 high, int divswanted, qint64 
     if (adjlow < low)
         adjlow += step;
 
-#ifdef PLOTTER_DEBUG
-    qDebug() << "adjlow: "  << adjlow;
-    qDebug() << "step: " << step;
-    qDebug() << "divs: " << divs;
-#endif
 }
 
 void ScopePlotter::setPlotColor(const QColor color)
@@ -793,3 +667,4 @@ void ScopePlotter::setPlotColor(const QColor color)
 
 //=================================================================
 
+ 
