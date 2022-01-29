@@ -386,6 +386,9 @@ freq = (int) roundf( start_freq + (x * pix_per_bin) * bin_step);
 
 printf(" G sample rate: %d frq: %d \n",g_sample_rate,freq);
 
+
+//emit    newFrequency(freq);
+
 return freq;
 }
 
@@ -418,6 +421,8 @@ qint64 ScopePlotter::roundFreq(qint64 freq, int resolution)
 void ScopePlotter::setCenterFreq(quint64 f)
 {
 g_center_frequency = f;
+
+//ui->freqCtrl->setFrequency(f);
 
  //   if((quint64)m_CenterFreq == f)
   //      return;

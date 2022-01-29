@@ -60,7 +60,9 @@ setWindowTitle(QString(VERSION));
 
 QObject::connect(ui->setupRsp, SIGNAL(clicked()), this, SLOT(hardware_setup()));
  
-connect(ui->freqCtrl, SIGNAL(newFrequency(qint64)), this, SLOT(setNewFrequency(qint64)));
+//QObject::connect(ScopePlotter::freqFromX, SIGNAL(clicked()), this, SLOT(hardware_setup()));
+
+
 
 connect(ui->dsb, SIGNAL(clicked()), this, SLOT(set_dsb()));
 connect(ui->usb, SIGNAL(clicked()), this, SLOT(set_usb()));

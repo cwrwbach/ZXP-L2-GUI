@@ -28,12 +28,16 @@ public:
     void setVdivDelta(int delta) { m_VdivDelta = delta; }
     void setFreqDigits(int digits) { m_FreqDigits = digits>=0 ? digits : 0; }
 
+ //   static qint64      freqFromX(int x);
+
 signals:
     void newCenterFreq(qint64 f);
     void newDemodFreq(qint64 freq, qint64 delta); /* delta is the offset from the center */
     void newLowCutFreq(int f);
     void newHighCutFreq(int f);
     void newFilterFreq(int low, int high);  /* substute for NewLow / NewHigh */
+
+    void    newFrequency(qint64 freq); // emitted when frequency has changed
 
 public slots:
     void setPlotColor(const QColor color);
