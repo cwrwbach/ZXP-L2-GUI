@@ -60,7 +60,6 @@ void set_ar0();
 void set_ar1();
 void set_ar2();
 void set_ar3();
-//void set_ar4();
 
 void set_dsb();
 void set_usb();

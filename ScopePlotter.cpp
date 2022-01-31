@@ -391,8 +391,8 @@ printf(" G sample rate: %d frq: %d \n",g_sample_rate,freq);
 
 return freq;
 }
-
-/** Calculate time offset of a given line on the waterfall */
+/*
+/** Calculate time offset of a given line on the waterfall 
 quint64 ScopePlotter::msecFromY(int y)
 {
     // ensure we are in the waterfall region
@@ -406,6 +406,7 @@ quint64 ScopePlotter::msecFromY(int y)
     else
         return tlast_wf_ms - dy * 1000 / fft_rate;
 }
+*/
 
 // Round frequency to click resolution value
 qint64 ScopePlotter::roundFreq(qint64 freq, int resolution)
@@ -482,7 +483,8 @@ void ScopePlotter::moveToCenterFreq(void)
     m_PeakHoldValid = false;
 }
 
-/** Set FFT plot color. */
+/*
+/** Set FFT plot color.
 void ScopePlotter::setFftPlotColor(const QColor color)
 {
     m_FftColor = color;
@@ -491,13 +493,17 @@ void ScopePlotter::setFftPlotColor(const QColor color)
     m_PeakHoldColor = color;
     m_PeakHoldColor.setAlpha(60);
 }
+*/
 
-/** Enable/disable filling the area below the FFT plot. */
+/*
+/** Enable/disable filling the area below the FFT plot. 
 void ScopePlotter::setFftFill(bool enabled)
 {
     m_FftFill = enabled;
 }
 
+
+*/
 /** Set peak hold on or off. */
 void ScopePlotter::setPeakHold(bool enabled)
 {
