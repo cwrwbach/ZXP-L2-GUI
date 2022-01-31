@@ -60,9 +60,9 @@ setWindowTitle(QString(VERSION));
 
 QObject::connect(ui->setupRsp, SIGNAL(clicked()), this, SLOT(hardware_setup()));
  
-//QObject::connect(ScopePlotter::freqFromX, SIGNAL(clicked()), this, SLOT(hardware_setup()));
 
 connect(ui->freqCtrl, SIGNAL(newFrequency(qint64)), this, SLOT(setNewFrequency(qint64)));
+connect(ui->alpha_plotter, SIGNAL(newFrequency(qint64)), this, SLOT(setNewFrequency(qint64)));
 
 connect(ui->dsb, SIGNAL(clicked()), this, SLOT(set_dsb()));
 connect(ui->usb, SIGNAL(clicked()), this, SLOT(set_usb()));
@@ -115,16 +115,17 @@ printf("hardware setup started... \n");
 start_server_stream();
 }	
 
-void MainWindow::setNewFrequency(qint64 )
+void MainWindow::setNewFrequency(qint64 newfreq)
 {
-int send_cf;	
+int send_cf = newfreq;	
 
-send_cf = ui->freqCtrl->getFrequency();
+
+ui->freqCtrl->setFrequency(newfreq);
 
 ui->alpha_plotter->setCenterFreq(send_cf);
 
 
-printf(" aacf: %d \n ",send_cf);
+printf(" Set New freq: %d \n ",send_cf);
 update_pitaya_cf(send_cf);
 }
 

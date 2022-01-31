@@ -20,8 +20,8 @@
 #define FFT_MAX_DB      0.f
 
 // Colors of type QRgb in 0xAARRGGBB format (unsigned int)
-//#define PLOTTER_BGD_COLOR           0xFF1F1D1D
-#define PLOTTER_BGD_COLOR           0xFF00002f
+#define PLOTTER_BGD_COLOR           0xFF1F1D1D
+//#define PLOTTER_BGD_COLOR           0xFF00002f
 #define PLOTTER_GRID_COLOR          0xFF444242
 #define PLOTTER_TEXT_COLOR          0xFFDADADA
 #define PLOTTER_CENTER_LINE_COLOR   0xFF788296
@@ -37,8 +37,6 @@ extern int g_center_frequency;
 ScopePlotter::ScopePlotter(QWidget *parent) : QFrame(parent) //Constructor
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-//  setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
     setFocusPolicy(Qt::StrongFocus);
     setAttribute(Qt::WA_PaintOnScreen,false);
     setAutoFillBackground(false);
@@ -67,7 +65,6 @@ ScopePlotter::ScopePlotter(QWidget *parent) : QFrame(parent) //Constructor
     m_MaxdB = -30;
     m_MindB = -130;
     m_dBStepSize = 10; //abs(m_MaxdB-m_MindB)/m_VerDivs;
-//end 24 jan
 
     m_Running = false;
     m_DrawOverlay = true;
@@ -387,26 +384,10 @@ freq = (int) roundf( start_freq + (x * pix_per_bin) * bin_step);
 printf(" G sample rate: %d frq: %d \n",g_sample_rate,freq);
 
 
-//emit    newFrequency(freq);
+emit    newFrequency(freq);
 
 return freq;
 }
-/*
-/** Calculate time offset of a given line on the waterfall 
-quint64 ScopePlotter::msecFromY(int y)
-{
-    // ensure we are in the waterfall region
-    if (y < m_OverlayPixmap.height())
-        return 0;
-
-    int dy = y - m_OverlayPixmap.height();
-
-    if (msec_per_wfline > 0)
-        return tlast_wf_ms - dy * msec_per_wfline;
-    else
-        return tlast_wf_ms - dy * 1000 / fft_rate;
-}
-*/
 
 // Round frequency to click resolution value
 qint64 ScopePlotter::roundFreq(qint64 freq, int resolution)
@@ -423,7 +404,6 @@ void ScopePlotter::setCenterFreq(quint64 f)
 {
 g_center_frequency = f;
 
-//ui->freqCtrl->setFrequency(f);
 
  //   if((quint64)m_CenterFreq == f)
   //      return;
@@ -462,19 +442,6 @@ void ScopePlotter::setWaterfallRange(float min, float max)
     // no overlay change is necessary
 }
 
-
-
-// Ensure overlay is updated by either scheduling or forcing a redraw
-//void ScopePlotter::updateOverlay()
-//{
- //   if (m_Running)
-  //      m_DrawOverlay = true;
-   // else
-    //    drawOverlay();
-//}
-
-
-
 /** Center FFT plot around 0 (corresponds to center freq). */
 void ScopePlotter::moveToCenterFreq(void)
 {
@@ -483,27 +450,6 @@ void ScopePlotter::moveToCenterFreq(void)
     m_PeakHoldValid = false;
 }
 
-/*
-/** Set FFT plot color.
-void ScopePlotter::setFftPlotColor(const QColor color)
-{
-    m_FftColor = color;
-    m_FftFillCol = color;
-    m_FftFillCol.setAlpha(0x1A);
-    m_PeakHoldColor = color;
-    m_PeakHoldColor.setAlpha(60);
-}
-*/
-
-/*
-/** Enable/disable filling the area below the FFT plot. 
-void ScopePlotter::setFftFill(bool enabled)
-{
-    m_FftFill = enabled;
-}
-
-
-*/
 /** Set peak hold on or off. */
 void ScopePlotter::setPeakHold(bool enabled)
 {
@@ -511,11 +457,7 @@ void ScopePlotter::setPeakHold(bool enabled)
     m_PeakHoldValid = false;
 }
 
-/**
- * Set peak detection on or off.
- * @param enabled The new state of peak detection.
- * @param c Minimum distance of peaks from mean, in multiples of standard deviation.
- */
+/** Set peak detection on or off. */
 void ScopePlotter::setPeakDetection(bool enabled, float c)
 {
     if(!enabled || c <= 0)
@@ -524,9 +466,7 @@ void ScopePlotter::setPeakDetection(bool enabled, float c)
         m_PeakDetection = c;
 }
 
-
 //---
-
 
 // Draw overlay bitmap containing grid and text that does not need every fft data update.
 void ScopePlotter::drawOverlay()

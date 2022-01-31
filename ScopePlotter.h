@@ -194,7 +194,6 @@ private:
     QFont       m_Font;         /*!< Font used for plotter (system font) */
     int         m_HdivDelta; /*!< Minimum distance in pixels between two horizontal grid lines (vertical division). */
 
-
     float       m_PeakDetection;
 
 };
