@@ -48,10 +48,20 @@
 
 #define G711_LEN PAK_LEN+G711_HEAD_LEN
 
+//function headers
+void read_conf(void);
+int alaw2linear(char);
+
+//servers, lazurus,pit14,pit16,pqc
+char server_addr[][15] = {"192.168.2.2", "192.168.2.222","192.168.2.242", "45.66.38.105"};
+
 int g_audio_sample_rate;
 int g_sample_rate;
 int g_fft_size;
 int g_center_frequency;
+
+int mir_bc_notch;
+int mir_dab_notch;
 
 int cb_in_ptr;
 int cb_out_ptr;
@@ -88,6 +98,11 @@ int sock_fd;
 int audio_rxd_count;
 
 //===
+void die(char *s)
+{
+	perror(s);
+	exit(1);
+}
 
 void send_control_packet(int type, int val)
 {
@@ -120,18 +135,15 @@ while(1)
 
 void * server_callback(void)
 {
-int i;
-unsigned int fft_count;
+
 int rxd_pak_len;
-float audio;
-int rbi;
-static int local_count;
-int rxd_count;
+/*
 union c4
 {
 int iii;
 char ccc[4];
 }c4;
+*/
    
 //get incoming samples from stream 
 while(1) 
@@ -154,10 +166,10 @@ while(1)
             g711_xfer_buf[i] = alaw2linear(in_pak_buf[i]);
             }
 
-c4.ccc[0] = in_pak_buf[1030];
-c4.ccc[1] = in_pak_buf[1031];
-c4.ccc[2] = in_pak_buf[1032];
-c4.ccc[3] = in_pak_buf[1033];
+//c4.ccc[0] = in_pak_buf[1030];
+//c4.ccc[1] = in_pak_buf[1031];
+//c4.ccc[2] = in_pak_buf[1032];
+//c4.ccc[3] = in_pak_buf[1033];
 
 //printf(" rxd pak: %d local: %d \n",c4.iii,local_count++);
 
@@ -179,6 +191,7 @@ void update_pitaya_cf(int cf)
 {
 float ppm_factor, freq;
 int new_data;
+ppm_factor = 0.0;
 
 freq = cf;
 freq = (int)floor(freq*(1.0 + ppm_factor *1.0e-6) + 0.5);
@@ -231,25 +244,33 @@ printf(" AF gain = %d\n",gain);
 }
 
 
-//---
-
-
-
-
-void die(char *s)
+void update_pitaya_notch(int gain)
 {
-	perror(s);
-	exit(1);
+send_control_packet(AFG,gain);
+printf(" AF gain = %d\n",gain);
+
+}
+
+void update_pitaya_agc(int gain)
+{
+send_control_packet(AFG,gain);
+printf(" AF gain = %d\n",gain);
+
+}
+
+
+void update_pitaya_gain_reduction(int gain)
+{
+send_control_packet(AFG,gain);
+printf(" AF gain = %d\n",gain);
+
 }
 
 //---
 
 int setup_network() 
 { 
-int new_data;
-
 char message[80];
-int pkt_size;
 
 strcpy(message,"CLIENT calling ");
 if ( (sock_fd=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
@@ -260,7 +281,10 @@ si_other.sin_family = AF_INET;
 si_other.sin_port = htons(PORT);
 
 //convert ip address to network byte order	
-if (inet_aton(SERVER , &si_other.sin_addr) == 0) 
+//if (inet_aton(SERVER , &si_other.sin_addr) == 0) 
+
+
+if (inet_aton(server_addr[1] , &si_other.sin_addr) == 0) 
 	{
 		fprintf(stderr, "inet_aton() failed\n");
 		exit(1);
@@ -279,9 +303,7 @@ void start_server_stream()
 {
 pthread_t callback_id,audio_cb_id;
 int err;
-int num_stages;
 int ret;
-int  freq;
 
 read_conf();
 
