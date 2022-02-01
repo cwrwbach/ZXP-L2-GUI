@@ -53,8 +53,6 @@ int g_sample_rate;
 int g_fft_size;
 int g_center_frequency;
 
-//char fft_circ_buf[FFT_SIZE];
-
 int cb_in_ptr;
 int cb_out_ptr;
 
@@ -91,18 +89,12 @@ int audio_rxd_count;
 
 //===
 
-
 void send_control_packet(int type, int val)
 {
-
-
 control_packet[type] = val;
 
 if (sendto(sock_fd, control_packet, sizeof(control_packet) , 0 , (struct sockaddr *) &si_other, slen)==-1)
     die("control message");
-
-
-
 }
 
 //---
@@ -113,11 +105,11 @@ while(1)
     {
     usleep(1000);
     if(audio_flag ==true)
-        { //printf(" *\n");
+        { 
         audio_flag = false;
         int snd_err = snd_pcm_writei(audio_device, g711_xfer_buf, 1024);	
         if(snd_err < 0 )
-        {      
+            {      
             printf(" Under run \n");
             snd_pcm_recover(audio_device, snd_err, 1); //catch underruns (silent flag set)
             usleep(1000);
@@ -183,7 +175,6 @@ c4.ccc[3] = in_pak_buf[1033];
 
 //---
 
-
 void update_pitaya_cf(int cf)
 {
 float ppm_factor, freq;
@@ -193,10 +184,7 @@ freq = cf;
 freq = (int)floor(freq*(1.0 + ppm_factor *1.0e-6) + 0.5);
 printf(" new freq: %f \n",freq);
 new_data = (int) freq;
-
 send_control_packet(FREQ,new_data);
-
-
 printf(" done changing F \n");
 }	
 
@@ -300,7 +288,6 @@ read_conf();
 g_sample_rate = 500000;
 g_fft_size = FFT_SIZE;
 
-freq = 198000;
 audio_flag = false;
 audio_sr = g_audio_sample_rate;
 audio_sr_delta = AR_DELTA; //correction to let audio run a tad slower to keep its buffer filled.

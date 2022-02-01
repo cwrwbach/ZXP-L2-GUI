@@ -2,4 +2,5 @@
 
 //8000 works well with SDR1a
 //7812 better with Pitaya 14
-g_audio_sample_rate=7812 //15625
+
+g_audio_sample_rate=8000 //15625

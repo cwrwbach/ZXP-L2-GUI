@@ -70,6 +70,9 @@
     </property>
    </widget>
    <widget class="QFrame" name="frame_5">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>1050</x>
@@ -375,6 +378,9 @@
     </widget>
    </widget>
    <widget class="QFrame" name="frame_8">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>1170</x>
@@ -652,6 +658,9 @@
     </widget>
    </widget>
    <widget class="QFrame" name="ip_select">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>1070</x>
