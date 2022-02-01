@@ -25,7 +25,7 @@
 
 
 //#define SERVER "45.66.38.105"
-#define SERVER "192.168.2.2" //222"
+#define SERVER "192.168.2.2" //222
 #define PORT 11361	
 #define FFT_SIZE 1024
 
@@ -71,7 +71,7 @@ struct sockaddr_in si_other;
 int slen=sizeof(si_other);
 
 char in_pak_buf[MAX_PAK_LEN];
-char fft_video_buf[FFT_SIZE];
+int fft_video_buf[FFT_SIZE];
 short g711_xfer_buf[G711_SIZE];
 int status[10];
 int audio_sr;
@@ -150,7 +150,7 @@ while(1)
         case FFT_LEN:
 
         for(int i=0; i<1024;i++)
-            fft_video_buf[i] = in_pak_buf[i];
+            fft_video_buf[i] = (int) in_pak_buf[i];
   
         stream_flag = true; //if I don't flag the FFT the CPU usage becomes 100% FIXME
         break;

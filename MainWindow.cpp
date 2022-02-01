@@ -22,37 +22,12 @@ extern "C" void update_pitaya_rfg(int);
 extern "C" void update_pitaya_afg(int);
 
 extern bool stream_flag;
-extern int resample_factor;
-extern float xfer_buf_p[];
-extern float xfer_buf_q[];
-extern char fft_video_buf[];
+extern int fft_video_buf[];
 extern int status[];
 
-bool down_convert_flag;
-bool gain_flag = 0;
-//double centerFreqVal;
-
-int decimVal;
-int srVal;
-
-ulong rxbuf_x = 0;
-ulong chunk_x = 0;
-
-int devModel = 1;
-int display_buf[RX_BUF_SIZE]; 
-int gri_val;
-int atten_val;
-int ifBandWidth = 1536;
-int ifType = 0;
-int shift = 30000;
-double freq = 0.0;
-int show_count = 0;
-int samplesPerPacket;
-int packs_rxd;
-//float fft_window[FFT_POINTS];
 //---
 
-MainWindow::MainWindow(const QString cfgfile, bool edit_conf, QWidget *parent) :
+MainWindow::MainWindow(const QString cfgfile, QWidget *parent) :
     QMainWindow(parent),    ui(new Ui::MainWindow)
 {
 ui->setupUi(this);
@@ -60,7 +35,6 @@ setWindowTitle(QString(VERSION));
 
 QObject::connect(ui->setupRsp, SIGNAL(clicked()), this, SLOT(hardware_setup()));
  
-
 connect(ui->freqCtrl, SIGNAL(newFrequency(qint64)), this, SLOT(setNewFrequency(qint64)));
 connect(ui->alpha_plotter, SIGNAL(newFrequency(qint64)), this, SLOT(setNewFrequency(qint64)));
 
@@ -74,7 +48,6 @@ connect(ui->sr2, SIGNAL(clicked()), this, SLOT(set_sr2()));
 connect(ui->sr3, SIGNAL(clicked()), this, SLOT(set_sr3()));
 connect(ui->sr4, SIGNAL(clicked()), this, SLOT(set_sr4()));
 connect(ui->sr5, SIGNAL(clicked()), this, SLOT(set_sr5()));
-//connect(ui->sr6, SIGNAL(clicked()), this, SLOT(set_sr6()));
 
 connect(ui->ar0, SIGNAL(clicked()), this, SLOT(set_ar0()));
 connect(ui->ar1, SIGNAL(clicked()), this, SLOT(set_ar1()));
@@ -155,26 +128,10 @@ void MainWindow::set_dsb(){ update_pitaya_demod(1);}
 void MainWindow::set_usb(){ update_pitaya_demod(2);}
 void MainWindow::set_lsb(){ update_pitaya_demod(3);}
 
-/*
-void MainWindow::set_sr2M(){ update_pitaya_sr(0);resample_factor = 2;}
-void MainWindow::set_sr4M(){ update_pitaya_sr(1);resample_factor = 5;}
-void MainWindow::set_sr5M(){ update_pitaya_sr(2);resample_factor = 10;}
-void MainWindow::set_sr6M(){ update_pitaya_sr(3);resample_factor = 25;}
-void MainWindow::set_sr8M(){ update_pitaya_sr(4);resample_factor = 50;}
-void MainWindow::set_sr10M(){update_pitaya_sr(5);resample_factor = 125;}
-
-void MainWindow::set_decim0(){ decimVal = 0 ;update_pitaya_decim(0);}
-void MainWindow::set_decim2(){ decimVal = 2 ;update_pitaya_decim(1);}
-void MainWindow::set_decim4(){ decimVal = 4 ;update_pitaya_decim(2);}
-void MainWindow::set_decim8(){ decimVal = 8 ;update_pitaya_decim(3);}
-void MainWindow::set_decim16(){ decimVal = 16 ;update_pitaya_decim(4);}
-void MainWindow::set_decim32(){ decimVal = 32 ;update_pitaya_decim(5);}
-*/
 //---
 
 void MainWindow::show_enable() // displays stream data
 {
-uint i;
 char str_1[20];
 char str_2[20];
 char str_3[20];
@@ -201,9 +158,5 @@ ui->stat_4->setText(str_4);
 ui->stat_5->setText(str_5);
 ui->stat_6->setText(str_6);
 
-for(i=0;i<FFT_POINTS;i++)
-    display_buf[i] = (int) fft_video_buf[i] ;
-	
-ui->alpha_plotter->draw_trace(display_buf,0,1024,-1500,-200); //(left,Num points,lower,upper)
-
+ui->alpha_plotter->draw_trace(fft_video_buf,0,1024,-1500,-200); //(left,Num points,lower,upper)
 }

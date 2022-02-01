@@ -1,5 +1,4 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
 #include <QColor>
 #include <QMainWindow>
@@ -21,26 +20,22 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(const QString cfgfile, bool edit_conf, QWidget *parent = 0);
-
+     
+    explicit MainWindow(const QString cfgfile, QWidget *parent = 0);
     ~MainWindow();
 
-    bool configOk; /*!< Main app uses this flag to know whether we should abort or continue. */
+bool configOk; /*!< Main app uses this flag to know whether we should abort or continue. */
 
 signals:
     void configChanged(QSettings *settings); /*!< New configuration has been loaded. */
 	
-	void mySignal(int myParameter); 
-
 public slots:
- //   void setNewFrequency(qint64 rx_freq);
 	
 private:
     Ui::MainWindow *ui;
 
     QPointer<QSettings> m_settings;  /*!< Application wide settings. */
     QString             m_cfg_dir;   /*!< Default config dir, e.g. XDG_CONFIG_HOME. */
-  
     QTimer   *fft_timer;
 
 private slots:
@@ -66,8 +61,5 @@ void set_usb();
 void set_lsb();
 void set_rfg(int);
 void set_afg(int);
-
 };
 
-
-#endif // MAINWINDOW_H

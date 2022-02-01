@@ -4,19 +4,17 @@
 int main(int argc, char *argv[])
 {
 	QString cfg_file;
-	bool edit_conf = false;
-
 	QApplication a(argc, argv);
  
-	MainWindow my_window(cfg_file, edit_conf);
+	MainWindow my_window(cfg_file);
 
 	if (my_window.configOk)
-  {
+        {
 		my_window.show();
-	return a.exec();
-	}
+	    return a.exec();
+	    }
 	else
-	{
+	    {
 		return 1;
-	}
+	    }
 }
