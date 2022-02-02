@@ -4,3 +4,10 @@
 //7812 better with Pitaya 14
 
 g_audio_sample_rate=8000 //15625
+
+mir_bc_notch = 0;
+mir_dab_notch = 0;
+
+
+
+

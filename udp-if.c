@@ -284,7 +284,7 @@ si_other.sin_port = htons(PORT);
 //if (inet_aton(SERVER , &si_other.sin_addr) == 0) 
 
 
-if (inet_aton(server_addr[1] , &si_other.sin_addr) == 0) 
+if (inet_aton(server_addr[0] , &si_other.sin_addr) == 0) 
 	{
 		fprintf(stderr, "inet_aton() failed\n");
 		exit(1);
