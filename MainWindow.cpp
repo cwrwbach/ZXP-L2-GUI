@@ -149,8 +149,103 @@ void MainWindow::set_mir_dab_n(int val){ update_mir_dab_notch(val);}
 void MainWindow::set_mir_bc_n(int val){ update_mir_bc_notch(val);}
 void MainWindow::set_mir_lna(int val){ update_mir_lna(val);}
 
+//---
+
+/*
+void MainWindow::MyUDP()
+{
+  socket = new QUdpSocket(this);
+  
+  //We need to bind the UDP socket to an address and a port
+  socket->bind(QHostAddress("192.168.2.2"),11361);         //ex. Address localhost, port 1234
+  
+  connect(socket,SIGNAL(readyRead()),this,SLOT(readyRead()));
+}
+
+void MainWindow::ready_read()
+{
+printf(" Caught  a tropical fish \n");
+}
+*/
+
+//https://gist.github.com/lamprosg/4593723
+/*
+#include "myudp.h"
+ 
+int main(int argc, char *argv[])
+{
+  QCoreApplication a(argc, argv);
+  
+  MyUDP server;
+  MyUDP server;
+  
+  server.SayHello();
+  
+  return a.exec();
+}
+
+#include "myudp.h"
+ 
+MyUDP::MyUDP(QObject *parent) : 
+    QObject(parent)
+{
+  socket = new QUdpSocket(this);
+  
+  //We need to bind the UDP socket to an address and a port
+  socket->bind(QHostAddress::LocalHost,1234);         //ex. Address localhost, port 1234
+  
+  connect(socket,SIGNAL(readyRead()),this,SLOT(readyRead()));
+}
 
 
+void MyUDP::SayHello()      //Just spit out some data
+{
+  QByteArray Data;
+  Data.append("Hello from UDP land");
+  
+  socket->writeDatagram(Data,QHostAddress::LocalHost,1234);
+  
+  //If you want to broadcast something you send it to your broadcast address
+  //ex. 192.2.1.255
+}
+
+
+void MyUDP::readyRead()     //Read something
+{
+  QByteArray Buffer;
+  Buffer.resize(socket->pendingDatagramSize());
+  
+  QHostAddress sender;
+  quint16 senderPort;
+  socket->readDatagram(Buffer.data(),Buffer.size(),&sender,&senderPort);
+  
+  //The address will be sender.toString()
+}
+
+
+//Base class QObject
+
+#include <QUdpSocket>
+ 
+class MyUDP : public QObject
+{
+  Q_OBJECT
+ 
+  public:
+      explicit MyUDP(QObject *parent = 0);
+
+      void SayHello();
+
+  private:
+      QUdpSocket *socket;
+ 
+  signals:
+ 
+  public slots:
+      void readyRead();
+ 
+};
+*/
 
 
 //---

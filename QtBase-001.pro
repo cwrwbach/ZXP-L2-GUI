@@ -10,6 +10,7 @@ QMAKE_CXXFLAGS += -fdiagnostics-color=auto
 
 QT += core gui
 QT += widgets
+QT += network
 
 TEMPLATE = app
 TARGET = gui

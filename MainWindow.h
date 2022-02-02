@@ -8,6 +8,7 @@
 #include <QTimer>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QUdpSocket>
 
 #define MAX_FFT_SIZE 512
 
@@ -24,6 +25,8 @@ public:
     explicit MainWindow(const QString cfgfile, QWidget *parent = 0);
     ~MainWindow();
 
+
+
 bool configOk; /*!< Main app uses this flag to know whether we should abort or continue. */
 
 signals:
@@ -34,9 +37,12 @@ public slots:
 private:
     Ui::MainWindow *ui;
 
+ 
+
     QPointer<QSettings> m_settings;  /*!< Application wide settings. */
     QString             m_cfg_dir;   /*!< Default config dir, e.g. XDG_CONFIG_HOME. */
     QTimer   *fft_timer;
+//    QUdpSocket *experi_socket;
 
 private slots:
 
@@ -67,7 +73,8 @@ void set_mir_dab_n(int);
 void set_mir_bc_n(int);
 void set_mir_lna(int);
 
-
+//void MyUDP();
+//void ready_read();
 
 };
 
