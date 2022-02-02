@@ -266,6 +266,27 @@ printf(" AF gain = %d\n",gain);
 
 }
 
+
+void update_mir_gr(int val)
+{
+printf(" mir gr: %d \n",val);
+}
+
+void update_mir_dab_notch(int val)
+{
+printf(" mir dab: %d \n",val);
+}
+
+void update_mir_bc_notch(int val)
+{
+printf(" mir bc: %d \n",val);
+}
+
+void update_mir_lna(int val)
+{
+printf(" mir lna: %d \n",val);
+}
+
 //---
 
 int setup_network() 

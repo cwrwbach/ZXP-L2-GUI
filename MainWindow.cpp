@@ -20,6 +20,11 @@ extern "C" void update_pitaya_ar(int);
 extern "C" void update_pitaya_demod(int);
 extern "C" void update_pitaya_rfg(int);
 extern "C" void update_pitaya_afg(int);
+extern "C" void update_mir_gr(int);
+extern "C" void update_mir_dab_notch(int);
+extern "C" void update_mir_bc_notch(int);
+extern "C" void update_mir_lna(int);
+
 
 extern bool stream_flag;
 extern int fft_video_buf[];
@@ -63,6 +68,12 @@ connect(ui->ar3, SIGNAL(clicked()), this, SLOT(set_ar3()));
 
 connect(ui->rf_gain, SIGNAL(valueChanged(int)), this, SLOT(set_rfg(int)));
 connect(ui->af_gain, SIGNAL(valueChanged(int)), this, SLOT(set_afg(int)));
+
+connect(ui->mir_gr, SIGNAL(valueChanged(int)), this, SLOT(set_mir_gr(int)));
+
+connect(ui->mir_dab_notch, SIGNAL(stateChanged(int)), this, SLOT(set_mir_dab_n(int)));
+connect(ui->mir_bc_notch, SIGNAL(stateChanged(int)), this, SLOT(set_mir_bc_n(int)));
+connect(ui->mir_lna, SIGNAL(stateChanged(int)), this, SLOT(set_mir_lna(int)));
 
 fft_timer = new QTimer(this);
 connect(fft_timer, SIGNAL(timeout()), this, SLOT(show_enable()));
@@ -112,6 +123,11 @@ void MainWindow::set_afg(int gain)
 update_pitaya_afg(gain);
 }
 
+void MainWindow::set_mir_gr(int gain)
+{
+update_mir_gr(gain);
+}
+
 void MainWindow::set_sr0(){ update_pitaya_sr(0);}
 void MainWindow::set_sr1(){ update_pitaya_sr(1);}
 void MainWindow::set_sr2(){ update_pitaya_sr(2);}
@@ -127,6 +143,15 @@ void MainWindow::set_ar3(){ update_pitaya_ar(3);}
 void MainWindow::set_dsb(){ update_pitaya_demod(1);}
 void MainWindow::set_usb(){ update_pitaya_demod(2);}
 void MainWindow::set_lsb(){ update_pitaya_demod(3);}
+
+
+void MainWindow::set_mir_dab_n(int val){ update_mir_dab_notch(val);}
+void MainWindow::set_mir_bc_n(int val){ update_mir_bc_notch(val);}
+void MainWindow::set_mir_lna(int val){ update_mir_lna(val);}
+
+
+
+
 
 //---
 

@@ -61,5 +61,13 @@ void set_usb();
 void set_lsb();
 void set_rfg(int);
 void set_afg(int);
+
+void set_mir_gr(int);
+void set_mir_dab_n(int);
+void set_mir_bc_n(int);
+void set_mir_lna(int);
+
+
+
 };
 
