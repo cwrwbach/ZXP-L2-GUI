@@ -7,6 +7,11 @@
 
 //https://doc.qt.io/qt-5/qudpsocket.html
 
+
+bool stream_flag;
+int fft_video_buf[1024];
+
+
 void Udp::soxit()
 {
 socket = new QUdpSocket(this);
@@ -64,6 +69,16 @@ while (socket->hasPendingDatagrams())
          datagram.resize(socket->pendingDatagramSize());
          socket->readDatagram(datagram.data(),datagram.size(),&sender,&port);
         printf(" << Messgae\n" );//Message From :: " << sender.toString();
+
+if(size == 1040)
+{ printf(" $ \n");
+for(int i=0; i<1024;i++)
+            fft_video_buf[i] = (int) datagram[i]; //-80 + (i/32); //(int) in_pak_buf[i];
+
+stream_flag = true;
+}
+
+
        // printf("Port From :: \n "); //<< port;
        // printf("Message :: \n"); //" //<< datagram;
     }
