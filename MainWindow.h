@@ -37,12 +37,13 @@ public slots:
 private:
     Ui::MainWindow *ui;
 
- 
+//    QUdpSocket *socket = nullptr;
+
 
     QPointer<QSettings> m_settings;  /*!< Application wide settings. */
     QString             m_cfg_dir;   /*!< Default config dir, e.g. XDG_CONFIG_HOME. */
     QTimer   *fft_timer;
-//    QUdpSocket *experi_socket;
+//    
 
 private slots:
 
@@ -73,8 +74,8 @@ void set_mir_dab_n(int);
 void set_mir_bc_n(int);
 void set_mir_lna(int);
 
-//void MyUDP();
-//void ready_read();
+void MyUDP();
+void readyRead();
 
 };
 

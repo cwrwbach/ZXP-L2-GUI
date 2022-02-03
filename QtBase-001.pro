@@ -29,6 +29,6 @@ QMAKE_CXXFLAGS_WARN_OFF -= -Wunused-parameter
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 # Input
-HEADERS += MainWindow.h ScopePlotter.h cfreqctrl.h meter.h
+HEADERS += MainWindow.h ScopePlotter.h cfreqctrl.h meter.h Udp.h
 FORMS += QtBase-001.ui
-SOURCES += Main.cpp MainWindow.cpp ScopePlotter.cpp udp-if.c adpcm.c read-config.c cfreqctrl.cpp meter.cpp
+SOURCES += Main.cpp MainWindow.cpp ScopePlotter.cpp udp-if.c adpcm.c read-config.c cfreqctrl.cpp meter.cpp Udp.cpp

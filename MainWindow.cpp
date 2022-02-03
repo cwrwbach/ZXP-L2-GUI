@@ -8,6 +8,7 @@
 #include "MainWindow.h"
 #include "MainWindow.h"
 #include "ui_QtBase-001.h"
+#include <QUdpSocket>
 
 #define VERSION "QT5 Scope"
 #define FFT_POINTS 1024
@@ -30,11 +31,18 @@ extern bool stream_flag;
 extern int fft_video_buf[];
 extern int status[];
 
+//QUdpSocket *socket; // = nullptr;
 //---
 
 MainWindow::MainWindow(const QString cfgfile, QWidget *parent) :
     QMainWindow(parent),    ui(new Ui::MainWindow)
 {
+
+printf("Satring %d \n",__LINE__);
+//MyUDP();
+
+printf("After %d \n",__LINE__);
+
 ui->setupUi(this);
 setWindowTitle(QString(VERSION));
 
@@ -151,22 +159,31 @@ void MainWindow::set_mir_lna(int val){ update_mir_lna(val);}
 
 //---
 
-/*
+
 void MainWindow::MyUDP()
 {
-  socket = new QUdpSocket(this);
-  
+printf("After %d \n",__LINE__);
+//socket = new QUdpSocket(this);
+printf("After %d \n",__LINE__);  
   //We need to bind the UDP socket to an address and a port
-  socket->bind(QHostAddress("192.168.2.2"),11361);         //ex. Address localhost, port 1234
-  
-  connect(socket,SIGNAL(readyRead()),this,SLOT(readyRead()));
+ // socket->bind(QHostAddress("192.168.2.2"),11361);         //ex. Address localhost, port 1234
+printf("After %d \n",__LINE__);  
+ // connect(socket,SIGNAL(readyRead()),this,SLOT(readyRead()));
+printf("After %d \n",__LINE__);
 }
 
-void MainWindow::ready_read()
+void MainWindow::readyRead()
 {
+QByteArray Buffer;
+printf(" ****************** %d \n",__LINE__);  
+//Buffer.resize(socket->pendingDatagramSize());
+  
+QHostAddress sender;
+quint16 senderPort;
+//socket->readDatagram(Buffer.data(),Buffer.size(),&sender,&senderPort);
 printf(" Caught  a tropical fish \n");
 }
-*/
+
 
 //https://gist.github.com/lamprosg/4593723
 /*
