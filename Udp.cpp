@@ -2,29 +2,35 @@
 #include "MainWindow.h"
 #include "Udp.h"
 #include <QDebug>
+#include <unistd.h>
+
+
+//https://doc.qt.io/qt-5/qudpsocket.html
 
 void Udp::soxit()
 {
-    socket = new QUdpSocket();
-        bool result =  socket->bind(QHostAddress::AnyIPv4, 11361);
-        qDebug() << result;
-        if(result)
-        {
-            printf(" PASS \n");;
+socket = new QUdpSocket(this);
+bool result =  socket->bind(QHostAddress::AnyIPv4, 11361);
+qDebug() << result;
+
+if(result)
+    {
+    printf(" PASS \n");;
         }
-        else
-        {
-            printf(" FAIL \n");
-        }
-
-
-
+else
+    {
+    printf(" FAIL \n");
+    }
 
 printf(" *************  BIDD, it wurked *********** \n)");
-        processPendingDatagrams();
-  //      connect(socket, SIGNAL(readyRead()), this, SLOT(processPendingDatagrams()),Qt::QueuedConnection);
-}
 
+usleep(100000);
+
+connect(socket, &QUdpSocket::readyRead,
+            this, &Udp::processPendingDatagrams);
+sendgram();
+usleep(100000);
+}
 
 
 void Udp::sendgram()
@@ -32,18 +38,36 @@ void Udp::sendgram()
 QString word="freddyhamster";
 //ui->textBrowser->append(word);
 
-
 QByteArray buffer;
 buffer.resize(socket->pendingDatagramSize());
 QHostAddress sender;
 quint16 senderPort;
 buffer=word.toUtf8();
 socket->writeDatagram(buffer.data(), QHostAddress::LocalHost, 11361 );
-
 }
 
 
+void Udp::processPendingDatagrams()
+ {
+int size;
+   
+QHostAddress sender;
+u_int16_t port;
 
+while (socket->hasPendingDatagrams())
+    {
+
+    size = socket->pendingDatagramSize(); 
+    printf(" size: %d \n",size);
+
+         QByteArray datagram;
+         datagram.resize(socket->pendingDatagramSize());
+         socket->readDatagram(datagram.data(),datagram.size(),&sender,&port);
+        printf(" << Messgae\n" );//Message From :: " << sender.toString();
+       // printf("Port From :: \n "); //<< port;
+       // printf("Message :: \n"); //" //<< datagram;
+    }
+}
 
 
 
@@ -109,18 +133,4 @@ void uchat::readPendingDatagrams()
 
 
 
-void Udp::processPendingDatagrams()
- {
-    printf("in \n");
-    QHostAddress sender;
-    u_int16_t port;
-    while (socket->hasPendingDatagrams())
-    {
-         QByteArray datagram;
-         datagram.resize(socket->pendingDatagramSize());
-         socket->readDatagram(datagram.data(),datagram.size(),&sender,&port);
-        printf(" << Messgae\n" );//Message From :: " << sender.toString();
-        printf("Port From :: \n "); //<< port;
-        printf("Message :: \n"); //" //<< datagram;
-    }
-}
+

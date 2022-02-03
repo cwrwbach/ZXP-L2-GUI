@@ -6,7 +6,7 @@
 #include <math.h>
 #include <complex.h>
 #include "MainWindow.h"
-#include "MainWindow.h"
+#include <unistd.h>
 #include "ui_QtBase-001.h"
 #include "Udp.h"
 #include <QUdpSocket>
@@ -44,10 +44,10 @@ MainWindow::MainWindow(const QString cfgfile, QWidget *parent) :
 
 printf("Satring %d \n",__LINE__);
 
-fido.soxit();
+//fido.soxit();
 
 printf("After %d \n",__LINE__);
-//Udp->sendgram();
+
 
 printf("After %d \n",__LINE__);
 
@@ -112,7 +112,10 @@ delete ui;
 void MainWindow::hardware_setup()
 {
 printf("hardware setup started... \n");
-start_server_stream();
+fido.soxit();
+usleep(200000);
+//fido.sendgram();
+//start_server_stream();
 }	
 
 void MainWindow::setNewFrequency(qint64 newfreq)
