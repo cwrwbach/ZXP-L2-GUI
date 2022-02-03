@@ -16,9 +16,41 @@ void Udp::soxit()
         {
             printf(" FAIL \n");
         }
+
+
+
+
+printf(" *************  BIDD, it wurked *********** \n)");
         processPendingDatagrams();
   //      connect(socket, SIGNAL(readyRead()), this, SLOT(processPendingDatagrams()),Qt::QueuedConnection);
 }
+
+
+
+void Udp::sendgram()
+{
+QString word="freddyhamster";
+//ui->textBrowser->append(word);
+
+
+QByteArray buffer;
+buffer.resize(socket->pendingDatagramSize());
+QHostAddress sender;
+quint16 senderPort;
+buffer=word.toUtf8();
+socket->writeDatagram(buffer.data(), QHostAddress::LocalHost, 11361 );
+
+}
+
+
+
+
+
+
+
+
+
+
 
 //dp::~Udp()
 //{

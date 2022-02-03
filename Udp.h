@@ -9,12 +9,17 @@ class Udp : public QObject
 {
 Q_OBJECT
 
-public:
-    
-private slots:
-    void soxit();
+  //  void soxit();
+    void sendgram();
     void processPendingDatagrams();
-private:
+
     QUdpSocket *socket = nullptr;
+
+public:
+  void soxit();
+ //   void sendgram();
+    
+
 };
+
 

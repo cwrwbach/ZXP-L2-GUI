@@ -8,6 +8,7 @@
 #include "MainWindow.h"
 #include "MainWindow.h"
 #include "ui_QtBase-001.h"
+#include "Udp.h"
 #include <QUdpSocket>
 
 #define VERSION "QT5 Scope"
@@ -34,12 +35,19 @@ extern int status[];
 //QUdpSocket *socket; // = nullptr;
 //---
 
+Udp fido;
+
+
 MainWindow::MainWindow(const QString cfgfile, QWidget *parent) :
     QMainWindow(parent),    ui(new Ui::MainWindow)
 {
 
 printf("Satring %d \n",__LINE__);
-//MyUDP();
+
+fido.soxit();
+
+printf("After %d \n",__LINE__);
+//Udp->sendgram();
 
 printf("After %d \n",__LINE__);
 
