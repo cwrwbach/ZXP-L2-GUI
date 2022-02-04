@@ -16,12 +16,12 @@
 #define RX_BUF_SIZE 1024
 
 //extern "C" void start_server_stream();
-//extern "C" void update_pitaya_cf(int);
-//extern "C" void update_pitaya_sr(int);
-//extern "C" void update_pitaya_ar(int);
-//extern "C" void update_pitaya_demod(int);
-//extern "C" void update_pitaya_rfg(int);
-//extern "C" void update_pitaya_afg(int);
+//extern "C" void update_radio_cf(int);
+//extern "C" void update_radio_sr(int);
+//extern "C" void update_radio_ar(int);
+//extern "C" void update_radio_demod(int);
+//extern "C" void update_radio_rfg(int);
+//extern "C" void update_radio_afg(int);
 //extern "C" void update_mir_gr(int);
 //extern "C" void update_mir_dab_notch(int);
 //e/xtern "C" void update_mir_bc_notch(int);
@@ -112,7 +112,7 @@ delete ui;
 void MainWindow::hardware_setup()
 {
 printf("hardware setup started... \n");
-fido.soxit();
+fido.setup_socket();
 usleep(200000);
 //fido.sendgram();
 //start_server_stream();
@@ -127,19 +127,17 @@ ui->freqCtrl->setFrequency(newfreq);
 
 ui->alpha_plotter->setCenterFreq(send_cf);
 
-
-printf(" Set New freq: %d \n ",send_cf);
-fido.update_pitaya_cf(send_cf);
+fido.update_radio_cf(send_cf);
 }
 
 void MainWindow::set_rfg(int gain)
 {
-fido.update_pitaya_rfg(gain);
+fido.update_radio_rfg(gain);
 }
 
 void MainWindow::set_afg(int gain)
 {
-fido.update_pitaya_afg(gain);
+fido.update_radio_afg(gain);
 }
 
 void MainWindow::set_mir_gr(int gain)
@@ -147,21 +145,21 @@ void MainWindow::set_mir_gr(int gain)
 fido.update_mir_gr(gain);
 }
 
-void MainWindow::set_sr0(){ fido.update_pitaya_sr(0);}
-void MainWindow::set_sr1(){ fido.update_pitaya_sr(1);}
-void MainWindow::set_sr2(){ fido.update_pitaya_sr(2);}
-void MainWindow::set_sr3(){ fido.update_pitaya_sr(3);}
-void MainWindow::set_sr4(){ fido.update_pitaya_sr(4);}
-void MainWindow::set_sr5(){ fido.update_pitaya_sr(5);}
+void MainWindow::set_sr0(){ fido.update_radio_sr(0);}
+void MainWindow::set_sr1(){ fido.update_radio_sr(1);}
+void MainWindow::set_sr2(){ fido.update_radio_sr(2);}
+void MainWindow::set_sr3(){ fido.update_radio_sr(3);}
+void MainWindow::set_sr4(){ fido.update_radio_sr(4);}
+void MainWindow::set_sr5(){ fido.update_radio_sr(5);}
 
-void MainWindow::set_ar0(){ fido.update_pitaya_ar(0);}
-void MainWindow::set_ar1(){ fido.update_pitaya_ar(1);}
-void MainWindow::set_ar2(){ fido.update_pitaya_ar(2);}
-void MainWindow::set_ar3(){ fido.update_pitaya_ar(3);}
+void MainWindow::set_ar0(){ fido.update_radio_ar(0);}
+void MainWindow::set_ar1(){ fido.update_radio_ar(1);}
+void MainWindow::set_ar2(){ fido.update_radio_ar(2);}
+void MainWindow::set_ar3(){ fido.update_radio_ar(3);}
 
-void MainWindow::set_dsb(){ fido.update_pitaya_demod(1);}
-void MainWindow::set_usb(){ fido.update_pitaya_demod(2);}
-void MainWindow::set_lsb(){ fido.update_pitaya_demod(3);}
+void MainWindow::set_dsb(){ fido.update_radio_demod(1);}
+void MainWindow::set_usb(){ fido.update_radio_demod(2);}
+void MainWindow::set_lsb(){ fido.update_radio_demod(3);}
 
 
 void MainWindow::set_mir_dab_n(int val){ fido.update_mir_dab_notch(val);}
@@ -197,83 +195,7 @@ printf(" Caught  a tropical fish \n");
 
 
 //https://gist.github.com/lamprosg/4593723
-/*
-#include "myudp.h"
- 
-int main(int argc, char *argv[])
-{
-  QCoreApplication a(argc, argv);
-  
-  MyUDP server;
-  MyUDP server;
-  
-  server.SayHello();
-  
-  return a.exec();
-}
 
-#include "myudp.h"
- 
-MyUDP::MyUDP(QObject *parent) : 
-    QObject(parent)
-{
-  socket = new QUdpSocket(this);
-  
-  //We need to bind the UDP socket to an address and a port
-  socket->bind(QHostAddress::LocalHost,1234);         //ex. Address localhost, port 1234
-  
-  connect(socket,SIGNAL(readyRead()),this,SLOT(readyRead()));
-}
-
-
-void MyUDP::SayHello()      //Just spit out some data
-{
-  QByteArray Data;
-  Data.append("Hello from UDP land");
-  
-  socket->writeDatagram(Data,QHostAddress::LocalHost,1234);
-  
-  //If you want to broadcast something you send it to your broadcast address
-  //ex. 192.2.1.255
-}
-
-
-void MyUDP::readyRead()     //Read something
-{
-  QByteArray Buffer;
-  Buffer.resize(socket->pendingDatagramSize());
-  
-  QHostAddress sender;
-  quint16 senderPort;
-  socket->readDatagram(Buffer.data(),Buffer.size(),&sender,&senderPort);
-  
-  //The address will be sender.toString()
-}
-
-
-//Base class QObject
-
-#include <QUdpSocket>
- 
-class MyUDP : public QObject
-{
-  Q_OBJECT
- 
-  public:
-      explicit MyUDP(QObject *parent = 0);
-
-      void SayHello();
-
-  private:
-      QUdpSocket *socket;
- 
-  signals:
- 
-  public slots:
-      void readyRead();
- 
-};
-*/
 
 
 //---
