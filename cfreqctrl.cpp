@@ -25,7 +25,7 @@ CFreqCtrl::CFreqCtrl(QWidget *parent) :
     m_DigitColor = QColor(0x00, 0xFF, 0xFF, 0xFF);
     m_HighlightColor = QColor(0x5A, 0x5A, 0x5A, 0xFF);
     m_UnitsColor = Qt::gray;
-    m_freq = 5505000;
+    m_freq = 909000;
     setup(0, 1, 1999999999U, 1, FCTL_UNIT_NONE); //default max 
     m_Oldfreq = 0;
     m_LastLeadZeroPos = 0;

@@ -20,6 +20,25 @@ public:
 public slots:    
     void processPendingDatagrams();
 
+
+void start_server_stream();
+void update_pitaya_cf(int);
+void update_pitaya_sr(int);
+void update_pitaya_ar(int);
+void update_pitaya_demod(int);
+void update_pitaya_rfg(int);
+void update_pitaya_afg(int);
+void update_mir_gr(int);
+void update_mir_dab_notch(int);
+void update_mir_bc_notch(int);
+void update_mir_lna(int);
+
+
+
+
+
+
+
 };
 
 

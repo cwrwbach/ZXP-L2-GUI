@@ -29,10 +29,16 @@
 #define PLOTTER_FILTER_BOX_COLOR    0xFFA0A0A4
 #define VERT_DIVS_MIN 5
 
-extern int g_audio_sample_rate;
-extern int g_sample_rate;
-extern int g_fft_size;
-extern int g_center_frequency;
+//extern int g_audio_sample_rate;
+//extern int g_sample_rate;
+//extern int g_fft_size;
+//extern int g_center_frequency;
+
+int g_audio_sample_rate = 8000;
+int g_sample_rate = 500000;
+int g_fft_size = 1024;
+int g_center_frequency=5000000;
+
 
 ScopePlotter::ScopePlotter(QWidget *parent) : QFrame(parent) //Constructor
 {

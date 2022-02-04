@@ -15,22 +15,22 @@
 #define FFT_POINTS 1024
 #define RX_BUF_SIZE 1024
 
-extern "C" void start_server_stream();
-extern "C" void update_pitaya_cf(int);
-extern "C" void update_pitaya_sr(int);
-extern "C" void update_pitaya_ar(int);
-extern "C" void update_pitaya_demod(int);
-extern "C" void update_pitaya_rfg(int);
-extern "C" void update_pitaya_afg(int);
-extern "C" void update_mir_gr(int);
-extern "C" void update_mir_dab_notch(int);
-extern "C" void update_mir_bc_notch(int);
-extern "C" void update_mir_lna(int);
+//extern "C" void start_server_stream();
+//extern "C" void update_pitaya_cf(int);
+//extern "C" void update_pitaya_sr(int);
+//extern "C" void update_pitaya_ar(int);
+//extern "C" void update_pitaya_demod(int);
+//extern "C" void update_pitaya_rfg(int);
+//extern "C" void update_pitaya_afg(int);
+//extern "C" void update_mir_gr(int);
+//extern "C" void update_mir_dab_notch(int);
+//e/xtern "C" void update_mir_bc_notch(int);
+//extern "C" void update_mir_lna(int);
 
 
 extern bool stream_flag;
 extern int fft_video_buf[];
-extern int status[];
+int status[256]; //FIXME
 
 //QUdpSocket *socket; // = nullptr;
 //---
@@ -129,44 +129,44 @@ ui->alpha_plotter->setCenterFreq(send_cf);
 
 
 printf(" Set New freq: %d \n ",send_cf);
-update_pitaya_cf(send_cf);
+fido.update_pitaya_cf(send_cf);
 }
 
 void MainWindow::set_rfg(int gain)
 {
-update_pitaya_rfg(gain);
+fido.update_pitaya_rfg(gain);
 }
 
 void MainWindow::set_afg(int gain)
 {
-update_pitaya_afg(gain);
+fido.update_pitaya_afg(gain);
 }
 
 void MainWindow::set_mir_gr(int gain)
 {
-update_mir_gr(gain);
+fido.update_mir_gr(gain);
 }
 
-void MainWindow::set_sr0(){ update_pitaya_sr(0);}
-void MainWindow::set_sr1(){ update_pitaya_sr(1);}
-void MainWindow::set_sr2(){ update_pitaya_sr(2);}
-void MainWindow::set_sr3(){ update_pitaya_sr(3);}
-void MainWindow::set_sr4(){ update_pitaya_sr(4);}
-void MainWindow::set_sr5(){ update_pitaya_sr(5);}
+void MainWindow::set_sr0(){ fido.update_pitaya_sr(0);}
+void MainWindow::set_sr1(){ fido.update_pitaya_sr(1);}
+void MainWindow::set_sr2(){ fido.update_pitaya_sr(2);}
+void MainWindow::set_sr3(){ fido.update_pitaya_sr(3);}
+void MainWindow::set_sr4(){ fido.update_pitaya_sr(4);}
+void MainWindow::set_sr5(){ fido.update_pitaya_sr(5);}
 
-void MainWindow::set_ar0(){ update_pitaya_ar(0);}
-void MainWindow::set_ar1(){ update_pitaya_ar(1);}
-void MainWindow::set_ar2(){ update_pitaya_ar(2);}
-void MainWindow::set_ar3(){ update_pitaya_ar(3);}
+void MainWindow::set_ar0(){ fido.update_pitaya_ar(0);}
+void MainWindow::set_ar1(){ fido.update_pitaya_ar(1);}
+void MainWindow::set_ar2(){ fido.update_pitaya_ar(2);}
+void MainWindow::set_ar3(){ fido.update_pitaya_ar(3);}
 
-void MainWindow::set_dsb(){ update_pitaya_demod(1);}
-void MainWindow::set_usb(){ update_pitaya_demod(2);}
-void MainWindow::set_lsb(){ update_pitaya_demod(3);}
+void MainWindow::set_dsb(){ fido.update_pitaya_demod(1);}
+void MainWindow::set_usb(){ fido.update_pitaya_demod(2);}
+void MainWindow::set_lsb(){ fido.update_pitaya_demod(3);}
 
 
-void MainWindow::set_mir_dab_n(int val){ update_mir_dab_notch(val);}
-void MainWindow::set_mir_bc_n(int val){ update_mir_bc_notch(val);}
-void MainWindow::set_mir_lna(int val){ update_mir_lna(val);}
+void MainWindow::set_mir_dab_n(int val){ fido.update_mir_dab_notch(val);}
+void MainWindow::set_mir_bc_n(int val){ fido.update_mir_bc_notch(val);}
+void MainWindow::set_mir_lna(int val){ fido.update_mir_lna(val);}
 
 //---
 

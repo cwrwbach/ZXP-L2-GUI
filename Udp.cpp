@@ -92,6 +92,12 @@ while (socket->hasPendingDatagrams())
 
         int snd_err = snd_pcm_writei(audio_device, datagram, 1024);
         printf("err %d %d\n",snd_err,__LINE__);
+        if(snd_err < 0 )
+            {      
+            snd_pcm_recover(audio_device, snd_err, 1); //catch underruns (silent flag set, or not)
+            usleep(1000);
+            }
+
         }
 
     }   //
@@ -113,3 +119,17 @@ printf("err %d %d\n",err,__LINE__);
 err = snd_pcm_set_params(audio_device,SND_PCM_FORMAT_A_LAW, SND_PCM_ACCESS_RW_INTERLEAVED,1,audio_sr,1,400000); //latency in
 printf("err %d %d\n",err,__LINE__);
 }
+
+
+void Udp::start_server_stream(){};
+void Udp::update_pitaya_cf(int){};
+void Udp::update_pitaya_sr(int){};
+void Udp::update_pitaya_ar(int){};
+void Udp::update_pitaya_demod(int){};
+void Udp::update_pitaya_rfg(int){};
+void Udp::update_pitaya_afg(int){};
+void Udp::update_mir_gr(int){};
+void Udp::update_mir_dab_notch(int fred){printf("fred %d\n",fred);};
+void Udp::update_mir_bc_notch(int){};
+void Udp::update_mir_lna(int){};
+
