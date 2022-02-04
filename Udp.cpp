@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <unistd.h>
 
+#include <alsa/asoundlib.h>
 
 //https://doc.qt.io/qt-5/qudpsocket.html
 
@@ -15,6 +16,13 @@ int fft_video_buf[1024];
 void Udp::soxit()
 {
 socket = new QUdpSocket(this);
+
+
+setup_sound();
+sleep(1);
+
+
+
 bool result =  socket->bind(QHostAddress::AnyIPv4, 11361);
 qDebug() << result;
 
@@ -28,6 +36,7 @@ else
     }
 
 printf(" *************  BIDD, it wurked *********** \n)");
+
 
 usleep(100000);
 
@@ -63,89 +72,44 @@ while (socket->hasPendingDatagrams())
     {
 
     size = socket->pendingDatagramSize(); 
-    printf(" size: %d \n",size);
+   // printf(" size: %d \n",size);
 
          QByteArray datagram;
          datagram.resize(socket->pendingDatagramSize());
          socket->readDatagram(datagram.data(),datagram.size(),&sender,&port);
-        printf(" << Messgae\n" );//Message From :: " << sender.toString();
+       // printf(" << Messgae\n" );//Message From :: " << sender.toString();
 
-if(size == 1040)
-{ printf(" $ \n");
-for(int i=0; i<1024;i++)
+    if(size == 1040)
+        { //printf(" $ \n");
+        for(int i=0; i<1024;i++)
             fft_video_buf[i] = (int) datagram[i]; //-80 + (i/32); //(int) in_pak_buf[i];
 
-stream_flag = true;
+        stream_flag = true;
+            }
+
+    if(size == 1042) //1042
+        {
+
+        int snd_err = snd_pcm_writei(audio_device, datagram, 1024);
+        printf("err %d %d\n",snd_err,__LINE__);
+        }
+
+    }   //
 }
 
 
-       // printf("Port From :: \n "); //<< port;
-       // printf("Message :: \n"); //" //<< datagram;
-    }
-}
-
-
-
-
-
-
-
-
-//dp::~Udp()
-//{
-//}
-
-
-
-
-
-/*
-#include "uchat.h"
-#include "ui_uchat.h"
-
-
-uchat::uchat(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::uchat)
+void Udp::setup_sound()
 {
-    ui->setupUi(this);
-    clientSocket=new QUdpSocket(this);
-    clientSocketc=new QUdpSocket(this);
-    clientSocketc->bind(QHostAddress::LocalHost, 7000);
-    connect(clientSocketc,SIGNAL(readyRead()),this,SLOT(readPendingDatagrams()));
+int err;
+int audio_sr = 8000;
+
+printf(" Setup sound devicce\n");
+
+strcpy(alsa_device,"default");
+
+
+err = snd_pcm_open(&audio_device, alsa_device, SND_PCM_STREAM_PLAYBACK, 0);
+printf("err %d %d\n",err,__LINE__);
+err = snd_pcm_set_params(audio_device,SND_PCM_FORMAT_A_LAW, SND_PCM_ACCESS_RW_INTERLEAVED,1,audio_sr,1,400000); //latency in
+printf("err %d %d\n",err,__LINE__);
 }
-
-uchat::~uchat()
-{
-    delete ui;
-}
-
-void uchat::on_sendButton_clicked()
-{
-    QString word=ui->lineEdit->text();
-    ui->textBrowser->append(word);
-    QByteArray buffer;
-    buffer.resize(clientSocket->pendingDatagramSize());
-    QHostAddress sender;
-    quint16 senderPort;
-    buffer=word.toUtf8();
-    clientSocket->writeDatagram(buffer.data(), QHostAddress::LocalHost, 8001 );
-}
-void uchat::readPendingDatagrams()
-{
-    while (clientSocketc->hasPendingDatagrams()) {
-        QByteArray buffer;
-        buffer.resize(clientSocketc->pendingDatagramSize());
-        QHostAddress sender;
-        quint16 senderPort;
-        clientSocketc->readDatagram(buffer.data(), buffer.size(),&sender, &senderPort);
-        ui->textBrowser->append(buffer.data());
-
-    }
-}
-*/
-
-
-
-
-
