@@ -120,7 +120,14 @@ void Rxr::update_radio_ar(int){};
 
 void Rxr::update_radio_rfg(int){};
 void Rxr::update_radio_afg(int){};
-void Rxr::update_mir_gr(int){};
+
+
+void Rxr::update_mir_gr(int val)
+{
+buffer[MIR_RSP_GR]= val;
+socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress::LocalHost,11361);
+printf("gr: %d\n",val);
+}
 
 
 

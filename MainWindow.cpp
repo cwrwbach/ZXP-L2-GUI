@@ -123,6 +123,7 @@ radio_rx.update_radio_afg(gain);
 
 void MainWindow::set_mir_gr(int gain)
 {
+printf(" MIR GR changes to: %d \n",gain);
 radio_rx.update_mir_gr(gain);
 }
 
