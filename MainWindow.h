@@ -74,8 +74,5 @@ void set_mir_dab_n(int);
 void set_mir_bc_n(int);
 void set_mir_lna(int);
 
-void MyUDP();
-void readyRead();
-
 };
 

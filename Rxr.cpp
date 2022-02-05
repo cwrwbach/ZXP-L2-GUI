@@ -1,5 +1,5 @@
 #include "MainWindow.h"
-#include "Udp.h"
+#include "Rxr.h"
 #include <QDebug>
 #include <unistd.h>
 #include <math.h>
@@ -118,7 +118,14 @@ socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddres
 void Rxr::start_server_stream(){};
 void Rxr::update_radio_sr(int){};
 void Rxr::update_radio_ar(int){};
-void Rxr::update_radio_demod(int){};
+
+
+
+void Rxr::update_radio_demod(int val){printf("Demod %d\n",val);};
+
+
+
+
 void Rxr::update_radio_rfg(int){};
 void Rxr::update_radio_afg(int){};
 void Rxr::update_mir_gr(int){};

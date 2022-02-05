@@ -8,7 +8,7 @@
 #include "MainWindow.h"
 #include <unistd.h>
 #include "ui_QtBase-001.h"
-#include "Udp.h"
+#include "Rxr.h"
 #include <QUdpSocket>
 
 #define VERSION "QT5 Scope"
@@ -31,25 +31,13 @@
 extern bool stream_flag;
 extern int fft_video_buf[];
 int status[256]; //FIXME
+Rxr radio_rx;
 
 //---
-
-Rxr fido;
-
 
 MainWindow::MainWindow(const QString cfgfile, QWidget *parent) :
     QMainWindow(parent),    ui(new Ui::MainWindow)
 {
-
-printf("Satring %d \n",__LINE__);
-
-//fido.soxit();
-
-printf("After %d \n",__LINE__);
-
-
-printf("After %d \n",__LINE__);
-
 ui->setupUi(this);
 setWindowTitle(QString(VERSION));
 
@@ -111,91 +99,52 @@ delete ui;
 void MainWindow::hardware_setup()
 {
 printf("hardware setup started... \n");
-fido.setup_socket();
+radio_rx.setup_socket();
 usleep(200000);
-//fido.sendgram();
-//start_server_stream();
 }	
 
 void MainWindow::setNewFrequency(qint64 newfreq)
 {
 int send_cf = newfreq;	
-
-
 ui->freqCtrl->setFrequency(newfreq);
-
 ui->alpha_plotter->setCenterFreq(send_cf);
-
-fido.update_radio_cf(send_cf);
+radio_rx.update_radio_cf(send_cf);
 }
 
 void MainWindow::set_rfg(int gain)
 {
-fido.update_radio_rfg(gain);
+radio_rx.update_radio_rfg(gain);
 }
 
 void MainWindow::set_afg(int gain)
 {
-fido.update_radio_afg(gain);
+radio_rx.update_radio_afg(gain);
 }
 
 void MainWindow::set_mir_gr(int gain)
 {
-fido.update_mir_gr(gain);
+radio_rx.update_mir_gr(gain);
 }
 
-void MainWindow::set_sr0(){ fido.update_radio_sr(0);}
-void MainWindow::set_sr1(){ fido.update_radio_sr(1);}
-void MainWindow::set_sr2(){ fido.update_radio_sr(2);}
-void MainWindow::set_sr3(){ fido.update_radio_sr(3);}
-void MainWindow::set_sr4(){ fido.update_radio_sr(4);}
-void MainWindow::set_sr5(){ fido.update_radio_sr(5);}
+void MainWindow::set_sr0(){ radio_rx.update_radio_sr(0);}
+void MainWindow::set_sr1(){ radio_rx.update_radio_sr(1);}
+void MainWindow::set_sr2(){ radio_rx.update_radio_sr(2);}
+void MainWindow::set_sr3(){ radio_rx.update_radio_sr(3);}
+void MainWindow::set_sr4(){ radio_rx.update_radio_sr(4);}
+void MainWindow::set_sr5(){ radio_rx.update_radio_sr(5);}
 
-void MainWindow::set_ar0(){ fido.update_radio_ar(0);}
-void MainWindow::set_ar1(){ fido.update_radio_ar(1);}
-void MainWindow::set_ar2(){ fido.update_radio_ar(2);}
-void MainWindow::set_ar3(){ fido.update_radio_ar(3);}
+void MainWindow::set_ar0(){ radio_rx.update_radio_ar(0);}
+void MainWindow::set_ar1(){ radio_rx.update_radio_ar(1);}
+void MainWindow::set_ar2(){ radio_rx.update_radio_ar(2);}
+void MainWindow::set_ar3(){ radio_rx.update_radio_ar(3);}
 
-void MainWindow::set_dsb(){ fido.update_radio_demod(1);}
-void MainWindow::set_usb(){ fido.update_radio_demod(2);}
-void MainWindow::set_lsb(){ fido.update_radio_demod(3);}
+void MainWindow::set_dsb(){ radio_rx.update_radio_demod(1);}
+void MainWindow::set_usb(){ radio_rx.update_radio_demod(2);}
+void MainWindow::set_lsb(){ radio_rx.update_radio_demod(3);}
 
-
-void MainWindow::set_mir_dab_n(int val){ fido.update_mir_dab_notch(val);}
-void MainWindow::set_mir_bc_n(int val){ fido.update_mir_bc_notch(val);}
-void MainWindow::set_mir_lna(int val){ fido.update_mir_lna(val);}
-
-//---
-
-
-void MainWindow::MyUDP()
-{
-printf("After %d \n",__LINE__);
-//socket = new QUdpSocket(this);
-printf("After %d \n",__LINE__);  
-  //We need to bind the UDP socket to an address and a port
- // socket->bind(QHostAddress("192.168.2.2"),11361);         //ex. Address localhost, port 1234
-printf("After %d \n",__LINE__);  
- // connect(socket,SIGNAL(readyRead()),this,SLOT(readyRead()));
-printf("After %d \n",__LINE__);
-}
-
-void MainWindow::readyRead()
-{
-QByteArray Buffer;
-printf(" ****************** %d \n",__LINE__);  
-//Buffer.resize(socket->pendingDatagramSize());
-  
-QHostAddress sender;
-quint16 senderPort;
-//socket->readDatagram(Buffer.data(),Buffer.size(),&sender,&senderPort);
-printf(" Caught  a tropical fish \n");
-}
-
-
-//https://gist.github.com/lamprosg/4593723
-
-
+void MainWindow::set_mir_dab_n(int val){ radio_rx.update_mir_dab_notch(val);}
+void MainWindow::set_mir_bc_n(int val){ radio_rx.update_mir_bc_notch(val);}
+void MainWindow::set_mir_lna(int val){ radio_rx.update_mir_lna(val);}
 
 //---
 
@@ -228,3 +177,5 @@ if(stream_flag ==true)
     ui->alpha_plotter->draw_trace(fft_video_buf,0,1024,-1500,-200); //(left,Num points,lower,upper)
     }
 }
+
+
