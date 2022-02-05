@@ -5,14 +5,25 @@
 #include <math.h>
 #include <alsa/asoundlib.h>
 
+//#define SERV_ADDR "192.168.2.2"
+//#define SERV_ADDR "192.168.2.101"
+#define SERV_ADDR "45.66.38.105"
+
+
 bool stream_flag;
 int fft_video_buf[1024];
 QVector<quint32> buffer(256);
+
+char serv_addr[32];
 //---
 
 void Rxr::setup_socket()
 {
 socket = new QUdpSocket(this);
+
+
+strcpy(serv_addr,SERV_ADDR);
+
 setup_sound();
 usleep(100000);//FIXME - probably not needed
 
@@ -40,7 +51,7 @@ buffer.resize(socket->pendingDatagramSize());
 //QHostAddress sender;
 //quint16 senderPort;
 buffer=word.toUtf8();
-socket->writeDatagram(buffer.data(), QHostAddress::LocalHost, 11361 );
+socket->writeDatagram(buffer.data(), QHostAddress(serv_addr), 11361 );
 }
 
 
@@ -102,14 +113,14 @@ ppm_factor = 0.0;
 freq = cf;
 freq = (int)floor(freq*(1.0 + ppm_factor *1.0e-6) + 0.5);
 buffer[FREQ]=(int) freq;
-socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress::LocalHost,11361);
+socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress(serv_addr),11361);
 }	
 
 void Rxr::update_radio_demod(int val)
 {
 printf("Demod %d\n",val);
 buffer[DMOD]= val;
-socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress::LocalHost,11361);
+socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress(serv_addr),11361);
 };
 
 
@@ -125,7 +136,7 @@ void Rxr::update_radio_afg(int){};
 void Rxr::update_mir_gr(int val)
 {
 buffer[MIR_RSP_GR]= val;
-socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress::LocalHost,11361);
+socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress(serv_addr),11361);
 printf("gr: %d\n",val);
 }
 
@@ -134,7 +145,7 @@ printf("gr: %d\n",val);
 void Rxr::update_mir_dab_notch(int val)
 {
 buffer[MIR_DAB_NOTCH ]= val;
-socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress::LocalHost,11361);
+socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress(serv_addr),11361);
 printf("dab %d\n",val);
 }
 
@@ -142,14 +153,14 @@ printf("dab %d\n",val);
 void Rxr::update_mir_bc_notch(int val)
 {
 buffer[MIR_BC_NOTCH ]= val;
-socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress::LocalHost,11361);
+socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress(serv_addr),11361);
 printf("bc %d\n",val);
 }
 
 void Rxr::update_mir_lna(int val)
 {
 buffer[MIR_LNA_STATE]= val;
-socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress::LocalHost,11361);
+socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress(serv_addr),11361);
 printf("lna %d\n",val);
 }
 
