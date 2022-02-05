@@ -25,8 +25,6 @@ public:
     explicit MainWindow(const QString cfgfile, QWidget *parent = 0);
     ~MainWindow();
 
-
-
 bool configOk; /*!< Main app uses this flag to know whether we should abort or continue. */
 
 signals:

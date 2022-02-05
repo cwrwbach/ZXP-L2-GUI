@@ -142,9 +142,23 @@ void MainWindow::set_dsb(){ radio_rx.update_radio_demod(1);}
 void MainWindow::set_usb(){ radio_rx.update_radio_demod(2);}
 void MainWindow::set_lsb(){ radio_rx.update_radio_demod(3);}
 
-void MainWindow::set_mir_dab_n(int val){ radio_rx.update_mir_dab_notch(val);}
-void MainWindow::set_mir_bc_n(int val){ radio_rx.update_mir_bc_notch(val);}
-void MainWindow::set_mir_lna(int val){ radio_rx.update_mir_lna(val);}
+void MainWindow::set_mir_dab_n(int state)
+{
+printf(" DAB notch %d \n",state);
+radio_rx.update_mir_dab_notch(state);
+}
+
+void MainWindow::set_mir_bc_n(int state)
+{ 
+printf(" BC notch %d \n",state);
+radio_rx.update_mir_bc_notch(state);
+}
+
+void MainWindow::set_mir_lna(int state)
+{ 
+printf(" LNA notch %d \n",state);
+radio_rx.update_mir_lna(state);
+}
 
 //---
 

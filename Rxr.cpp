@@ -5,17 +5,9 @@
 #include <math.h>
 #include <alsa/asoundlib.h>
 
-#define FREQ 4
-#define SRATE 5
-#define ARATE 6
-#define RFG 7
-#define AFG 8
-#define DMOD 9
-#define SSEL 10
-
 bool stream_flag;
 int fft_video_buf[1024];
-
+QVector<quint32> buffer(256);
 //---
 
 void Rxr::setup_socket()
@@ -103,9 +95,8 @@ printf("err %d %d\n",err,__LINE__);
 
 void Rxr::update_radio_cf(int cf )
 {
-QVector<quint32> buffer(256);
+//QVector<quint32> buffer(256);
 float ppm_factor, freq;
-int new_data;
 
 ppm_factor = 0.0;
 freq = cf;
@@ -114,6 +105,18 @@ buffer[FREQ]=(int) freq;
 socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress::LocalHost,11361);
 }	
 
+void Rxr::update_radio_demod(int val)
+{
+printf("Demod %d\n",val);
+buffer[DMOD]= val;
+socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress::LocalHost,11361);
+};
+
+
+
+
+
+
 
 void Rxr::start_server_stream(){};
 void Rxr::update_radio_sr(int){};
@@ -121,7 +124,6 @@ void Rxr::update_radio_ar(int){};
 
 
 
-void Rxr::update_radio_demod(int val){printf("Demod %d\n",val);};
 
 
 
@@ -129,6 +131,30 @@ void Rxr::update_radio_demod(int val){printf("Demod %d\n",val);};
 void Rxr::update_radio_rfg(int){};
 void Rxr::update_radio_afg(int){};
 void Rxr::update_mir_gr(int){};
-void Rxr::update_mir_dab_notch(int fred){printf("fred %d\n",fred);};
-void Rxr::update_mir_bc_notch(int){};
-void Rxr::update_mir_lna(int){};
+
+
+
+void Rxr::update_mir_dab_notch(int val)
+{
+buffer[MIR_DAB_NOTCH ]= val;
+socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress::LocalHost,11361);
+printf("dab %d\n",val);
+}
+
+
+void Rxr::update_mir_bc_notch(int val)
+{
+buffer[MIR_BC_NOTCH ]= val;
+socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress::LocalHost,11361);
+printf("bc %d\n",val);
+}
+
+void Rxr::update_mir_lna(int val)
+{
+buffer[MIR_AGC_LNASTATE]= val;
+socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress::LocalHost,11361);
+printf("lna %d\n",val);
+}
+
+
+
