@@ -16,13 +16,13 @@
 #define MIR_IF 21
 #define MIR_AGC_ENABLE 30
 #define MIR_AGC_SETPOINT 31
-#define MIR_AGC_LNASTATE 32
+//#define MIR_AGC_LNASTATE 32
 #define MIR_GR_MODE 40
 #define MIR_SETGR 41
 #define MIR_GR_MIN 42
 #define MIR_GR_THRESH 43
 #define MIR_RSP_GR 44
-#define MIR_RSP_LNASTATE 45
+#define MIR_LNA_STATE 45
 #define MIR_RSP_MINGR 46
 #define MIR_GRALT_IDX 47
 #define MIR_GRALT_LNASTATE 48

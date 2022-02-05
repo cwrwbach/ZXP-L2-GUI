@@ -113,19 +113,9 @@ socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddres
 };
 
 
-
-
-
-
-
 void Rxr::start_server_stream(){};
 void Rxr::update_radio_sr(int){};
 void Rxr::update_radio_ar(int){};
-
-
-
-
-
 
 
 void Rxr::update_radio_rfg(int){};
@@ -151,7 +141,7 @@ printf("bc %d\n",val);
 
 void Rxr::update_mir_lna(int val)
 {
-buffer[MIR_AGC_LNASTATE]= val;
+buffer[MIR_LNA_STATE]= val;
 socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress::LocalHost,11361);
 printf("lna %d\n",val);
 }
