@@ -4,7 +4,7 @@
 #include <QUdpSocket>
 #include <alsa/asoundlib.h>
 
-class Udp : public QObject
+class Rxr : public QObject
 {
     Q_OBJECT
     QUdpSocket *socket = nullptr;

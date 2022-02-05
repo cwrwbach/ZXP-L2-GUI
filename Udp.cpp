@@ -18,7 +18,7 @@ int fft_video_buf[1024];
 
 //---
 
-void Udp::setup_socket()
+void Rxr::setup_socket()
 {
 socket = new QUdpSocket(this);
 setup_sound();
@@ -34,13 +34,13 @@ else
 
 usleep(100000); //FIXME - probably not needed
 connect(socket, &QUdpSocket::readyRead,
-            this, &Udp::processPendingDatagrams);
+            this, &Rxr::processPendingDatagrams);
 sendgram();
 usleep(100000);//FIXME - probably not needed
 }
 
 
-void Udp::sendgram()
+void Rxr::sendgram()
 {
 QString word="Sign on message";
 QByteArray buffer;
@@ -52,7 +52,7 @@ socket->writeDatagram(buffer.data(), QHostAddress::LocalHost, 11361 );
 }
 
 
-void Udp::processPendingDatagrams()
+void Rxr::processPendingDatagrams()
  {
 int size;
 QByteArray datagram;   
@@ -85,7 +85,7 @@ while (socket->hasPendingDatagrams())
     }   
 }
 
-void Udp::setup_sound()
+void Rxr::setup_sound()
 {
 int err;
 int audio_sr = 8000;
@@ -101,7 +101,7 @@ err = snd_pcm_set_params(audio_device,SND_PCM_FORMAT_A_LAW, SND_PCM_ACCESS_RW_IN
 printf("err %d %d\n",err,__LINE__);
 }
 
-void Udp::update_radio_cf(int cf )
+void Rxr::update_radio_cf(int cf )
 {
 QVector<quint32> buffer(256);
 float ppm_factor, freq;
@@ -115,13 +115,13 @@ socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddres
 }	
 
 
-void Udp::start_server_stream(){};
-void Udp::update_radio_sr(int){};
-void Udp::update_radio_ar(int){};
-void Udp::update_radio_demod(int){};
-void Udp::update_radio_rfg(int){};
-void Udp::update_radio_afg(int){};
-void Udp::update_mir_gr(int){};
-void Udp::update_mir_dab_notch(int fred){printf("fred %d\n",fred);};
-void Udp::update_mir_bc_notch(int){};
-void Udp::update_mir_lna(int){};
+void Rxr::start_server_stream(){};
+void Rxr::update_radio_sr(int){};
+void Rxr::update_radio_ar(int){};
+void Rxr::update_radio_demod(int){};
+void Rxr::update_radio_rfg(int){};
+void Rxr::update_radio_afg(int){};
+void Rxr::update_mir_gr(int){};
+void Rxr::update_mir_dab_notch(int fred){printf("fred %d\n",fred);};
+void Rxr::update_mir_bc_notch(int){};
+void Rxr::update_mir_lna(int){};

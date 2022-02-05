@@ -32,10 +32,9 @@ extern bool stream_flag;
 extern int fft_video_buf[];
 int status[256]; //FIXME
 
-//QUdpSocket *socket; // = nullptr;
 //---
 
-Udp fido;
+Rxr fido;
 
 
 MainWindow::MainWindow(const QString cfgfile, QWidget *parent) :
@@ -209,24 +208,23 @@ char str_4[20];
 char str_5[20];
 char str_6[20];
 
-while(stream_flag == false)
-	{
-	QCoreApplication::processEvents();
-	}
-stream_flag=false;
-sprintf(str_1,"Test 1: %d ",status[1]);
-sprintf(str_2,"Test 2: %d ",status[2]);
-sprintf(str_3,"Test 3: %d ",status[3]);
-sprintf(str_4,"Test 4: %d ",status[4]);
-sprintf(str_5,"Test 5: %d ",status[5]);
-sprintf(str_6,"Test 5: %d ",status[6]);
+if(stream_flag ==true)
+    {
+    stream_flag=false;
+    sprintf(str_1,"Test 1: %d ",status[1]);
+    sprintf(str_2,"Test 2: %d ",status[2]);
+    sprintf(str_3,"Test 3: %d ",status[3]);
+    sprintf(str_4,"Test 4: %d ",status[4]);
+    sprintf(str_5,"Test 5: %d ",status[5]);
+    sprintf(str_6,"Test 5: %d ",status[6]);
 
-ui->stat_1->setText(str_1);
-ui->stat_2->setText(str_2);
-ui->stat_3->setText(str_3);
-ui->stat_4->setText(str_4);
-ui->stat_5->setText(str_5);
-ui->stat_6->setText(str_6);
+    ui->stat_1->setText(str_1);
+    ui->stat_2->setText(str_2);
+    ui->stat_3->setText(str_3);
+    ui->stat_4->setText(str_4);
+    ui->stat_5->setText(str_5);
+    ui->stat_6->setText(str_6);
 
-ui->alpha_plotter->draw_trace(fft_video_buf,0,1024,-1500,-200); //(left,Num points,lower,upper)
+    ui->alpha_plotter->draw_trace(fft_video_buf,0,1024,-1500,-200); //(left,Num points,lower,upper)
+    }
 }
