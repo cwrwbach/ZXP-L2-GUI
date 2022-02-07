@@ -10,6 +10,7 @@
 #include <stdexcept>
 #include "ScopePlotter.h"
 #include "waterfall.h"
+#include "Rxr.h"
 
 #define PLOT_WIDTH 1024
 #define PLOT_HEIGHT 500
@@ -37,8 +38,7 @@
 int g_audio_sample_rate = 8000;
 int g_sample_rate = 500000;
 int g_fft_size = 1024;
-int g_center_frequency=5000000;
-
+int g_center_frequency=10000000;
 
 ScopePlotter::ScopePlotter(QWidget *parent) : QFrame(parent) //Constructor
 {
@@ -60,7 +60,7 @@ ScopePlotter::ScopePlotter(QWidget *parent) : QFrame(parent) //Constructor
     //m_CenterFreq = 144500000;
     m_DemodCenterFreq = 144500000;
 
-    m_HorDivs = 20;
+    m_HorDivs = 16;
     m_VerDivs = 13;
     m_PandMaxdB = m_WfMaxdB = 0.f;
     m_PandMindB = m_WfMindB = -150.f;
@@ -212,7 +212,6 @@ int xmin, xmax;
 double y_scale;
 double ph,lw;
 
-
 if (m_DrawOverlay)
 	{
     drawOverlay();
@@ -321,6 +320,7 @@ printf(" StartFrq: %d Units: %d h_divs: %d \n",StartFreq,m_FreqDigits,m_HorDivs)
         }
         return;
     }
+
     // here if is fractional frequency values
     // so create max sized text based on frequency units
     for (int i = 0; i <= m_HorDivs; i++)

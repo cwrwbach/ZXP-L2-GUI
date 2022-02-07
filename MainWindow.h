@@ -31,13 +31,13 @@ signals:
     void configChanged(QSettings *settings); /*!< New configuration has been loaded. */
 	
 public slots:
+
+public:
+
 	
-private:
+//private:
     Ui::MainWindow *ui;
-
-//    QUdpSocket *socket = nullptr;
-
-
+private:
     QPointer<QSettings> m_settings;  /*!< Application wide settings. */
     QString             m_cfg_dir;   /*!< Default config dir, e.g. XDG_CONFIG_HOME. */
     QTimer   *fft_timer;

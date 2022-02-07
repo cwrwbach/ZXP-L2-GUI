@@ -6,8 +6,10 @@
 #include <alsa/asoundlib.h>
 
 //#define SERV_ADDR "192.168.2.2"
+#define SERV_ADDR "192.168.2.222"
+//#define SERV_ADDR "192.168.2.242"
 //#define SERV_ADDR "192.168.2.101"
-#define SERV_ADDR "45.66.38.105"
+//#define SERV_ADDR "45.66.38.105"
 
 
 bool stream_flag;
@@ -15,12 +17,12 @@ int fft_video_buf[1024];
 QVector<quint32> buffer(256);
 
 char serv_addr[32];
+
 //---
 
 void Rxr::setup_socket()
 {
 socket = new QUdpSocket(this);
-
 
 strcpy(serv_addr,SERV_ADDR);
 
@@ -72,8 +74,7 @@ while (socket->hasPendingDatagrams())
         { 
         for(int i=0; i<1024;i++)
             fft_video_buf[i] = (int) datagram[i];
-
-        stream_flag = true;
+            stream_flag = true;
             }
 
     if(size == 1042) //G711
@@ -129,9 +130,20 @@ void Rxr::update_radio_sr(int){};
 void Rxr::update_radio_ar(int){};
 
 
-void Rxr::update_radio_rfg(int){};
-void Rxr::update_radio_afg(int){};
+void Rxr::update_radio_rfg(int val)
+{
+buffer[RFG]= val;
+socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress(serv_addr),11361);
+printf("radio rfg: %d\n",val);
+}
 
+
+void Rxr::update_radio_afg(int val)
+{
+buffer[AFG]= val;
+socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress(serv_addr),11361);
+printf("radio afg: %d\n",val);
+};
 
 void Rxr::update_mir_gr(int val)
 {

@@ -179,8 +179,8 @@ private:
     int         m_CursorCaptureDelta;
     int         m_GrabPosition;
  
-    int         m_HorDivs;   /*!< Current number of horizontal divisions. Calculated from width. */
-    int         m_VerDivs;   /*!< Current number of vertical divisions. Calculated from height. */
+    int         m_HorDivs;   /*!< number of horizontal divisions. Calculated from width. */
+    int         m_VerDivs;   /*!< number of vertical divisions. Calculated from height. */
 
     float       m_PandMindB;
     float       m_PandMaxdB;
