@@ -212,6 +212,8 @@ int xmin, xmax;
 double y_scale;
 double ph,lw;
 
+//This workss but could do with tidying...
+
 if (m_DrawOverlay)
 	{
     drawOverlay();
@@ -241,7 +243,7 @@ xmax = 1010;
 
     //if fft & WF timer
     {
-
+        if(1) //FIXME this enables/disables the waterfall, debug only
         {
         for (i = xmin; i < xmax; i++)
             {
@@ -262,6 +264,7 @@ update();
 painter1.end();
 
 QPainter painter2(&m_2DPixmap);
+
 
 xmin = 0;
 xmax = 4000;
@@ -287,7 +290,9 @@ y_scale =  ph/lw;
  //   update();
     painter2.drawPolyline(LineBuf, n); //paint a line with n points from LineBuf[n]
     painter2.end();
+
     }
+
 update(); // trigger a new paintEvent
 }
 

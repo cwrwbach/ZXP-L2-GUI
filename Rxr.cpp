@@ -6,18 +6,19 @@
 #include <alsa/asoundlib.h>
 
 //#define SERV_ADDR "192.168.2.2"
-#define SERV_ADDR "192.168.2.222"
-//#define SERV_ADDR "192.168.2.242"
+//#define SERV_ADDR "192.168.2.222"
+#define SERV_ADDR "192.168.2.242"
 //#define SERV_ADDR "192.168.2.101"
 //#define SERV_ADDR "45.66.38.105"
-
+//#define AUDIO_RATE 8000
+#define AUDIO_RATE 11400 //11960 //7812  set to silly low rate for debugging
 
 bool stream_flag;
 int fft_video_buf[1024];
 QVector<quint32> buffer(256);
 
 char serv_addr[32];
-
+int debug_fft;
 //---
 
 void Rxr::setup_socket()
@@ -72,6 +73,8 @@ while (socket->hasPendingDatagrams())
       
     if(size == 1040) //FFT
         { 
+        //debug
+        //printf(" Debug FFT: %d \n",debug_fft++);
         for(int i=0; i<1024;i++)
             fft_video_buf[i] = (int) datagram[i];
             stream_flag = true;
@@ -79,9 +82,14 @@ while (socket->hasPendingDatagrams())
 
     if(size == 1042) //G711
         {
+        //debug
+        //printf("snd_pcm_avail %d \n",snd_pcm_avail (audio_device));
         int snd_err = snd_pcm_writei(audio_device, datagram, 1024);
+
         if(snd_err < 0 )
             {      
+            //Debug
+            printf(" S err %d \n",snd_err);
             snd_pcm_recover(audio_device, snd_err, 1); //catch underruns (silent flag set, or not)
             usleep(1000);
             }
@@ -92,14 +100,14 @@ while (socket->hasPendingDatagrams())
 void Rxr::setup_sound()
 {
 int err;
-int audio_sr = 8000;
+int audio_sr = AUDIO_RATE;
 
 printf(" Setup sound devicce\n");
 
 strcpy(alsa_device,"default");
 
 
-err = snd_pcm_open(&audio_device, alsa_device, SND_PCM_STREAM_PLAYBACK, 0);
+err = snd_pcm_open(&audio_device, alsa_device, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK); //0
 printf("err %d %d\n",err,__LINE__);
 err = snd_pcm_set_params(audio_device,SND_PCM_FORMAT_A_LAW, SND_PCM_ACCESS_RW_INTERLEAVED,1,audio_sr,1,400000); //latency in
 printf("err %d %d\n",err,__LINE__);

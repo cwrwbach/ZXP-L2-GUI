@@ -33,6 +33,8 @@ extern int fft_video_buf[];
 int status[256]; //FIXME
 Rxr radio_rx;
 
+
+int bug2,bug3;
 //---
 
 MainWindow::MainWindow(const QString cfgfile, QWidget *parent) :
@@ -172,9 +174,12 @@ char str_4[20];
 char str_5[20];
 char str_6[20];
 
+//printf(" Show_enable %d \n",bug2++);
+
 if(stream_flag ==true)
     {
     stream_flag=false;
+/*
     sprintf(str_1,"Test 1: %d ",status[1]);
     sprintf(str_2,"Test 2: %d ",status[2]);
     sprintf(str_3,"Test 3: %d ",status[3]);
@@ -188,8 +193,9 @@ if(stream_flag ==true)
     ui->stat_4->setText(str_4);
     ui->stat_5->setText(str_5);
     ui->stat_6->setText(str_6);
-
+*/
     ui->alpha_plotter->draw_trace(fft_video_buf,0,1024,-1500,-200); //(left,Num points,lower,upper)
+ //   printf(" After drawtrace %d\n",bug3++);
     }
 }
 
