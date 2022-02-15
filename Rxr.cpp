@@ -10,8 +10,8 @@
 #define SERV_ADDR "192.168.2.242"
 //#define SERV_ADDR "192.168.2.101"
 //#define SERV_ADDR "45.66.38.105"
-//#define AUDIO_RATE 8000
-#define AUDIO_RATE 11400 //11960 //7812  set to silly low rate for debugging
+#define AUDIO_RATE 8000
+//#define AUDIO_RATE 11400 //11960 //7812  set to silly low rate for debugging
 
 bool stream_flag;
 int fft_video_buf[1024];
