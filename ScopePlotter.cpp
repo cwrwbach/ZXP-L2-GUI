@@ -12,7 +12,7 @@
 #include "waterfall.h"
 #include "Rxr.h"
 
-#define PLOT_WIDTH 1024
+#define PLOT_WIDTH 1200 //1024
 #define PLOT_HEIGHT 500
 
 #define CUR_CUT_DELTA 5		//cursor capture delta in pixels
@@ -77,7 +77,7 @@ ScopePlotter::ScopePlotter(QWidget *parent) : QFrame(parent) //Constructor
     m_2DPixmap = QPixmap(0,0);
     m_OverlayPixmap = QPixmap(0,0);
   
-    m_Percent2DScreen = 77;	//FINDME  //percent of screen used for 2D display
+    m_Percent2DScreen = 80;	//FINDME  //percent of screen used for 2D display
 
     m_FontSize = 9;
     m_VdivDelta = 100;
@@ -160,7 +160,7 @@ printf("Mouse wheelie workie \n");
 void ScopePlotter::resizeEvent(QResizeEvent* )
 {
 	
-//	printf(" *** RESIZE IN PROGRESS  *** \n");
+	printf(" *** RESIZE IN PROGRESS  *** \n");
 
     if (!size().isValid())
         return;
