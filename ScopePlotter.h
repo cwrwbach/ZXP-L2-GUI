@@ -69,7 +69,7 @@ private:
 	int m_XAxisYCenter;
     int m_YAxisWidth;
 
-    QPixmap m_2DPixmap;
+    QPixmap m_FftPixmap;
     QPixmap m_OverlayPixmap;
     QPixmap m_WaterfallPixmap;
     QColor m_ColorTbl[256];

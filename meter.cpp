@@ -27,7 +27,7 @@ CMeter::CMeter(QWidget *parent) : QFrame(parent)
 
     m_Font = QFont("Arial");
     m_Font.setWeight(QFont::Normal);
-    m_2DPixmap = QPixmap(0,0);
+    m_FftPixmap = QPixmap(0,0);
     m_OverlayPixmap = QPixmap(0,0);
     m_Size = QSize(0,0);
     m_pixperdb = 0.0f;
@@ -64,11 +64,11 @@ void CMeter::resizeEvent(QResizeEvent *)
         m_OverlayPixmap = QPixmap(m_Size.width() * dpr, m_Size.height() * dpr);
         m_OverlayPixmap.setDevicePixelRatio(dpr);
         m_OverlayPixmap.fill(Qt::black);
-        m_2DPixmap = QPixmap(m_Size.width() * dpr, m_Size.height() * dpr);
-        m_2DPixmap.setDevicePixelRatio(dpr);
-        m_2DPixmap.fill(Qt::black);
+        m_FftPixmap = QPixmap(m_Size.width() * dpr, m_Size.height() * dpr);
+        m_FftPixmap.setDevicePixelRatio(dpr);
+        m_FftPixmap.fill(Qt::black);
 
-        qreal w = (m_2DPixmap.width() / dpr) - 2 * CTRL_MARGIN * (m_2DPixmap.width() / dpr);
+        qreal w = (m_FftPixmap.width() / dpr) - 2 * CTRL_MARGIN * (m_FftPixmap.width() / dpr);
         m_pixperdb = w / fabs(MAX_DB - MIN_DB);
         setSqlLevel(m_Sql);
     }
@@ -110,7 +110,7 @@ void CMeter::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
 
-    painter.drawPixmap(0, 0, m_2DPixmap);
+    painter.drawPixmap(0, 0, m_FftPixmap);
     return;
 }
 
@@ -120,16 +120,16 @@ void CMeter::draw()
     int w;
     int h;
 
-    if (m_2DPixmap.isNull())
+    if (m_FftPixmap.isNull())
         return;
 
     // get/draw the 2D spectrum
-    w = m_2DPixmap.width() / m_2DPixmap.devicePixelRatio();
-    h = m_2DPixmap.height() / m_2DPixmap.devicePixelRatio();
+    w = m_FftPixmap.width() / m_FftPixmap.devicePixelRatio();
+    h = m_FftPixmap.height() / m_FftPixmap.devicePixelRatio();
 
     // first copy into 2Dbitmap the overlay bitmap.
-    m_2DPixmap = m_OverlayPixmap.copy(0, 0, m_OverlayPixmap.width(), m_OverlayPixmap.height());
-    QPainter painter(&m_2DPixmap);
+    m_FftPixmap = m_OverlayPixmap.copy(0, 0, m_OverlayPixmap.width(), m_OverlayPixmap.height());
+    QPainter painter(&m_FftPixmap);
 
     // DrawCurrent position indicator
     qreal hline = (qreal) h * CTRL_XAXIS_HEGHT;

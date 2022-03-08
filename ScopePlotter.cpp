@@ -74,10 +74,10 @@ ScopePlotter::ScopePlotter(QWidget *parent) : QFrame(parent) //Constructor
 
     m_Running = false;
     m_DrawOverlay = true;
-    m_2DPixmap = QPixmap(0,0);
+    m_FftPixmap = QPixmap(0,0);
     m_OverlayPixmap = QPixmap(0,0);
   
-    m_Percent2DScreen = 80;	//FINDME  //percent of screen used for 2D display
+    m_Percent2DScreen = 85;	//FINDME  //percent of screen used for 2D display
 
     m_FontSize = 9;
     m_VdivDelta = 100;
@@ -170,8 +170,8 @@ void ScopePlotter::resizeEvent(QResizeEvent* )
         m_Size = size();
         m_OverlayPixmap = QPixmap(m_Size.width(), m_Percent2DScreen*m_Size.height()/100);
         m_OverlayPixmap.fill(Qt::black);
-        m_2DPixmap = QPixmap(m_Size.width(), m_Percent2DScreen*m_Size.height()/100);
-        m_2DPixmap.fill(Qt::black);
+        m_FftPixmap = QPixmap(m_Size.width(), m_Percent2DScreen*m_Size.height()/100);
+        m_FftPixmap.fill(Qt::black);
 
         int height = (100-m_Percent2DScreen)*m_Size.height()/100;
         if (m_WaterfallPixmap.isNull()) {
@@ -193,7 +193,7 @@ void ScopePlotter::paintEvent(QPaintEvent *)
 {
 QPainter painter(this);
 
-painter.drawPixmap(0,0,m_2DPixmap);
+painter.drawPixmap(0,0,m_FftPixmap);
 painter.drawPixmap(0, m_Percent2DScreen*m_Size.height()/100,m_WaterfallPixmap);
 }
 
@@ -220,20 +220,20 @@ if (m_DrawOverlay)
     m_DrawOverlay = false;
     }
    
-w = m_2DPixmap.width();
-h = m_2DPixmap.height();
+w = m_FftPixmap.width();
+h = m_FftPixmap.height();
 
 if ((w != 0) || (h != 0))
     {
 	// redraw 2Dbitmap with overlay bitmap.
-  	m_2DPixmap = m_OverlayPixmap.copy(0,0,w,h);
+  	m_FftPixmap = m_OverlayPixmap.copy(0,0,w,h);
 
     //scroll the wfall down
     
     m_WaterfallPixmap.scroll(0, 1, 0, 0, w, h);
     
-    QPainter painter1(&m_WaterfallPixmap);
-    painter1.setPen(QColor(0x00,0x00,0x00));
+    QPainter painter_wf(&m_WaterfallPixmap);
+    painter_wf.setPen(QColor(0x00,0x00,0x00));
 
 w=900;
 h=40;
@@ -252,18 +252,18 @@ xmax = 1010;
             //col_inx *=-2;
            // printf(" %d \n",inx);
 
-            painter1.setPen(QColor(turbo[inx][0],turbo[inx][1],turbo[inx][2]));
+            painter_wf.setPen(QColor(turbo[inx][0],turbo[inx][1],turbo[inx][2]));
 
-           // painter1.setPen(QColor(turbo[i]));
-            painter1.drawPoint(i,0);
+           // painter_wf.setPen(QColor(turbo[i]));
+            painter_wf.drawPoint(i,0);
             }
         }
     } //fft & waterfall timer
 
 update();
-painter1.end();
+painter_wf.end();
 
-QPainter painter2(&m_2DPixmap);
+QPainter painter_fft(&m_FftPixmap);
 
 
 xmin = 0;
@@ -274,7 +274,7 @@ lw=(double) lower-upper;
 y_scale =  ph/lw;
 
 
-    painter2.setPen(m_FftColor); //fft trace colour
+    painter_fft.setPen(m_FftColor); //fft trace colour
     n = num_points; //xmax - xmin;
     l=left;         
     
@@ -288,8 +288,8 @@ y_scale =  ph/lw;
         }    
          
  //   update();
-    painter2.drawPolyline(LineBuf, n); //paint a line with n points from LineBuf[n]
-    painter2.end();
+    painter_fft.drawPolyline(LineBuf, n); //paint a line with n points from LineBuf[n]
+    painter_fft.end();
 
     }
 
@@ -482,7 +482,8 @@ void ScopePlotter::setPeakDetection(bool enabled, float c)
 // Draw overlay bitmap containing grid and text that does not need every fft data update.
 void ScopePlotter::drawOverlay()
 {
-int plot_width = PLOT_WIDTH ; 
+int www = m_WaterfallPixmap.width();;
+//int const plot_width =        m_FftPixmap.width ; //PLOT_WIDTH ; 
 int plot_height = PLOT_HEIGHT ; 
 int x,y;
 float horiz_Pixperdiv,vert_Pixperdiv;
@@ -519,7 +520,8 @@ Font.setWeight(QFont::Normal);
 painter.setFont(Font);
 
     // draw vertical grid lines
-    horiz_Pixperdiv = (float)plot_width / (float)plot_HorDivs;
+  //  horiz_Pixperdiv = (float)plot_width / (float)plot_HorDivs;
+horiz_Pixperdiv = (float)m_FftPixmap.width() / (float)plot_HorDivs;
     y = plot_height ; 
     
     painter.setPen(QPen(QColor(0xF0,0xF0,0xF0,0x30), 1, Qt::DotLine));
@@ -531,7 +533,7 @@ painter.setFont(Font);
 
 //printf(" FREQUENCY STAIRS %d \n",__LINE__);
     // draw frequency values
-      makeFrequencyStrs();
+    makeFrequencyStrs();
     painter.setPen(QColor(0xD8,0xBA,0xA1,0xFF));
     y = plot_height - (plot_height/plot_VerDivs);
     m_XAxisYCenter = plot_height - metrics.height()/2;
@@ -550,7 +552,7 @@ painter.setFont(Font);
     for (int i = 1; i < plot_VerDivs; i++)
     {
         y = (int)((float) i*vert_Pixperdiv);
-        painter.drawLine(5*metrics.width("0",-1), y, plot_width, y);
+        painter.drawLine(5*metrics.width("0",-1), y,m_FftPixmap.width(), y);
     }
 
     // draw amplitude values
@@ -574,7 +576,7 @@ painter.setFont(Font);
     {
         // if not running so is no data updates to draw to screen
         // copy into 2Dbitmap the overlay bitmap.
-        m_2DPixmap = m_OverlayPixmap.copy(0,0,plot_width,plot_height);
+        m_FftPixmap = m_OverlayPixmap.copy(0,0,m_FftPixmap.width(),plot_height); //!!! //w = m_WaterfallPixmap.width();
 
         // trigger a new paintEvent
         update();

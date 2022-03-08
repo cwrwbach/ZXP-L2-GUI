@@ -36,7 +36,7 @@ private:
     void DrawOverlay();
 
     QFont   m_Font;
-    QPixmap m_2DPixmap;
+    QPixmap m_FftPixmap;
     QPixmap m_OverlayPixmap;
     QSize   m_Size;
     QString m_Str;
