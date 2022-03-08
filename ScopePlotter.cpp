@@ -199,10 +199,116 @@ painter.drawPixmap(0, m_Percent2DScreen*m_Size.height()/100,m_WaterfallPixmap);
 
 //---
 
+void ScopePlotter::getScreenIntegerFFTData(qint32 plotHeight, qint32 plotWidth,
+                                       float maxdB, float mindB,
+                                       qint64 startFreq, qint64 stopFreq,
+                                       float *inBuf, qint32 *outBuf,
+                                       int *xmin, int *xmax) const
+{
+    qint32 i;
+    qint32 y;
+    qint32 x;
+    qint32 ymax = 10000;
+    qint32 xprev = -1;
+    qint32 minbin, maxbin;
+    qint32 m_BinMin, m_BinMax;
+    qint32 m_FFTSize = m_fftDataSize;
+    float *m_pFFTAveBuf = inBuf;
+    float  dBGainFactor = ((float)plotHeight) / fabs(maxdB - mindB);
+    auto* m_pTranslateTbl = new qint32[qMax(m_FFTSize, plotWidth)];
+
+    /** FIXME: qint64 -> qint32 **/
+    m_BinMin = (qint32)((float)startFreq * (float)m_FFTSize / m_SampleFreq);
+    m_BinMin += (m_FFTSize/2);
+    m_BinMax = (qint32)((float)stopFreq * (float)m_FFTSize / m_SampleFreq);
+    m_BinMax += (m_FFTSize/2);
+
+    minbin = m_BinMin < 0 ? 0 : m_BinMin;
+    if (m_BinMin > m_FFTSize)
+        m_BinMin = m_FFTSize - 1;
+    if (m_BinMax <= m_BinMin)
+        m_BinMax = m_BinMin + 1;
+    maxbin = m_BinMax < m_FFTSize ? m_BinMax : m_FFTSize;
+    bool largeFft = (m_BinMax-m_BinMin) > plotWidth; // true if more fft point than plot points
+
+    if (largeFft)
+    {
+        // more FFT points than plot points
+        for (i = minbin; i < maxbin; i++)
+            m_pTranslateTbl[i] = ((qint64)(i-m_BinMin)*plotWidth) / (m_BinMax - m_BinMin);
+        *xmin = m_pTranslateTbl[minbin];
+        *xmax = m_pTranslateTbl[maxbin - 1] + 1;
+    }
+    else
+    {
+        // more plot points than FFT points
+        for (i = 0; i < plotWidth; i++)
+            m_pTranslateTbl[i] = m_BinMin + (i*(m_BinMax - m_BinMin)) / plotWidth;
+        *xmin = 0;
+        *xmax = plotWidth;
+    }
+
+    if (largeFft)
+    {
+        // more FFT points than plot points
+        for (i = minbin; i < maxbin; i++ )
+        {
+            y = (qint32)(dBGainFactor*(maxdB-m_pFFTAveBuf[i]));
+
+            if (y > plotHeight)
+                y = plotHeight;
+            else if (y < 0)
+                y = 0;
+
+            x = m_pTranslateTbl[i];	//get fft bin to plot x coordinate transform
+
+            if (x == xprev)   // still mappped to same fft bin coordinate
+            {
+                if (y < ymax) // store only the max value
+                {
+                    outBuf[x] = y;
+                    ymax = y;
+                }
+
+            }
+            else
+            {
+                outBuf[x] = y;
+                xprev = x;
+                ymax = y;
+            }
+        }
+    }
+    else
+    {
+        // more plot points than FFT points
+        for (x = 0; x < plotWidth; x++ )
+        {
+            i = m_pTranslateTbl[x]; // get plot to fft bin coordinate transform
+            if(i < 0 || i >= m_FFTSize)
+                y = plotHeight;
+            else
+                y = (qint32)(dBGainFactor*(maxdB-m_pFFTAveBuf[i]));
+
+            if (y > plotHeight)
+                y = plotHeight;
+            else if (y < 0)
+                y = 0;
+
+            outBuf[x] = y;
+        }
+    }
+
+    delete [] m_pTranslateTbl;
+}
+
+
+//---
+
 void ScopePlotter::draw_trace(int * trace_buf,int left,int num_points,int lower,int upper)
 {
 QPoint LineBuf[MAX_SCREENSIZE];
-int plot_width = PLOT_WIDTH ; 
+//int plot_width = PLOT_WIDTH ; 
 int plot_height = PLOT_HEIGHT ; 
 double LinePoint;
 int i,l,n;
@@ -212,7 +318,7 @@ int xmin, xmax;
 double y_scale;
 double ph,lw;
 
-//This workss but could do with tidying...
+//This works but could do with muchismo tidying...
 
 if (m_DrawOverlay)
 	{
@@ -235,8 +341,15 @@ if ((w != 0) || (h != 0))
     QPainter painter_wf(&m_WaterfallPixmap);
     painter_wf.setPen(QColor(0x00,0x00,0x00));
 
-w=900;
+//w=900;
 h=40;
+
+
+getScreenIntegerFFTData(255, n, m_WfMaxdB, m_WfMindB,
+                                m_FftCenter - (qint64)m_Span / 2,
+                                m_FftCenter + (qint64)m_Span / 2,
+                                m_wfData, m_fftbuf,
+                                &xmin,&xmax);
 
 xmin = 10;
 xmax = 1010;
@@ -266,8 +379,8 @@ painter_wf.end();
 QPainter painter_fft(&m_FftPixmap);
 
 
-xmin = 0;
-xmax = 4000;
+xmin = 0; //the left-est position on screen
+//xmax = 4000;
 
 ph=(double) plot_height;
 lw=(double) lower-upper; 
@@ -277,18 +390,19 @@ y_scale =  ph/lw;
     painter_fft.setPen(m_FftColor); //fft trace colour
     n = num_points; //xmax - xmin;
     l=left;         
-    
+//int temp;    
     for (i = l; i < n; i++)
         {
-		LinePoint = (double) trace_buf[i] * 10;
+//temp = int ((float)i * 1.2);
+		LinePoint = (double) trace_buf[i] * 10; //10
 		LinePoint = LinePoint * y_scale;	
         LineBuf[i].setX(i + xmin);
         LineBuf[i].setY((int)LinePoint); 
         show();
         }    
-         
+ // printf(" n= %d %d \n",temp,__LINE__);       
  //   update();
-    painter_fft.drawPolyline(LineBuf, n); //paint a line with n points from LineBuf[n]
+    painter_fft.drawPolyline(LineBuf,n); //paint a line with n points from LineBuf[n]
     painter_fft.end();
 
     }
@@ -482,9 +596,9 @@ void ScopePlotter::setPeakDetection(bool enabled, float c)
 // Draw overlay bitmap containing grid and text that does not need every fft data update.
 void ScopePlotter::drawOverlay()
 {
-int www = m_WaterfallPixmap.width();;
-//int const plot_width =        m_FftPixmap.width ; //PLOT_WIDTH ; 
-int plot_height = PLOT_HEIGHT ; 
+int pw = m_WaterfallPixmap.width();
+int ph = m_WaterfallPixmap.height() * 10;
+//int plot_height = PLOT_HEIGHT ; 
 int x,y;
 float horiz_Pixperdiv,vert_Pixperdiv;
 
@@ -508,8 +622,6 @@ painter.setPen(QPen(QColor(0xF0,0xF0,0xF0,0x30), 1, Qt::DotLine));
         painter.drawLine(x, 0, x, y);
     }
  update();
-//return;
-//extra
 
 // create Font to use for scales
 QFont Font("Arial");
@@ -520,9 +632,8 @@ Font.setWeight(QFont::Normal);
 painter.setFont(Font);
 
     // draw vertical grid lines
-  //  horiz_Pixperdiv = (float)plot_width / (float)plot_HorDivs;
-horiz_Pixperdiv = (float)m_FftPixmap.width() / (float)plot_HorDivs;
-    y = plot_height ; 
+    horiz_Pixperdiv = pw / (float)plot_HorDivs;
+    y = ph ; //plot_height ; 
     
     painter.setPen(QPen(QColor(0xF0,0xF0,0xF0,0x30), 1, Qt::DotLine));
     for (int i = 1; i < plot_HorDivs; i++)
@@ -531,23 +642,24 @@ horiz_Pixperdiv = (float)m_FftPixmap.width() / (float)plot_HorDivs;
         painter.drawLine(x, 0, x, y);
     }
 
-//printf(" FREQUENCY STAIRS %d \n",__LINE__);
+//printf(" FREQUENCY STRINGS %d \n",__LINE__);
     // draw frequency values
     makeFrequencyStrs();
     painter.setPen(QColor(0xD8,0xBA,0xA1,0xFF));
-    y = plot_height - (plot_height/plot_VerDivs);
-    m_XAxisYCenter = plot_height - metrics.height()/2;
+   // y = plot_height - (plot_height/plot_VerDivs);
+y = ph - (ph/plot_VerDivs);
+    m_XAxisYCenter = ph - metrics.height()/2;
     for (int i = 1; i < plot_HorDivs; i++)
     {
         x = (int)((float)i*horiz_Pixperdiv - horiz_Pixperdiv/2);
-        rect.setRect(x, y, (int)horiz_Pixperdiv, plot_height/plot_VerDivs);
+        rect.setRect(x, y, (int)horiz_Pixperdiv, ph/plot_VerDivs);
         painter.drawText(rect, Qt::AlignHCenter|Qt::AlignBottom, m_HDivText[i]);
     }
 
     //m_dBStepSize = abs(m_MaxdB-m_MindB)/(double)plot_VerDivs;
     m_dBStepSize = 10;
     
-    vert_Pixperdiv = (float)plot_height / (float)plot_VerDivs;
+    vert_Pixperdiv = (float)ph / (float)plot_VerDivs;
     painter.setPen(QPen(QColor(0xF0,0xF0,0xF0,0x30), 1,Qt::DotLine));
     for (int i = 1; i < plot_VerDivs; i++)
     {
@@ -576,8 +688,7 @@ horiz_Pixperdiv = (float)m_FftPixmap.width() / (float)plot_HorDivs;
     {
         // if not running so is no data updates to draw to screen
         // copy into 2Dbitmap the overlay bitmap.
-        m_FftPixmap = m_OverlayPixmap.copy(0,0,m_FftPixmap.width(),plot_height); //!!! //w = m_WaterfallPixmap.width();
-
+        m_FftPixmap = m_OverlayPixmap.copy(0,0,pw,ph); //!!! //w = m_WaterfallPixmap.width();
         // trigger a new paintEvent
         update();
     }
