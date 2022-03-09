@@ -8,7 +8,7 @@
 #include <QMap>
 
 #define HORZ_DIVS_MAX 50 //12
-#define MAX_SCREENSIZE 4096
+#define MAX_SCREENSIZE 1800
 
 class ScopePlotter : public QFrame
 {
