@@ -63,22 +63,6 @@ private:
     };
     void drawOverlay();
 
-
-/*
-  void getScreenIntegerFFTData(qint32 plotHeight, qint32 plotWidth,
-                                 float maxdB, float mindB,
-                                 qint64 startFreq, qint64 stopFreq,
-                                 float *inBuf, qint32 *outBuf,
-                                 qint32 *maxbin, qint32 *minbin) const;
-* */
-
-//    static void calcDivSize (qint64 low, qint64 high, int divswanted, qint64 &adjlow, qint64 &step, int& divs);
-
-
-
-
-
-
     bool isPointCloseTo(int x, int xr, int delta){return ((x > (xr-delta) ) && ( x<(xr+delta)) );}
 	qint32 m_fftbuf[MAX_SCREENSIZE];
     qint32 dai_showbuf[MAX_SCREENSIZE];

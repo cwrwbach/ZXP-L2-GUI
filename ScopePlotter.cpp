@@ -200,11 +200,6 @@ painter.drawPixmap(0, m_Percent2DScreen*m_Size.height()/100,m_WaterfallPixmap);
 
 //---
 
-
-
-
-
-
 void ScopePlotter::getScreenIntegerFFTData(qint32 plotHeight, qint32 plotWidth,
                                        float maxdB, float mindB,
                                        qint64 startFreq, qint64 stopFreq,
@@ -223,21 +218,11 @@ void ScopePlotter::getScreenIntegerFFTData(qint32 plotHeight, qint32 plotWidth,
     float  dBGainFactor = ((float)plotHeight) / fabs(maxdB - mindB);
     auto* m_pTranslateTbl = new qint32[qMax(m_FFTSize, plotWidth)];
 
-
-
-
-printf("plotHeight: %d, plotWidth %d \n",plotHeight,plotWidth);
-printf("maxdB: %f, mindB: %f \n",maxdB, mindB);
-printf("startFreq: %lld, stopFreq: %lld \n",startFreq,stopFreq);
-printf("dBGainFactor: %f \n",dBGainFactor);
-
-printf("m_FFTSize: %d, m_SampleFreq: %f \n",m_FFTSize,m_SampleFreq); 
-
-for(int temp =0; temp< 1024;temp++)
- printf(" ininin %f \n",inBuf[temp]);
-
-//    inBuf[temp] = (float) temp/2;
-
+//printf("plotHeight: %d, plotWidth %d \n",plotHeight,plotWidth);
+//printf("maxdB: %f, mindB: %f \n",maxdB, mindB);
+//printf("startFreq: %lld, stopFreq: %lld \n",startFreq,stopFreq);
+//printf("dBGainFactor: %f \n",dBGainFactor);
+//printf("m_FFTSize: %d, m_SampleFreq: %f \n",m_FFTSize,m_SampleFreq); 
 
     /** FIXME: qint64 -> qint32 **/
     m_BinMin = (qint32)((float)startFreq * (float)m_FFTSize / m_SampleFreq);
@@ -253,14 +238,14 @@ for(int temp =0; temp< 1024;temp++)
     maxbin = m_BinMax < m_FFTSize ? m_BinMax : m_FFTSize;
 
 
-printf("m_BinMax: %d, m_BinMin: %d \n",m_BinMax,m_BinMin);
+//printf("m_BinMax: %d, m_BinMin: %d \n",m_BinMax,m_BinMin);
 
     bool largeFft = (m_BinMax-m_BinMin) > plotWidth; // true if more fft point than plot points
 
     if (largeFft)
     {
         // more FFT points than plot points
-    printf("Large FFT: ");
+//    printf("Large FFT: ");
     for (i = minbin; i < maxbin; i++)
             m_pTranslateTbl[i] = ((qint64)(i-m_BinMin)*plotWidth) / (m_BinMax - m_BinMin);
         *xmin = m_pTranslateTbl[minbin];
@@ -268,7 +253,7 @@ printf("m_BinMax: %d, m_BinMin: %d \n",m_BinMax,m_BinMin);
     }
     else
     {
-    printf("Small FFT: ");
+//    printf("Small FFT: ");
         // more plot points than FFT points
         for (i = 0; i < plotWidth; i++)
             m_pTranslateTbl[i] = m_BinMin + (i*(m_BinMax - m_BinMin)) / plotWidth;
@@ -278,7 +263,7 @@ printf("m_BinMax: %d, m_BinMin: %d \n",m_BinMax,m_BinMin);
 
     if (largeFft)
     {
-    printf("Squeeze\n");
+//    printf("Squeeze\n");
         // more FFT points than plot points
         for (i = minbin; i < maxbin; i++ )
         {
@@ -298,7 +283,6 @@ printf("m_BinMax: %d, m_BinMin: %d \n",m_BinMax,m_BinMin);
                     outBuf[x] = y;
                     ymax = y;
                 }
-
             }
             else
             {
@@ -310,7 +294,7 @@ printf("m_BinMax: %d, m_BinMin: %d \n",m_BinMax,m_BinMin);
     }
     else
     {
-    printf("Stretch\n");
+//    printf("Stretch\n");
         // more plot points than FFT points
         for (x = 0; x < plotWidth; x++ )
         {
@@ -324,154 +308,27 @@ printf("m_BinMax: %d, m_BinMin: %d \n",m_BinMax,m_BinMin);
                 y = plotHeight;
             else if (y < 0)
                 y = 0;
-
             outBuf[x] = y;
         }
     }
 
-
-//for(int temp =0; temp< 1224;temp++)
-//    outBuf[temp] = temp/2;
-
-
-printf("xmin: %d, xmax: %d \n\n",*xmin,*xmax);
+//printf("xmin: %d, xmax: %d \n\n",*xmin,*xmax);
     delete [] m_pTranslateTbl;
 }
-
-//+_+_+_+_+_
-
-
-/*
-
-void ScopePlotter::getScreenIntegerFFTData(qint32 plotHeight, qint32 plotWidth,
-                                       float maxdB, float mindB,
-                                       qint64 startFreq, qint64 stopFreq,
-                                       float *inBuf, qint32 *outBuf,
-                                       int *xmin, int *xmax) const
-{
-    qint32 i;
-    qint32 y;
-    qint32 x;
-    qint32 ymax = 10000;
-    qint32 xprev = -1;
-    qint32 minbin, maxbin;
-    qint32 m_BinMin, m_BinMax;
-    qint32 m_FFTSize = m_fftDataSize;
-    float *m_pFFTAveBuf = inBuf;
-    float  dBGainFactor = ((float)plotHeight) / fabs(maxdB - mindB);
-    auto* m_pTranslateTbl = new qint32[qMax(m_FFTSize, plotWidth)];
-
-dBGainFactor = -100;
-
-//printf("GainFact %f \n",dBGainFactor);
-
-    //** FIXME: qint64 -> qint32 
-    m_BinMin = (qint32)((float)startFreq * (float)m_FFTSize / m_SampleFreq);
-    m_BinMin += (m_FFTSize/2);
-    m_BinMax = (qint32)((float)stopFreq * (float)m_FFTSize / m_SampleFreq);
-    m_BinMax += (m_FFTSize/2);
-
-    minbin = m_BinMin < 0 ? 0 : m_BinMin;
-    if (m_BinMin > m_FFTSize)
-        m_BinMin = m_FFTSize - 1;
-    if (m_BinMax <= m_BinMin)
-        m_BinMax = m_BinMin + 1;
-    maxbin = m_BinMax < m_FFTSize ? m_BinMax : m_FFTSize;
-    bool largeFft = (m_BinMax-m_BinMin) > plotWidth; // true if more fft point than plot points
-
-    if (largeFft)
-    {
-    printf("large Min %ld Max %ld pw %ld \n",m_BinMin,m_BinMax,plotWidth);
-        // more FFT points than plot points
-        for (i = minbin; i < maxbin; i++)
-            m_pTranslateTbl[i] = ((qint64)(i-m_BinMin)*plotWidth) / (m_BinMax - m_BinMin);
-        *xmin = m_pTranslateTbl[minbin];
-        *xmax = m_pTranslateTbl[maxbin - 1] + 1;
-    }
-    else
-    {printf("small");
-        // more plot points than FFT points
-        for (i = 0; i < plotWidth; i++)
-            m_pTranslateTbl[i] = m_BinMin + (i*(m_BinMax - m_BinMin)) / plotWidth;
-        *xmin = 0;
-        *xmax = plotWidth;
-    }
-
-    if (largeFft)
-    {printf("large2\n");
-        // more FFT points than plot points
-        for (i = minbin; i < maxbin; i++ )
-        {
-            y = (qint32)(dBGainFactor*(maxdB-m_pFFTAveBuf[i]));
-
-            if (y > plotHeight)
-                y = plotHeight;
-            else if (y < 0)
-                y = 0;
-
-            x = m_pTranslateTbl[i];	//get fft bin to plot x coordinate transform
-
-            if (x == xprev)   // still mappped to same fft bin coordinate
-            {
-                if (y < ymax) // store only the max value
-                {
-                    outBuf[x] = y;
-                    ymax = y;
-                }
-
-            }
-            else
-            {
-                outBuf[x] = y;
-                xprev = x;
-                ymax = y;
-            }
-        }
-    }
-    else
-    {
-        // more plot points than FFT points
-        for (x = 0; x < plotWidth; x++ )
-        {
-            i = m_pTranslateTbl[x]; // get plot to fft bin coordinate transform
-            if(i < 0 || i >= m_FFTSize)
-                y = plotHeight;
-            else
-                y = (qint32)(dBGainFactor*(maxdB-m_pFFTAveBuf[i]));
-
-            if (y > plotHeight)
-                y = plotHeight;
-            else if (y < 0)
-                y = 0;
-
-            outBuf[x] = y;
-        }
-    }
-
-
-outBuf[102] = -400;
-
-printf("out %d \n",outBuf[511]);
-    delete [] m_pTranslateTbl;
-}
-*/
 
 //---
 
 void ScopePlotter::draw_trace(int * trace_buf,int left,int num_points,int lower,int upper)
 {
 QPoint LineBuf[MAX_SCREENSIZE];
-//int plot_width = PLOT_WIDTH ; 
 int plot_height = PLOT_HEIGHT ; 
 double LinePoint;
-int i,l,pw;
+int i,l,plot_width;;
 int w;
 int h;
 int xmin, xmax;
 double y_scale;
 double ph,lw;
-
-//This works but could do with muchismo tidying...
 
 if (m_DrawOverlay)
 	{
@@ -491,48 +348,27 @@ if ((w != 0) || (h != 0))
     QPainter painter_wf(&m_WaterfallPixmap);
     painter_wf.setPen(QColor(0x00,0x00,0x00));
 
-h=40;
-
 m_fftDataSize = 1024;
 m_SampleFreq = 500000;
 
 float inbuf[4096];
-int my_outbuf[4096];
-int minmin,maxmax;
+int outbuf[4096];
+int xmin,xmax;
 
-/*
-getScreenIntegerFFTData(qint32 plotHeight, qint32 plotWidth,
-                                       float maxdB, float mindB,
-                                       qint64 startFreq, qint64 stopFreq,
-                                       float *inBuf, qint32 *outBuf,
-                                       int *xmin, int *xmax) const
-* 
-getScreenIntegerFFTData(255, n, m_WfMaxdB, m_WfMindB,
-                                m_FftCenter - (qint64)m_Span / 2,
-                                m_FftCenter + (qint64)m_Span / 2,
-                                m_wfData, m_fftbuf,
-                                &xmin,&xmax);
-*/
-
-w = m_WaterfallPixmap.width(); //printf(" Screen Wid: %d \n",w);
-pw = qMin(w, MAX_SCREENSIZE);
+w = m_WaterfallPixmap.width(); 
+plot_width = qMin(w, MAX_SCREENSIZE);
 
 for(int i=0; i<1024;i++)
     {
     inbuf[i] = (float) trace_buf[i]; //trace_buf is our input data main... 1024 point in FFT
-    //inbuf[i] *=10;
     }    
 
-
-m_SampleFreq = 500000;
-getScreenIntegerFFTData(255, pw, 
-                        -10, -130 ,
-                        -250000,
-                        250000,
-                        inbuf, my_outbuf,
-                        &minmin,&maxmax);
-
-pw = maxmax;
+getScreenIntegerFFTData(255, plot_width, //255 is plot height - need work on height.
+                        -30, -150 , //max and min dB
+                        g_sample_rate/-2,
+                        g_sample_rate/2,
+                        inbuf, outbuf,
+                        &xmin,&xmax);
 
     //if fft & WF timer
     {
@@ -558,34 +394,25 @@ ph=(double) plot_height;
 lw=(double) lower-upper; 
 y_scale =  ph/lw;
 
-//printf("pw_now: %d \n",pw);
-
     painter_fft.setPen(m_FftColor); //fft trace colour
     l=left;         
 
-    for (i = l; i < pw; i++)
+    for (i = l; i < plot_width; i++)
         {
-		LinePoint = (float) my_outbuf[i] *5  ; //(double) trace_buf[i] * 10; //10
-//printf("LINPOINT %f %d \n",LinePoint,i);
-
-		LinePoint = LinePoint * -y_scale;
-	
-        LineBuf[i].setX(i + xmin);
+		LinePoint = (float) outbuf[i] *5  ; //(double) trace_buf[i] * 10; //10
+        LinePoint = LinePoint * -y_scale;
+	    LineBuf[i].setX(i + xmin);
         LineBuf[i].setY((int)LinePoint); 
         show();
         }    
  
-    painter_fft.drawPolyline(LineBuf,pw); //paint a line with n points from LineBuf[n]
+    painter_fft.drawPolyline(LineBuf,plot_width); //paint a line with n points from LineBuf[n]
     painter_fft.end();
     }
 update(); // trigger a new paintEvent
 }
 
 //---
-
-
-
-
 
 // Create frequency division strings based on start frequency, span frequency,
 // and frequency units.
@@ -681,7 +508,7 @@ int start_freq = g_center_frequency - g_sample_rate / 2;
 freq = (int) roundf( start_freq + (x * pix_per_bin) * bin_step);
 
 
-printf(" G sample rate: %d frq: %d \n",g_sample_rate,freq);
+//printf(" G sample rate: %d frq: %d \n",g_sample_rate,freq);
 
 
 emit    newFrequency(freq);
