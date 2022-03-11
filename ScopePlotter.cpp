@@ -233,7 +233,10 @@ printf("dBGainFactor: %f \n",dBGainFactor);
 
 printf("m_FFTSize: %d, m_SampleFreq: %f \n",m_FFTSize,m_SampleFreq); 
 
+for(int temp =0; temp< 1024;temp++)
+ printf(" ininin %f \n",inBuf[temp]);
 
+//    inBuf[temp] = (float) temp/2;
 
 
     /** FIXME: qint64 -> qint32 **/
@@ -325,6 +328,12 @@ printf("m_BinMax: %d, m_BinMin: %d \n",m_BinMax,m_BinMin);
             outBuf[x] = y;
         }
     }
+
+
+//for(int temp =0; temp< 1224;temp++)
+//    outBuf[temp] = temp/2;
+
+
 printf("xmin: %d, xmax: %d \n\n",*xmin,*xmax);
     delete [] m_pTranslateTbl;
 }
@@ -488,7 +497,7 @@ m_fftDataSize = 1024;
 m_SampleFreq = 500000;
 
 float inbuf[4096];
-//int outbuf[4096];
+int my_outbuf[4096];
 int minmin,maxmax;
 
 /*
@@ -509,13 +518,18 @@ w = m_WaterfallPixmap.width(); //printf(" Screen Wid: %d \n",w);
 pw = qMin(w, MAX_SCREENSIZE);
 
 for(int i=0; i<1024;i++)
-    inbuf[i] = (float) trace_buf[i]*1000; //trace_buf is our input data main... 1024 point in FFT
+    {
+    inbuf[i] = (float) trace_buf[i]; //trace_buf is our input data main... 1024 point in FFT
+    //inbuf[i] *=10;
+    }    
+
+
 m_SampleFreq = 500000;
 getScreenIntegerFFTData(255, pw, 
                         -10, -130 ,
                         -250000,
                         250000,
-                        inbuf, m_fftbuf,
+                        inbuf, my_outbuf,
                         &minmin,&maxmax);
 
 pw = maxmax;
@@ -551,9 +565,11 @@ y_scale =  ph/lw;
 
     for (i = l; i < pw; i++)
         {
-		LinePoint = (float) m_fftbuf[i]  ; //(double) trace_buf[i] * 10; //10
+		LinePoint = (float) my_outbuf[i] *5  ; //(double) trace_buf[i] * 10; //10
+//printf("LINPOINT %f %d \n",LinePoint,i);
+
 		LinePoint = LinePoint * -y_scale;
-	printf("LB: %f \n",LinePoint);
+	
         LineBuf[i].setX(i + xmin);
         LineBuf[i].setY((int)LinePoint); 
         show();
