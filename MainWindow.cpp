@@ -167,12 +167,12 @@ radio_rx.update_mir_lna(state);
 
 void MainWindow::show_enable() // displays stream data
 {
-char str_1[20];
-char str_2[20];
-char str_3[20];
-char str_4[20];
-char str_5[20];
-char str_6[20];
+//char str_1[20];
+//char str_2[20];
+//char str_3[20];
+//char str_4[20];
+//char str_5[20];
+//char str_6[20];
 
 //printf(" Show_enable %d \n",bug2++);
 

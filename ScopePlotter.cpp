@@ -152,7 +152,11 @@ else
 // Called when a mouse wheel is turned
 void ScopePlotter::wheelEvent(QWheelEvent * event)
 {
+int mx,my;	
 QPoint pt = event->pos();
+mx = pt.x();
+my = pt.y();
+printf(" x: %d y: %d Ln: %d \n",mx,my,__LINE__);
 printf("Mouse wheelie workie \n");
 }
 
@@ -321,12 +325,14 @@ void ScopePlotter::getScreenIntegerFFTData(qint32 plotHeight, qint32 plotWidth,
 void ScopePlotter::draw_trace(int * trace_buf,int left,int num_points,int lower,int upper)
 {
 QPoint LineBuf[MAX_SCREENSIZE];
-int plot_height = PLOT_HEIGHT ; 
+//int plot_height = PLOT_HEIGHT ; 
+int debugxx = num_points;
+debugxx*=2; //loose the warning
 double LinePoint;
 int i,l,plot_width;;
 int w;
 int h;
-int xmin, xmax;
+//int xmin, xmax;
 double y_scale;
 double ph,lw;
 

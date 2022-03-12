@@ -77,8 +77,8 @@ while (socket->hasPendingDatagrams())
         //printf(" Debug FFT: %d \n",debug_fft++);
         for(int i=0; i<1024;i++)
             fft_video_buf[i] = (int) datagram[i];
-            stream_flag = true;
-            }
+        stream_flag = true;
+        }
 
     if(size == 1042) //G711
         {
