@@ -64,8 +64,8 @@ private:
     void drawOverlay();
 
     bool isPointCloseTo(int x, int xr, int delta){return ((x > (xr-delta) ) && ( x<(xr+delta)) );}
-	qint32 m_fftbuf[MAX_SCREENSIZE];
-    qint32 dai_showbuf[MAX_SCREENSIZE];
+//	qint32 m_fftbuf[MAX_SCREENSIZE];
+ //   qint32 dai_showbuf[MAX_SCREENSIZE];
 	int m_XAxisYCenter;
     int m_YAxisWidth;
 
