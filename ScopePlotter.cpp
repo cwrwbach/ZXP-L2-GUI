@@ -390,7 +390,7 @@ painter_wf.end();
 QPainter painter_fft(&m_FftPixmap);
 
 xmin = 0; //the left-est position on screen
-ph=(double) plot_height;
+ph=(double) h; //plot_height;
 lw=(double) lower-upper; 
 y_scale =  ph/lw;
 
