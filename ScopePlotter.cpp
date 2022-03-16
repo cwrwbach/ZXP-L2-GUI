@@ -68,8 +68,8 @@ ScopePlotter::ScopePlotter(QWidget *parent) : QFrame(parent) //Constructor
     m_Running = false;
     m_DrawOverlay = true;
 
-    m_MaxdB = -30;
-    m_MindB = -130;
+    m_MaxdB = -60;
+    m_MindB = -170;
     m_dBStepSize = 10; //abs(m_MaxdB-m_MindB)/m_VerDivs;
 
     m_Running = false;
@@ -366,16 +366,20 @@ plot_width = qMin(w, MAX_SCREENSIZE);
 
 for(int i=0; i<1024;i++)
     {
-    inbuf[i] = (float) trace_buf[i]; //trace_buf is our input data main... 1024 point in FFT
+    inbuf[i] = (float) trace_buf[i]; //trace_buf is our input data main
+    inbuf[i] *= -1; //units are half-dB
     }    
+//inbuf[256] = -160;
+//inbuf[600] = -60;
+
 
 getScreenIntegerFFTData(255, plot_width, //255 is plot height - need work on height.
-                        -30, -150 , //max and min dB
+                        -30, -255 , //max and min dB
                         g_sample_rate/-2,
                         g_sample_rate/2,
                         inbuf, outbuf,
                         &xmin,&xmax);
-
+/*
     //if fft & WF timer
     {
         if(0) //FIXME this enables/disables the waterfall, debug only
@@ -388,14 +392,14 @@ getScreenIntegerFFTData(255, plot_width, //255 is plot height - need work on hei
             painter_wf.drawPoint(i,0);
             }
         }
-    } //fft & waterfall timer
 
 update();
+*/
 painter_wf.end();
 
 QPainter painter_fft(&m_FftPixmap);
 
-xmin = 0; //the left-est position on screen
+xmin = 0; //the left-ist position on screen
 ph=(double) h; //plot_height;
 lw=(double) lower-upper; 
 y_scale =  ph/lw;
@@ -625,9 +629,9 @@ painter.setPen(QPen(QColor(0xF0,0xF0,0xF0,0x30), 1, Qt::DotLine));
 //Draw a centre line (later for cursor line)
   for (int i = 1; i < 500; i++)
     {
-  //      x = (int)((float)i*horiz_Pixperdiv);
-    x=512; y=500; //x cenre is 512 a present
-        painter.drawLine(x, 0, x, y);
+    x = m_WaterfallPixmap.width()/2; 
+    y=500;
+    painter.drawLine(x, 0, x, y);
     }
  update();
 
@@ -655,7 +659,7 @@ painter.setFont(Font);
     makeFrequencyStrs();
     painter.setPen(QColor(0xD8,0xBA,0xA1,0xFF));
    // y = plot_height - (plot_height/plot_VerDivs);
-y = ph - (ph/plot_VerDivs);
+    y = ph - (ph/plot_VerDivs);
     m_XAxisYCenter = ph - metrics.height()/2;
     for (int i = 1; i < plot_HorDivs; i++)
     {
@@ -680,12 +684,10 @@ y = ph - (ph/plot_VerDivs);
     //Font.setWeight(QFont::Light);
     painter.setFont(Font);
     int dB = m_MaxdB;
-    m_YAxisWidth = metrics.width("-120 ");
+    m_YAxisWidth = metrics.width("-999 ");
 	for (int i = 1; i < plot_VerDivs; i++)
 		{
-		
- 
-        y = (int)((float)i*vert_Pixperdiv);
+		y = (int)((float)i*vert_Pixperdiv);
         rect.setRect(0, y-metrics.height()/2, m_YAxisWidth, metrics.height());
         painter.drawText(rect, Qt::AlignRight|Qt::AlignVCenter, QString::number(dB));
         dB -= m_dBStepSize;  // move to end if want to include maxdb  

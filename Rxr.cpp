@@ -76,7 +76,7 @@ while (socket->hasPendingDatagrams())
         //debug
         //printf(" Debug FFT: %d \n",debug_fft++);
         for(int i=0; i<1024;i++)
-            fft_video_buf[i] = (int) datagram[i];
+            fft_video_buf[i] = (uint8_t) datagram[i];
         stream_flag = true;
         }
 
