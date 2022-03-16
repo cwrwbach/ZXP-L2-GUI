@@ -374,27 +374,26 @@ for(int i=0; i<1024;i++)
 
 
 getScreenIntegerFFTData(255, plot_width, //255 is plot height - need work on height.
-                        -30, -255 , //max and min dB
+                        -30, -260 , //max and min dB
                         g_sample_rate/-2,
                         g_sample_rate/2,
                         inbuf, outbuf,
                         &xmin,&xmax);
-/*
-    //if fft & WF timer
-    {
-        if(0) //FIXME this enables/disables the waterfall, debug only
+
+     if(1) //FIXME this enables/disables the waterfall, debug only
         {
-        for (i = xmin; i < xmax; i++)
+       // for (i = xmin; i < xmax; i++)
+        for (i = l; i < plot_width; i++)
             {
 
-            int inx = 100+trace_buf[i];
+            int inx = 50+outbuf[i]; //100+trace_buf[i];
             painter_wf.setPen(QColor(turbo[inx][0],turbo[inx][1],turbo[inx][2]));
             painter_wf.drawPoint(i,0);
             }
         }
 
 update();
-*/
+
 painter_wf.end();
 
 QPainter painter_fft(&m_FftPixmap);
@@ -658,7 +657,6 @@ painter.setFont(Font);
     // draw frequency values
     makeFrequencyStrs();
     painter.setPen(QColor(0xD8,0xBA,0xA1,0xFF));
-   // y = plot_height - (plot_height/plot_VerDivs);
     y = ph - (ph/plot_VerDivs);
     m_XAxisYCenter = ph - metrics.height()/2;
     for (int i = 1; i < plot_HorDivs; i++)
