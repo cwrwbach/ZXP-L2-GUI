@@ -15,19 +15,6 @@
 #define FFT_POINTS 1024
 #define RX_BUF_SIZE 1024
 
-//extern "C" void start_server_stream();
-//extern "C" void update_radio_cf(int);
-//extern "C" void update_radio_sr(int);
-//extern "C" void update_radio_ar(int);
-//extern "C" void update_radio_demod(int);
-//extern "C" void update_radio_rfg(int);
-//extern "C" void update_radio_afg(int);
-//extern "C" void update_mir_gr(int);
-//extern "C" void update_mir_dab_notch(int);
-//e/xtern "C" void update_mir_bc_notch(int);
-//extern "C" void update_mir_lna(int);
-
-
 extern bool stream_flag;
 extern int fft_video_buf[];
 int status[256]; //FIXME

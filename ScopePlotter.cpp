@@ -52,7 +52,7 @@ m_Running = false;
 m_DrawOverlay = true;
 
 m_MaxdB = -60;
-m_MindB = -170;
+m_MindB = -160;
 m_dBStepSize = 10; //abs(m_MaxdB-m_MindB)/m_VerDivs;
 
 m_Running = false;
@@ -60,7 +60,7 @@ m_DrawOverlay = true;
 m_FftPixmap = QPixmap(0,0);
 m_OverlayPixmap = QPixmap(0,0);
   
-m_Percent2DScreen = 90;	//FINDME  //percent of screen used for 2D display
+m_Percent2DScreen = 85;	//FINDME  //percent of screen used for 2D display
 
 m_FontSize = 9;
 m_VdivDelta = 100;
