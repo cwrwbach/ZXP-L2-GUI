@@ -47,7 +47,7 @@
       <property name="baseSize">
        <size>
         <width>1200</width>
-        <height>600</height>
+        <height>800</height>
        </size>
       </property>
       <property name="mouseTracking">
@@ -69,7 +69,7 @@
       <property name="minimumSize">
        <size>
         <width>0</width>
-        <height>350</height>
+        <height>220</height>
        </size>
       </property>
       <property name="frameShape">
@@ -81,10 +81,10 @@
       <widget class="CMeter" name="sMeter">
        <property name="geometry">
         <rect>
-         <x>160</x>
-         <y>20</y>
-         <width>251</width>
-         <height>61</height>
+         <x>10</x>
+         <y>10</y>
+         <width>161</width>
+         <height>41</height>
         </rect>
        </property>
        <property name="frameShape">
@@ -97,8 +97,8 @@
       <widget class="QPushButton" name="setupRsp">
        <property name="geometry">
         <rect>
-         <x>910</x>
-         <y>250</y>
+         <x>740</x>
+         <y>110</y>
          <width>83</width>
          <height>61</height>
         </rect>
@@ -110,8 +110,8 @@
       <widget class="CFreqCtrl" name="freqCtrl">
        <property name="geometry">
         <rect>
-         <x>220</x>
-         <y>110</y>
+         <x>610</x>
+         <y>30</y>
          <width>351</width>
          <height>61</height>
         </rect>
@@ -126,8 +126,8 @@
       <widget class="QLabel" name="label_2">
        <property name="geometry">
         <rect>
-         <x>60</x>
-         <y>80</y>
+         <x>50</x>
+         <y>60</y>
          <width>64</width>
          <height>17</height>
         </rect>
@@ -140,7 +140,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>100</y>
+         <y>80</y>
          <width>160</width>
          <height>16</height>
         </rect>
@@ -153,7 +153,7 @@
        <property name="geometry">
         <rect>
          <x>50</x>
-         <y>160</y>
+         <y>100</y>
          <width>64</width>
          <height>17</height>
         </rect>
@@ -165,10 +165,10 @@
       <widget class="QProgressBar" name="Bar">
        <property name="geometry">
         <rect>
-         <x>30</x>
-         <y>230</y>
-         <width>251</width>
-         <height>51</height>
+         <x>10</x>
+         <y>150</y>
+         <width>191</width>
+         <height>31</height>
         </rect>
        </property>
        <property name="maximum">
@@ -185,7 +185,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>180</y>
+         <y>120</y>
          <width>160</width>
          <height>16</height>
         </rect>
@@ -194,181 +194,13 @@
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
-      <widget class="QFrame" name="mir_params">
-       <property name="geometry">
-        <rect>
-         <x>600</x>
-         <y>10</y>
-         <width>141</width>
-         <height>161</height>
-        </rect>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
-       <widget class="QCheckBox" name="mir_bc_notch">
-        <property name="geometry">
-         <rect>
-          <x>20</x>
-          <y>20</y>
-          <width>92</width>
-          <height>22</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>BC Notch</string>
-        </property>
-       </widget>
-       <widget class="QCheckBox" name="mir_dab_notch">
-        <property name="geometry">
-         <rect>
-          <x>20</x>
-          <y>50</y>
-          <width>92</width>
-          <height>22</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>DAB Notch</string>
-        </property>
-       </widget>
-       <widget class="QCheckBox" name="mir_lna">
-        <property name="geometry">
-         <rect>
-          <x>20</x>
-          <y>80</y>
-          <width>92</width>
-          <height>22</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>LNA</string>
-        </property>
-       </widget>
-       <widget class="QSlider" name="mir_gr">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>120</y>
-          <width>171</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="value">
-         <number>50</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </widget>
-      <widget class="QFrame" name="ip_select">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>370</x>
-         <y>190</y>
-         <width>141</width>
-         <height>151</height>
-        </rect>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
-       <widget class="QRadioButton" name="ip1">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>30</y>
-          <width>106</width>
-          <height>22</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Local</string>
-        </property>
-       </widget>
-       <widget class="QRadioButton" name="ip2">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>50</y>
-          <width>106</width>
-          <height>22</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Pi RSP</string>
-        </property>
-       </widget>
-       <widget class="QRadioButton" name="ip3">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>70</y>
-          <width>106</width>
-          <height>22</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>PQC RSP</string>
-        </property>
-       </widget>
-       <widget class="QRadioButton" name="ip4">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>90</y>
-          <width>106</width>
-          <height>22</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Pitaya-14</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label">
-        <property name="geometry">
-         <rect>
-          <x>50</x>
-          <y>10</y>
-          <width>64</width>
-          <height>17</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Server </string>
-        </property>
-       </widget>
-       <widget class="QRadioButton" name="ip5">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>110</y>
-          <width>106</width>
-          <height>22</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Pitaya-16</string>
-        </property>
-       </widget>
-      </widget>
       <widget class="QFrame" name="frame_6">
        <property name="geometry">
         <rect>
-         <x>770</x>
-         <y>20</y>
+         <x>430</x>
+         <y>10</y>
          <width>81</width>
-         <height>221</height>
+         <height>181</height>
         </rect>
        </property>
        <property name="frameShape">
@@ -384,45 +216,13 @@
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>170</y>
-          <width>106</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>I/Q</string>
-        </property>
-       </widget>
-       <widget class="QRadioButton" name="bw200_3">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>10</x>
           <y>130</y>
           <width>106</width>
           <height>23</height>
          </rect>
         </property>
         <property name="text">
-         <string>WFM</string>
-        </property>
-       </widget>
-       <widget class="QRadioButton" name="bw300_3">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>150</y>
-          <width>106</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>NFM</string>
+         <string>I/Q</string>
         </property>
        </widget>
        <widget class="QRadioButton" name="dsb">
@@ -525,7 +325,7 @@
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>190</y>
+          <y>150</y>
           <width>106</width>
           <height>23</height>
          </rect>
@@ -541,10 +341,10 @@
       <widget class="QFrame" name="frame">
        <property name="geometry">
         <rect>
-         <x>610</x>
-         <y>190</y>
+         <x>210</x>
+         <y>10</y>
          <width>91</width>
-         <height>151</height>
+         <height>181</height>
         </rect>
        </property>
        <property name="frameShape">
@@ -638,8 +438,8 @@
        </property>
        <property name="geometry">
         <rect>
-         <x>890</x>
-         <y>30</y>
+         <x>320</x>
+         <y>10</y>
          <width>91</width>
          <height>181</height>
         </rect>
@@ -724,7 +524,7 @@
        <widget class="QLabel" name="label_6">
         <property name="geometry">
          <rect>
-          <x>10</x>
+          <x>0</x>
           <y>10</y>
           <width>91</width>
           <height>17</height>
@@ -754,7 +554,7 @@
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>160</y>
+          <y>150</y>
           <width>81</width>
           <height>23</height>
          </rect>
@@ -770,10 +570,10 @@
        </property>
        <property name="geometry">
         <rect>
-         <x>1020</x>
-         <y>30</y>
+         <x>530</x>
+         <y>10</y>
          <width>61</width>
-         <height>171</height>
+         <height>181</height>
         </rect>
        </property>
        <property name="frameShape">
@@ -862,7 +662,7 @@
        <widget class="QLabel" name="label_9">
         <property name="geometry">
          <rect>
-          <x>20</x>
+          <x>0</x>
           <y>10</y>
           <width>81</width>
           <height>17</height>

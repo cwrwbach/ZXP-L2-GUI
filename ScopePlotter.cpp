@@ -13,7 +13,7 @@
 #include "Rxr.h"
 
 // Colors of type QRgb in 0xAARRGGBB format (unsigned int)
-#define PLOTTER_BGD_COLOR           0xFF1F1D1D
+#define PLOTTER_BGD_COLOR           0xFF1F1F1D
 #define PLOTTER_GRID_COLOR          0xFF444242
 #define PLOTTER_TEXT_COLOR          0xFFDADADA
 #define PLOTTER_CENTER_LINE_COLOR   0xFF788296
@@ -94,7 +94,7 @@ if (m_Size != size()) //resize pixmaps to new screensize
     {
     m_Size = size();
     m_OverlayPixmap = QPixmap(m_Size.width(), m_Percent2DScreen*m_Size.height()/100);
-    m_OverlayPixmap.fill(Qt::darkGreen); //The FFT screen backround
+    m_OverlayPixmap.fill(PLOTTER_BGD_COLOR ); //The FFT screen backround
     m_FftPixmap = QPixmap(m_Size.width(), m_Percent2DScreen*m_Size.height()/100);
     m_FftPixmap.fill(Qt::red); //???
 
@@ -279,9 +279,9 @@ for(int i=0; i<1024;i++)
 
 
 //inbuf[256] = -160;
-inbuf[600] = -120;
-inbuf[601] = -140;
-inbuf[602] = -160;
+//inbuf[600] = -120;
+//inbuf[601] = -140;
+//inbuf[602] = -160;
 
 
 
@@ -289,7 +289,7 @@ inbuf[602] = -160;
 
 plot_height = 245; //245 works here but is a fudge
 
-getScreenIntegerFFTData(plot_height, plot_width, //255 is plot height - need work on height.
+getScreenIntegerFFTData(plot_height, plot_width,
                         -30, -260 , //max and min dB
                         g_sample_rate/-2,
                         g_sample_rate/2,
