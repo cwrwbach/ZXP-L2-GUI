@@ -74,11 +74,11 @@ connect(ui->ar3, SIGNAL(clicked()), this, SLOT(set_ar3()));
 connect(ui->rf_gain, SIGNAL(valueChanged(int)), this, SLOT(set_rfg(int)));
 connect(ui->af_gain, SIGNAL(valueChanged(int)), this, SLOT(set_afg(int)));
 
-connect(ui->mir_gr, SIGNAL(valueChanged(int)), this, SLOT(set_mir_gr(int)));
+//connect(ui->mir_gr, SIGNAL(valueChanged(int)), this, SLOT(set_mir_gr(int)));
 
-connect(ui->mir_dab_notch, SIGNAL(stateChanged(int)), this, SLOT(set_mir_dab_n(int)));
-connect(ui->mir_bc_notch, SIGNAL(stateChanged(int)), this, SLOT(set_mir_bc_n(int)));
-connect(ui->mir_lna, SIGNAL(stateChanged(int)), this, SLOT(set_mir_lna(int)));
+//connect(ui->mir_dab_notch, SIGNAL(stateChanged(int)), this, SLOT(set_mir_dab_n(int)));
+//connect(ui->mir_bc_notch, SIGNAL(stateChanged(int)), this, SLOT(set_mir_bc_n(int)));
+//connect(ui->mir_lna, SIGNAL(stateChanged(int)), this, SLOT(set_mir_lna(int)));
 
 fft_timer = new QTimer(this);
 connect(fft_timer, SIGNAL(timeout()), this, SLOT(show_enable()));

@@ -12,194 +12,107 @@
 #include "waterfall.h"
 #include "Rxr.h"
 
-#define PLOT_WIDTH 1200 //1024
-#define PLOT_HEIGHT 500
-
-#define CUR_CUT_DELTA 5		//cursor capture delta in pixels
-
-#define FFT_MIN_DB     -160.f
-#define FFT_MAX_DB      0.f
-
 // Colors of type QRgb in 0xAARRGGBB format (unsigned int)
 #define PLOTTER_BGD_COLOR           0xFF1F1D1D
-//#define PLOTTER_BGD_COLOR           0xFF00002f
 #define PLOTTER_GRID_COLOR          0xFF444242
 #define PLOTTER_TEXT_COLOR          0xFFDADADA
 #define PLOTTER_CENTER_LINE_COLOR   0xFF788296
 #define PLOTTER_FILTER_LINE_COLOR   0xFFFF7171
 #define PLOTTER_FILTER_BOX_COLOR    0xFFA0A0A4
-#define VERT_DIVS_MIN 5
 
-//extern int g_audio_sample_rate;
-//extern int g_sample_rate;
-//extern int g_fft_size;
-//extern int g_center_frequency;
 
 int g_audio_sample_rate = 8000;
 int g_sample_rate = 500000;
 int g_fft_size = 1024;
 int g_center_frequency=10000000;
 
+///---
+
 ScopePlotter::ScopePlotter(QWidget *parent) : QFrame(parent) //Constructor
 {
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    setFocusPolicy(Qt::StrongFocus);
-    setAttribute(Qt::WA_PaintOnScreen,false);
-    setAutoFillBackground(false);
-    setAttribute(Qt::WA_OpaquePaintEvent, false);
-    setAttribute(Qt::WA_NoSystemBackground, true);
-    setMouseTracking(true);
+setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+setFocusPolicy(Qt::StrongFocus);
+setAttribute(Qt::WA_PaintOnScreen,false);
+setAutoFillBackground(false);
+setAttribute(Qt::WA_OpaquePaintEvent, false);
+setAttribute(Qt::WA_NoSystemBackground, true);
+setMouseTracking(true);
 
-//added 24 jan 
-//FIXME JUST BODGE NUMBERS
-    m_FreqUnits = 100;
-    m_StartFreqAdj = 5000000 - 250000; //Center - (FreqPerDiv * (HorDivs/2))
-    m_FreqPerDiv = 25000; //Sample rate/HorDivs
+m_FreqUnits = 100;
+m_StartFreqAdj = 5000000 - 250000; //Center - (FreqPerDiv * (HorDivs/2))
+m_FreqPerDiv = 25000; //Sample rate/HorDivs
+m_FftCenter = 0;
 
-    m_FftCenter = 0;
-    //m_CenterFreq = 144500000;
-    m_DemodCenterFreq = 144500000;
+m_HorDivs = 16;
+m_VerDivs = 13;
+m_PandMaxdB = m_WfMaxdB = 0.f;
+m_PandMindB = m_WfMindB = -150.f;
 
-    m_HorDivs = 16;
-    m_VerDivs = 13;
-    m_PandMaxdB = m_WfMaxdB = 0.f;
-    m_PandMindB = m_WfMindB = -150.f;
+m_Running = false;
+m_DrawOverlay = true;
 
-    m_Running = false;
-    m_DrawOverlay = true;
+m_MaxdB = -60;
+m_MindB = -170;
+m_dBStepSize = 10; //abs(m_MaxdB-m_MindB)/m_VerDivs;
 
-    m_MaxdB = -60;
-    m_MindB = -170;
-    m_dBStepSize = 10; //abs(m_MaxdB-m_MindB)/m_VerDivs;
-
-    m_Running = false;
-    m_DrawOverlay = true;
-    m_FftPixmap = QPixmap(0,0);
-    m_OverlayPixmap = QPixmap(0,0);
+m_Running = false;
+m_DrawOverlay = true;
+m_FftPixmap = QPixmap(0,0);
+m_OverlayPixmap = QPixmap(0,0);
   
-    m_Percent2DScreen = 85;	//FINDME  //percent of screen used for 2D display
+m_Percent2DScreen = 90;	//FINDME  //percent of screen used for 2D display
 
-    m_FontSize = 9;
-    m_VdivDelta = 100;
-    HdivDelta = 20;
+m_FontSize = 9;
+m_VdivDelta = 100;
+HdivDelta = 20;
 
-   setPlotColor(QColor(0x00,0xff,0x00,0xff));
+setPlotColor(QColor(0x00,0xff,0x00,0xff));
 }
 
 ScopePlotter::~ScopePlotter() //destructor
 {
 }
 
-
-QSize ScopePlotter::minimumSizeHint() const
-{
-    return QSize(50, 50);
-}
-
-QSize ScopePlotter::sizeHint() const
-{
-    return QSize(180, 180);
-}
-
-
-void ScopePlotter::mouseMoveEvent(QMouseEvent* event)
-{
-int mx,my;	
-
-return;
-
-QPoint pt = event->pos();
-mx = pt.x();
-my = pt.y();
-
-printf(" x: %d y: %d \n",mx,my);
-
-}
-
-void ScopePlotter::mousePressEvent(QMouseEvent * event)
-{
-int mx,my;	
-QPoint pt = event->pos();
-mx = pt.x();
-my = pt.y();
-printf(" x: %d y: %d Ln: %d \n",mx,my,__LINE__);
-
-freqFromX(mx);
-
-}
-
-//-=-=-=-
-
-// Called when a mouse button is released
-void ScopePlotter::mouseReleaseEvent(QMouseEvent * event)
-{
-QPoint pt = event->pos();
-
-return; 
-
-if (!m_OverlayPixmap.rect().contains(pt))
-    { 
-	printf(" NOT in rect /");
-	} 
- 
-else
-    {
-    printf(" YES in rect \n");
-	}
-}
-
-
-// Called when a mouse wheel is turned
-void ScopePlotter::wheelEvent(QWheelEvent * event)
-{
-int mx,my;	
-QPoint pt = event->pos();
-mx = pt.x();
-my = pt.y();
-printf(" x: %d y: %d Ln: %d \n",mx,my,__LINE__);
-printf("Mouse wheelie workie \n");
-}
-
-
-// Called when screen size changes so must recalculate bitmaps
-void ScopePlotter::resizeEvent(QResizeEvent* )
-{
-	
-	//printf(" *** RESIZE IN PROGRESS  *** \n");
-
-    if (!size().isValid())
-        return;
-
-    if (m_Size != size())
-    {	//if changed, resize pixmaps to new screensize
-        m_Size = size();
-        m_OverlayPixmap = QPixmap(m_Size.width(), m_Percent2DScreen*m_Size.height()/100);
-        m_OverlayPixmap.fill(Qt::black);
-        m_FftPixmap = QPixmap(m_Size.width(), m_Percent2DScreen*m_Size.height()/100);
-        m_FftPixmap.fill(Qt::black);
-
-        int height = (100-m_Percent2DScreen)*m_Size.height()/100;
-        if (m_WaterfallPixmap.isNull()) {
-            m_WaterfallPixmap = QPixmap(m_Size.width(), height);
-            m_WaterfallPixmap.fill(Qt::black);
-        } else {
-            m_WaterfallPixmap = m_WaterfallPixmap.scaled(m_Size.width(), height,
-                                                         Qt::IgnoreAspectRatio,
-                                                         Qt::SmoothTransformation);
-        }
-  //      m_PeakHoldValid=false;
-    }     
-    drawOverlay();
-}
-
+///---
 
 // Called by QT when screen needs to be redrawn
 void ScopePlotter::paintEvent(QPaintEvent *)
 {
 QPainter painter(this);
-
 painter.drawPixmap(0,0,m_FftPixmap);
 painter.drawPixmap(0, m_Percent2DScreen*m_Size.height()/100,m_WaterfallPixmap);
+}
+
+//-=-=-=-
+
+void ScopePlotter::resizeEvent(QResizeEvent* ) //recalculate bitmaps
+{
+if (!size().isValid())
+    return;
+
+if (m_Size != size()) //resize pixmaps to new screensize
+    {
+    m_Size = size();
+    m_OverlayPixmap = QPixmap(m_Size.width(), m_Percent2DScreen*m_Size.height()/100);
+    m_OverlayPixmap.fill(Qt::darkGreen); //The FFT screen backround
+    m_FftPixmap = QPixmap(m_Size.width(), m_Percent2DScreen*m_Size.height()/100);
+    m_FftPixmap.fill(Qt::red); //???
+
+    int height = (100-m_Percent2DScreen)*m_Size.height()/100;
+    if (m_WaterfallPixmap.isNull()) 
+        {
+        m_WaterfallPixmap = QPixmap(m_Size.width(), height);
+        m_WaterfallPixmap.fill(Qt::green);
+        } 
+        else 
+        {
+        m_WaterfallPixmap = m_WaterfallPixmap.scaled(m_Size.width(), height,
+                            Qt::IgnoreAspectRatio,
+                            Qt::SmoothTransformation);
+        }
+    // m_PeakHoldValid=false;
+    }     
+drawOverlay();
 }
 
 //---
@@ -210,114 +123,101 @@ void ScopePlotter::getScreenIntegerFFTData(qint32 plotHeight, qint32 plotWidth,
                                        float *inBuf, qint32 *outBuf,
                                        int *xmin, int *xmax) const
 {
-    qint32 i;
-    qint32 y;
-    qint32 x;
-    qint32 ymax = 10000;
-    qint32 xprev = -1;
-    qint32 minbin, maxbin;
-    qint32 m_BinMin, m_BinMax;
-    qint32 m_FFTSize = m_fftDataSize;
-    float *m_pFFTAveBuf = inBuf;
-    float  dBGainFactor = ((float)plotHeight) / fabs(maxdB - mindB);
-    auto* m_pTranslateTbl = new qint32[qMax(m_FFTSize, plotWidth)];
+qint32 i;
+qint32 y;
+qint32 x;
+qint32 ymax = 10000;
+qint32 xprev = -1;
+qint32 minbin, maxbin;
+qint32 m_BinMin, m_BinMax;
+qint32 m_FFTSize = m_fftDataSize;
+float *pFFTAveBuf = inBuf;
+float  dBGainFactor = ((float)plotHeight) / fabs(maxdB - mindB);
+auto* m_pTranslateTbl = new qint32[qMax(m_FFTSize, plotWidth)];
 
-//printf("plotHeight: %d, plotWidth %d \n",plotHeight,plotWidth);
-//printf("maxdB: %f, mindB: %f \n",maxdB, mindB);
-//printf("startFreq: %lld, stopFreq: %lld \n",startFreq,stopFreq);
-//printf("dBGainFactor: %f \n",dBGainFactor);
-//printf("m_FFTSize: %d, m_SampleFreq: %f \n",m_FFTSize,m_SampleFreq); 
+/** FIXME: qint64 -> qint32 **/
+m_BinMin = (qint32)((float)startFreq * (float)m_FFTSize / m_SampleFreq);
+m_BinMin += (m_FFTSize/2);
+m_BinMax = (qint32)((float)stopFreq * (float)m_FFTSize / m_SampleFreq);
+m_BinMax += (m_FFTSize/2);
 
-    /** FIXME: qint64 -> qint32 **/
-    m_BinMin = (qint32)((float)startFreq * (float)m_FFTSize / m_SampleFreq);
-    m_BinMin += (m_FFTSize/2);
-    m_BinMax = (qint32)((float)stopFreq * (float)m_FFTSize / m_SampleFreq);
-    m_BinMax += (m_FFTSize/2);
+minbin = m_BinMin < 0 ? 0 : m_BinMin;
+if (m_BinMin > m_FFTSize)
+    m_BinMin = m_FFTSize - 1;
+if (m_BinMax <= m_BinMin)
+    m_BinMax = m_BinMin + 1;
+maxbin = m_BinMax < m_FFTSize ? m_BinMax : m_FFTSize;
 
-    minbin = m_BinMin < 0 ? 0 : m_BinMin;
-    if (m_BinMin > m_FFTSize)
-        m_BinMin = m_FFTSize - 1;
-    if (m_BinMax <= m_BinMin)
-        m_BinMax = m_BinMin + 1;
-    maxbin = m_BinMax < m_FFTSize ? m_BinMax : m_FFTSize;
+bool largeFft = (m_BinMax-m_BinMin) > plotWidth; // true if more fft than plot points
 
-
-//printf("m_BinMax: %d, m_BinMin: %d \n",m_BinMax,m_BinMin);
-
-    bool largeFft = (m_BinMax-m_BinMin) > plotWidth; // true if more fft point than plot points
-
-    if (largeFft)
+//setup a FFT points to screen width translate table
+if (largeFft)
     {
-        // more FFT points than plot points
-//    printf("Large FFT: ");
+    // more FFT points than plot points
     for (i = minbin; i < maxbin; i++)
-            m_pTranslateTbl[i] = ((qint64)(i-m_BinMin)*plotWidth) / (m_BinMax - m_BinMin);
-        *xmin = m_pTranslateTbl[minbin];
-        *xmax = m_pTranslateTbl[maxbin - 1] + 1;
+        m_pTranslateTbl[i] = ((qint64)(i-m_BinMin)*plotWidth) / (m_BinMax -m_BinMin);
+    *xmin = m_pTranslateTbl[minbin];
+    *xmax = m_pTranslateTbl[maxbin - 1] + 1;
     }
-    else
+else
     {
-//    printf("Small FFT: ");
-        // more plot points than FFT points
-        for (i = 0; i < plotWidth; i++)
+    // more plot points than FFT points
+    for (i = 0; i < plotWidth; i++)
             m_pTranslateTbl[i] = m_BinMin + (i*(m_BinMax - m_BinMin)) / plotWidth;
-        *xmin = 0;
-        *xmax = plotWidth;
+    *xmin = 0;
+    *xmax = plotWidth;
     }
 
-    if (largeFft)
+//now do the width and heights
+if (largeFft)
     {
-//    printf("Squeeze\n");
-        // more FFT points than plot points
-        for (i = minbin; i < maxbin; i++ )
+    // more FFT points than plot points
+    for (i = minbin; i < maxbin; i++ ) //table is No of FFT ppoints wide
         {
-            y = (qint32)(dBGainFactor*(maxdB-m_pFFTAveBuf[i]));
+        y = (qint32)(dBGainFactor*(maxdB-pFFTAveBuf[i]));
 
-            if (y > plotHeight)
-                y = plotHeight;
-            else if (y < 0)
-                y = 0;
+        if (y > plotHeight)
+            y = plotHeight;
+        else if (y < 0)
+            y = 0;
 
-            x = m_pTranslateTbl[i];	//get fft bin to plot x coordinate transform
+        x = m_pTranslateTbl[i];	//get fft bin to plot x coordinate transform
 
-            if (x == xprev)   // still mappped to same fft bin coordinate
+        if (x == xprev)   // still mappped to same fft bin coordinate
             {
-                if (y < ymax) // store only the max value
+            if (y < ymax) // store only the max value
                 {
-                    outBuf[x] = y;
-                    ymax = y;
+                outBuf[x] = y;
+                ymax = y;
                 }
             }
-            else
+        else
             {
-                outBuf[x] = y;
-                xprev = x;
-                ymax = y;
+            outBuf[x] = y;
+            xprev = x;
+            ymax = y;
             }
         }
     }
-    else
+else
     {
-//    printf("Stretch\n");
-        // more plot points than FFT points
-        for (x = 0; x < plotWidth; x++ )
+    // more plot points than FFT points
+    for (x = 0; x < plotWidth; x++ ) //table is the size of screen width
         {
-            i = m_pTranslateTbl[x]; // get plot to fft bin coordinate transform
-            if(i < 0 || i >= m_FFTSize)
-                y = plotHeight;
-            else
-                y = (qint32)(dBGainFactor*(maxdB-m_pFFTAveBuf[i]));
+        i = m_pTranslateTbl[x]; // get plot to fft bin coordinate transform
+        if(i < 0 || i >= m_FFTSize)
+            y = plotHeight;
+        else
+            y = (qint32)(dBGainFactor*(maxdB-pFFTAveBuf[i]));
 
-            if (y > plotHeight)
-                y = plotHeight;
-            else if (y < 0)
-                y = 0;
-            outBuf[x] = y;
+        if (y > plotHeight)
+            y = plotHeight;
+        else if (y < 0)
+            y = 0;
+        outBuf[x] = y;
         }
     }
-
-//printf("xmin: %d, xmax: %d \n\n",*xmin,*xmax);
-    delete [] m_pTranslateTbl;
+delete [] m_pTranslateTbl;
 }
 
 //---
@@ -329,7 +229,8 @@ QPoint LineBuf[MAX_SCREENSIZE];
 int debugxx = num_points;
 debugxx*=2; //loose the warning
 double LinePoint;
-int i,l,plot_width;;
+int i,l,plot_width;
+int plot_height;
 int w;
 int h;
 //int xmin, xmax;
@@ -364,16 +265,31 @@ int xmin,xmax;
 w = m_WaterfallPixmap.width(); 
 plot_width = qMin(w, MAX_SCREENSIZE);
 
+plot_height = qMin(h, MAX_SCREENSIZE)/2;
+
+
 for(int i=0; i<1024;i++)
     {
     inbuf[i] = (float) trace_buf[i]; //trace_buf is our input data main
     inbuf[i] *= -1; //units are half-dB
     }    
+
+
+
+
+
 //inbuf[256] = -160;
-//inbuf[600] = -60;
+inbuf[600] = -120;
+inbuf[601] = -140;
+inbuf[602] = -160;
 
 
-getScreenIntegerFFTData(255, plot_width, //255 is plot height - need work on height.
+
+
+
+plot_height = 245; //245 works here but is a fudge
+
+getScreenIntegerFFTData(plot_height, plot_width, //255 is plot height - need work on height.
                         -30, -260 , //max and min dB
                         g_sample_rate/-2,
                         g_sample_rate/2,
@@ -382,7 +298,7 @@ getScreenIntegerFFTData(255, plot_width, //255 is plot height - need work on hei
 
      if(1) //FIXME this enables/disables the waterfall, debug only
         {
-       // for (i = xmin; i < xmax; i++)
+        l=0;
         for (i = l; i < plot_width; i++)
             {
 
@@ -525,6 +441,21 @@ emit    newFrequency(freq);
 return freq;
 }
 
+
+
+void ScopePlotter::mousePressEvent(QMouseEvent * event)
+{
+int mx,my;	
+QPoint pt = event->pos();
+mx = pt.x();
+my = pt.y();
+printf(" x: %d y: %d Ln: %d \n",mx,my,__LINE__);
+
+freqFromX(mx);
+
+}
+
+
 // Round frequency to click resolution value
 qint64 ScopePlotter::roundFreq(qint64 freq, int resolution)
 {
@@ -550,7 +481,35 @@ g_center_frequency = f;
  //   m_PeakHoldValid = false;
 }
 
+// Called when a mouse button is released
+void ScopePlotter::mouseReleaseEvent(QMouseEvent * event)
+{
+QPoint pt = event->pos();
 
+return; 
+
+if (!m_OverlayPixmap.rect().contains(pt))
+    { 
+	printf(" NOT in rect /");
+	} 
+ 
+else
+    {
+    printf(" YES in rect \n");
+	}
+}
+
+
+// Called when a mouse wheel is turned
+void ScopePlotter::wheelEvent(QWheelEvent * event)
+{
+int mx,my;	
+QPoint pt = event->pos();
+mx = pt.x();
+my = pt.y();
+printf(" x: %d y: %d Ln: %d \n",mx,my,__LINE__);
+printf("Mouse wheelie workie \n");
+}
 void ScopePlotter::setFftRange(float min, float max)
 {
     setWaterfallRange(min, max);
@@ -674,7 +633,9 @@ painter.setFont(Font);
     for (int i = 1; i < plot_VerDivs; i++)
     {
         y = (int)((float) i*vert_Pixperdiv);
-        painter.drawLine(5*metrics.width("0",-1), y,m_FftPixmap.width(), y);
+       // painter.drawLine(5*metrics.width("0",-1), y,m_FftPixmap.width(), y);
+        painter.drawLine(5*metrics.horizontalAdvance("0",-1), y,m_FftPixmap.width(), y);
+
     }
 
     // draw amplitude values
@@ -682,7 +643,8 @@ painter.setFont(Font);
     //Font.setWeight(QFont::Light);
     painter.setFont(Font);
     int dB = m_MaxdB;
-    m_YAxisWidth = metrics.width("-999 ");
+   // m_YAxisWidth = metrics.width("-999 ");
+m_YAxisWidth = metrics.horizontalAdvance("-999 ");
 	for (int i = 1; i < plot_VerDivs; i++)
 		{
 		y = (int)((float)i*vert_Pixperdiv);
@@ -703,6 +665,8 @@ painter.setFont(Font);
 }//drawOverLay
 
 
+//---
+//???
 //---
 
 
@@ -737,6 +701,21 @@ void ScopePlotter::calcDivSize (qint64 low, qint64 high, int divswanted, qint64 
 
 }
 
+
+void ScopePlotter::mouseMoveEvent(QMouseEvent* event)
+{
+int mx,my;	
+
+return;
+
+QPoint pt = event->pos();
+mx = pt.x();
+my = pt.y();
+
+printf(" x: %d y: %d \n",mx,my);
+
+}
+
 void ScopePlotter::setPlotColor(const QColor color)
 {
     m_FftColor = color;
@@ -747,6 +726,23 @@ void ScopePlotter::setPlotColor(const QColor color)
     m_PeakHoldColor=color;
     m_PeakHoldColor.setAlpha(60);
 }
+
+
+QSize ScopePlotter::minimumSizeHint() const
+{
+    return QSize(50, 50);
+}
+
+QSize ScopePlotter::sizeHint() const
+{
+    return QSize(180, 180);
+}
+
+
+
+
+
+
 
 //=================================================================
 

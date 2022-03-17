@@ -33,10 +33,10 @@ usleep(100000);//FIXME - probably not needed
 bool result =  socket->bind(QHostAddress::AnyIPv4, 11361);
 qDebug() << result;
 
-if(result)
-    printf(" PASS \n");
-else
-    printf(" FAIL \n");
+//if(result)
+//    printf(" PASS \n");
+//else
+//    printf(" FAIL \n");
 
 usleep(100000); //FIXME - probably not needed
 connect(socket, &QUdpSocket::readyRead,
@@ -89,7 +89,7 @@ while (socket->hasPendingDatagrams())
         if(snd_err < 0 )
             {      
             //Debug
-            printf(" S err %d \n",snd_err);
+          //  printf(" S err %d \n",snd_err);
             snd_pcm_recover(audio_device, snd_err, 1); //catch underruns (silent flag set, or not)
             usleep(1000);
             }
@@ -102,15 +102,18 @@ void Rxr::setup_sound()
 int err;
 int audio_sr = AUDIO_RATE;
 
-printf(" Setup sound devicce\n");
+printf(" Setup sound device\n");
 
 strcpy(alsa_device,"default");
 
 
-err = snd_pcm_open(&audio_device, alsa_device, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK); //0
-printf("err %d %d\n",err,__LINE__);
-err = snd_pcm_set_params(audio_device,SND_PCM_FORMAT_A_LAW, SND_PCM_ACCESS_RW_INTERLEAVED,1,audio_sr,1,400000); //latency in
-printf("err %d %d\n",err,__LINE__);
+err = snd_pcm_open(&audio_device, alsa_device, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
+err=err; //0
+//printf("err %d %d\n",err,__LINE__);
+err = snd_pcm_set_params(audio_device,SND_PCM_FORMAT_A_LAW, SND_PCM_ACCESS_RW_INTERLEAVED,1,audio_sr,1,400000);
+err=err;
+ //latency in
+//printf("err %d %d\n",err,__LINE__);
 }
 
 void Rxr::update_radio_cf(int cf )
