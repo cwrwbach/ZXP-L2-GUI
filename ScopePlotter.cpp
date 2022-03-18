@@ -19,6 +19,7 @@
 #define PLOTTER_CENTER_LINE_COLOR   0xFF788296
 #define PLOTTER_FILTER_LINE_COLOR   0xFFFF7171
 #define PLOTTER_FILTER_BOX_COLOR    0xFFA0A0A4
+#define ROUNDING_VAL 1000
 
 
 int g_audio_sample_rate = 8000;
@@ -274,7 +275,8 @@ for(int i=0; i<1024;i++)
     inbuf[i] *= -1; //units are half-dB
     }    
 
-
+//for(int i=0; i<1024;i++)
+ //   inbuf[i] = (float)((i+102)/-102) * 25;
 
 
 
@@ -289,12 +291,17 @@ for(int i=0; i<1024;i++)
 
 plot_height = 245; //245 works here but is a fudge
 
+
 getScreenIntegerFFTData(plot_height, plot_width,
                         -30, -260 , //max and min dB
                         g_sample_rate/-2,
                         g_sample_rate/2,
                         inbuf, outbuf,
                         &xmin,&xmax);
+
+//for(int i=0; i<1024;i++)
+//    outbuf[i] = (int) inbuf[i];
+
 
      if(1) //FIXME this enables/disables the waterfall, debug only
         {
@@ -416,43 +423,33 @@ int ScopePlotter::xFromFreq(qint64 freq)
     return x;
 }
 
-// Convert from screen coordinate to frequency
-qint64 ScopePlotter::freqFromX(int x)
+//---
+
+qint64 ScopePlotter::freqFromX(int x) // convert screen coordinate to frequency
 {
+float  f_freq;
 int freq;
 float width = (float) m_OverlayPixmap.width();
-float pix_per_bin = width / g_fft_size;
-float bin_step = (float) g_sample_rate / g_fft_size;
-int start_freq = g_center_frequency - g_sample_rate / 2;
+int start_freq = g_center_frequency - g_sample_rate/2;
 
-//qint64 freq = (qint64)(StartFreq + (float)m_Span * (float)x / (float)w);
-
-//printf(" CenterF %d FftCenter %d Span %d ",m_CenterFreq,m_FftCenter, m_Span);
-//printf(" W %d StartF %d Frq %d Ln %d \n",w,StartFreq,f,__LINE__);
-
-freq = (int) roundf( start_freq + (x * pix_per_bin) * bin_step);
-
-
-//printf(" G sample rate: %d frq: %d \n",g_sample_rate,freq);
-
-
-emit    newFrequency(freq);
-
+f_freq = ((float) g_sample_rate/width*x) +( float) start_freq;
+f_freq /=ROUNDING_VAL;
+freq = (int) roundf(f_freq);
+freq *=ROUNDING_VAL;
+emit    newFrequency(freq); //send to world
 return freq;
 }
 
-
+//---
 
 void ScopePlotter::mousePressEvent(QMouseEvent * event)
 {
-int mx,my;	
+int mx,my;
 QPoint pt = event->pos();
 mx = pt.x();
 my = pt.y();
-printf(" x: %d y: %d Ln: %d \n",mx,my,__LINE__);
 
 freqFromX(mx);
-
 }
 
 
