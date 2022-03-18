@@ -8,7 +8,7 @@
 #include <QMap>
 
 #define HORZ_DIVS_MAX 50 //12
-#define MAX_SCREENSIZE 1800
+#define MAX_SCREENSIZE 1920 //Max reolution of the monitor
 
 class ScopePlotter : public QFrame
 {

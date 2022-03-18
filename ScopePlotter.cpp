@@ -23,7 +23,7 @@
 
 
 int g_audio_sample_rate = 8000;
-int g_sample_rate = 500000;
+int g_sample_rate = 512000;
 int g_fft_size = 1024;
 int g_center_frequency=10000000;
 
@@ -40,8 +40,8 @@ setAttribute(Qt::WA_NoSystemBackground, true);
 setMouseTracking(true);
 
 m_FreqUnits = 100;
-m_StartFreqAdj = 5000000 - 250000; //Center - (FreqPerDiv * (HorDivs/2))
-m_FreqPerDiv = 25000; //Sample rate/HorDivs
+m_StartFreqAdj = 5120000 - 256000; //Center - (FreqPerDiv * (HorDivs/2))
+m_FreqPerDiv = 25600; //Sample rate/HorDivs
 m_FftCenter = 0;
 
 m_HorDivs = 16;
@@ -257,7 +257,7 @@ if ((w != 0) || (h != 0))
     painter_wf.setPen(QColor(0x00,0x00,0x00));
 
 m_fftDataSize = 1024;
-m_SampleFreq = 500000;
+m_SampleFreq = 512000;
 
 float inbuf[4096];
 int outbuf[4096];
@@ -436,6 +436,8 @@ f_freq = ((float) g_sample_rate/width*x) +( float) start_freq;
 f_freq /=ROUNDING_VAL;
 freq = (int) roundf(f_freq);
 freq *=ROUNDING_VAL;
+printf(" X: %d Freq: %d \n",x,freq); 
+
 emit    newFrequency(freq); //send to world
 return freq;
 }
