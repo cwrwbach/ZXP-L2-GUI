@@ -41,10 +41,10 @@ setMouseTracking(true);
 
 m_FreqUnits = 100;
 m_StartFreqAdj = 5120000 - 256000; //Center - (FreqPerDiv * (HorDivs/2))
-m_FreqPerDiv = 25600; //Sample rate/HorDivs
+m_FreqPerDiv = 25000; //Sample rate/HorDivs
 m_FftCenter = 0;
 
-m_HorDivs = 16;
+m_HorDivs = 10;
 m_VerDivs = 13;
 m_PandMaxdB = m_WfMaxdB = 0.f;
 m_PandMindB = m_WfMindB = -150.f;
@@ -359,10 +359,10 @@ void ScopePlotter::makeFrequencyStrs()
     int     i,j;
 
 
-//printf(" StartFrq: %d Units: %d h_divs: %d \n",StartFreq,m_FreqDigits,m_HorDivs);
+printf(" StartFrq: %d Units: %d h_divs: %d \n",StartFreq,m_FreqDigits,m_HorDivs);
 
 
-    if (0)//((1 == m_FreqUnits) || (m_FreqDigits == 0)) //FIXM BODGE
+    if (1)//((1 == m_FreqUnits) || (m_FreqDigits == 0)) //FIXM BODGE
     {
         // if units is Hz then just output integer freq
         for (int i = 0; i <= m_HorDivs; i++)
@@ -438,7 +438,7 @@ freq = (int) roundf(f_freq);
 freq *=ROUNDING_VAL;
 printf(" X: %d Freq: %d \n",x,freq); 
 
-emit    newFrequency(freq); //send to world
+//emit    newFrequency(freq); //send to world
 return freq;
 }
 
@@ -569,11 +569,15 @@ int pw = m_WaterfallPixmap.width();
 int ph = m_WaterfallPixmap.height() * 10;
 //int plot_height = PLOT_HEIGHT ; 
 int x,y;
-float horiz_Pixperdiv,vert_Pixperdiv;
+float horiz_Pixperdiv;
+float vert_Pixperdiv;
+
+float pix_per_bin;
+float horiz_grid;
+ 
 
 //if (m_OverlayPixmap.isNull())
 //	return;
-
 QRect rect;
 QPainter painter(&m_OverlayPixmap);
 painter.initFrom(this);
@@ -596,20 +600,31 @@ painter.setPen(QPen(QColor(0xF0,0xF0,0xF0,0x30), 1, Qt::DotLine));
 QFont Font("Arial");
 Font.setPointSize(m_FontSize);
 QFontMetrics metrics(Font);
-
 Font.setWeight(QFont::Normal);
 painter.setFont(Font);
 
-    // draw vertical grid lines
-    horiz_Pixperdiv = pw / (float)plot_HorDivs;
-    y = ph ; //plot_height ; 
+
+pix_per_bin = (float) pw/1024;
+horiz_grid = pix_per_bin * 100;
+
+y = ph ; //plot_height ; 
     
     painter.setPen(QPen(QColor(0xF0,0xF0,0xF0,0x30), 1, Qt::DotLine));
-    for (int i = 1; i < plot_HorDivs; i++)
+
+
+
+    for (int i = 1,x=pw/2   ; i < 6; i++)
     {
-        x = (int)((float)i*horiz_Pixperdiv);
+        x += (int)horiz_grid;
         painter.drawLine(x, 0, x, y);
     }
+
+for (int i = 1,x=pw/2   ; i < 6; i++)
+    {
+        x -= (int)horiz_grid;
+        painter.drawLine(x, 0, x, y);
+    }
+
 
 //printf(" FREQUENCY STRINGS %d \n",__LINE__);
     // draw frequency values
