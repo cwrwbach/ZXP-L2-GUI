@@ -275,6 +275,7 @@ for(int i=0; i<1024;i++)
     inbuf[i] *= -1; //units are half-dB
     }    
 
+//debugging test stairs
 //for(int i=0; i<1024;i++)
  //   inbuf[i] = (float)((i+102)/-102) * 25;
 
@@ -324,6 +325,9 @@ QPainter painter_fft(&m_FftPixmap);
 xmin = 0; //the left-ist position on screen
 ph=(double) h; //plot_height;
 lw=(double) lower-upper; 
+
+lw=-1176;
+
 y_scale =  ph/lw;
 
     painter_fft.setPen(m_FftColor); //fft trace colour
@@ -359,10 +363,10 @@ void ScopePlotter::makeFrequencyStrs()
     int     i,j;
 
 
-printf(" StartFrq: %d Units: %d h_divs: %d \n",StartFreq,m_FreqDigits,m_HorDivs);
+//printf(" StartFrq: %lld Units: %d h_divs: %d \n",StartFreq,m_FreqDigits,m_HorDivs);
 
 
-    if (1)//((1 == m_FreqUnits) || (m_FreqDigits == 0)) //FIXM BODGE
+    if (0)//((1 == m_FreqUnits) || (m_FreqDigits == 0)) //FIXM BODGE
     {
         // if units is Hz then just output integer freq
         for (int i = 0; i <= m_HorDivs; i++)
@@ -397,12 +401,19 @@ printf(" StartFrq: %d Units: %d h_divs: %d \n",StartFreq,m_FreqDigits,m_HorDivs)
         if ((j - dp) > max)
             max = j - dp;
     } max = 3;
+
+
+//printf(" LLL %d : %d \n",m_HorDivs,__LINE__);
     // truncate all strings to maximum fractional length
     StartFreq = m_StartFreqAdj;
     for (i = 0; i <= m_HorDivs; i++)
     {
         freq = (float)StartFreq/(float)m_FreqUnits;
-        m_HDivText[i].setNum(freq/10000,'f', max); //FIXME BODGE
+freq = 123456789;
+
+
+        m_HDivText[i].setNum(freq/10000,'abc123', max); //FIXME BODGE
+//m_HDivText[i].setNum(1234,'f', max); //FIXME BODGE
         StartFreq += m_FreqPerDiv;
     }
 }//make freq strs
@@ -436,9 +447,9 @@ f_freq = ((float) g_sample_rate/width*x) +( float) start_freq;
 f_freq /=ROUNDING_VAL;
 freq = (int) roundf(f_freq);
 freq *=ROUNDING_VAL;
-printf(" X: %d Freq: %d \n",x,freq); 
+//printf(" X: %d Freq: %d \n",x,freq); 
 
-//emit    newFrequency(freq); //send to world
+emit    newFrequency(freq); //send to world
 return freq;
 }
 
@@ -574,7 +585,7 @@ float vert_Pixperdiv;
 
 float pix_per_bin;
 float horiz_grid;
- 
+int fred; 
 
 //if (m_OverlayPixmap.isNull())
 //	return;
@@ -594,7 +605,7 @@ painter.setPen(QPen(QColor(0xF0,0xF0,0xF0,0x30), 1, Qt::DotLine));
     y=500;
     painter.drawLine(x, 0, x, y);
     }
- update();
+update();
 
 // create Font to use for scales
 QFont Font("Arial");
@@ -603,20 +614,28 @@ QFontMetrics metrics(Font);
 Font.setWeight(QFont::Normal);
 painter.setFont(Font);
 
-
 pix_per_bin = (float) pw/1024;
 horiz_grid = pix_per_bin * 100;
 
 y = ph ; //plot_height ; 
     
-    painter.setPen(QPen(QColor(0xF0,0xF0,0xF0,0x30), 1, Qt::DotLine));
+painter.setPen(QPen(QColor(0xF0,0xF0,0xF0,0x30), 1, Qt::DotLine));
 
-
+m_YAxisWidth = metrics.horizontalAdvance("-999 ");
 
     for (int i = 1,x=pw/2   ; i < 6; i++)
     {
         x += (int)horiz_grid;
         painter.drawLine(x, 0, x, y);
+
+
+ //rect.setRect(x, y, (int)horiz_Pixperdiv, ph/plot_VerDivs);
+//        painter.drawText(rect, Qt::AlignHCenter|Qt::AlignBottom, m_HDivText[i]);
+fred = 4242;
+rect.setRect(0, y-metrics.height()/2, m_YAxisWidth, metrics.height());
+        painter.drawText(rect, Qt::AlignRight|Qt::AlignVCenter, QString::number(fred));
+
+
     }
 
 for (int i = 1,x=pw/2   ; i < 6; i++)
@@ -629,12 +648,15 @@ for (int i = 1,x=pw/2   ; i < 6; i++)
 //printf(" FREQUENCY STRINGS %d \n",__LINE__);
     // draw frequency values
     makeFrequencyStrs();
+
     painter.setPen(QColor(0xD8,0xBA,0xA1,0xFF));
     y = ph - (ph/plot_VerDivs);
     m_XAxisYCenter = ph - metrics.height()/2;
     for (int i = 1; i < plot_HorDivs; i++)
     {
+
         x = (int)((float)i*horiz_Pixperdiv - horiz_Pixperdiv/2);
+
         rect.setRect(x, y, (int)horiz_Pixperdiv, ph/plot_VerDivs);
         painter.drawText(rect, Qt::AlignHCenter|Qt::AlignBottom, m_HDivText[i]);
     }
@@ -642,11 +664,13 @@ for (int i = 1,x=pw/2   ; i < 6; i++)
     //m_dBStepSize = abs(m_MaxdB-m_MindB)/(double)plot_VerDivs;
     m_dBStepSize = 10;
     
-    vert_Pixperdiv = (float)ph / (float)plot_VerDivs;
+    vert_Pixperdiv = (float)ph / (float)plot_VerDivs * (float) 85/100;
     painter.setPen(QPen(QColor(0xF0,0xF0,0xF0,0x30), 1,Qt::DotLine));
     for (int i = 1; i < plot_VerDivs; i++)
     {
         y = (int)((float) i*vert_Pixperdiv);
+//printf("percent: %d \n",m_Percent2DScreen);
+
        // painter.drawLine(5*metrics.width("0",-1), y,m_FftPixmap.width(), y);
         painter.drawLine(5*metrics.horizontalAdvance("0",-1), y,m_FftPixmap.width(), y);
 
@@ -720,7 +744,7 @@ void ScopePlotter::mouseMoveEvent(QMouseEvent* event)
 {
 int mx,my;	
 
-return;
+//return;
 
 QPoint pt = event->pos();
 mx = pt.x();
