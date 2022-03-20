@@ -280,16 +280,6 @@ for(int i=0; i<1024;i++)
  //   inbuf[i] = (float)((i+102)/-102) * 25;
 
 
-
-//inbuf[256] = -160;
-//inbuf[600] = -120;
-//inbuf[601] = -140;
-//inbuf[602] = -160;
-
-
-
-
-
 plot_height = 245; //245 works here but is a fudge
 
 
@@ -299,10 +289,6 @@ getScreenIntegerFFTData(plot_height, plot_width,
                         g_sample_rate/2,
                         inbuf, outbuf,
                         &xmin,&xmax);
-
-//for(int i=0; i<1024;i++)
-//    outbuf[i] = (int) inbuf[i];
-
 
      if(1) //FIXME this enables/disables the waterfall, debug only
         {
@@ -465,19 +451,6 @@ my = pt.y();
 freqFromX(mx);
 }
 
-/*
-// Round frequency to click resolution value
-qint64 ScopePlotter::roundFreq(qint64 freq, int resolution)
-{
-    qint64 delta = resolution;
-    qint64 delta_2 = delta / 2;
-    if (freq >= 0)
-        return (freq - (freq + delta_2) % delta + delta_2);
-    else
-        return (freq - (freq + delta_2) % delta - delta_2);
-}
-*/
-
 void ScopePlotter::setCenterFreq(quint64 f)
 {
 g_center_frequency = f;
@@ -501,7 +474,6 @@ else
 	}
 }
 
-
 // Called when a mouse wheel is turned
 void ScopePlotter::wheelEvent(QWheelEvent * event)
 {
@@ -511,43 +483,6 @@ mx = pt.x();
 my = pt.y();
 printf(" x: %d y: %d Ln: %d \n",mx,my,__LINE__);
 printf("Mouse wheelie workie \n");
-}
-/*
-void ScopePlotter::setFftRange(float min, float max)
-{
-    setWaterfallRange(min, max);
-    setPandapterRange(min, max);
-}
-*/
-/*
-void ScopePlotter::setPandapterRange(float min, float max)
-{
-  //  if (out_of_range(min, max))
-    //    return;
-
-    m_PandMindB = min;
-    m_PandMaxdB = max;
-    updateOverlay();
-    m_PeakHoldValid = false;
-}
-
-void ScopePlotter::setWaterfallRange(float min, float max)
-{
-   // if (out_of_range(min, max))
-    //    return;
-
-    m_WfMindB = min;
-    m_WfMaxdB = max;
-    // no overlay change is necessary
-}
-*/
-
-/** Center FFT plot around 0 (corresponds to center freq). */
-void ScopePlotter::moveToCenterFreq(void)
-{
-    setFftCenterFreq(0);
-    updateOverlay();
-    m_PeakHoldValid = false;
 }
 
 /** Set peak hold on or off. */
@@ -698,43 +633,6 @@ m_YAxisWidth = metrics.horizontalAdvance("-999 ");
 }//drawOverLay
 
 
-//---
-//???
-//---
-
-/*
-void ScopePlotter::calcDivSize (qint64 low, qint64 high, int divswanted, qint64 &adjlow, qint64 &step, int& divs)
-{
-
-    if (divswanted == 0)
-        return;
-
-    static const qint64 stepTable[] = { 1, 2, 5 };
-    static const int stepTableSize = sizeof (stepTable) / sizeof (stepTable[0]);
-    qint64 multiplier = 1;
-    step = 1;
-    divs = high - low;
-    int index = 0;
-    adjlow = (low / step) * step;
-
-    while (divs > divswanted)
-    {
-        step = stepTable[index] * multiplier;
-        divs = int ((high - low) / step);
-        adjlow = (low / step) * step;
-        index = index + 1;
-        if (index == stepTableSize)
-        {
-            index = 0;
-            multiplier = multiplier * 10;
-        }
-    }
-    if (adjlow < low)
-        adjlow += step;
-
-}
-*/
-
 void ScopePlotter::mouseMoveEvent(QMouseEvent* event)
 {
 int mx,my;	
@@ -759,24 +657,6 @@ void ScopePlotter::setPlotColor(const QColor color)
     m_PeakHoldColor=color;
     m_PeakHoldColor.setAlpha(60);
 }
-
-/*
-QSize ScopePlotter::minimumSizeHint() const
-{
-    return QSize(50, 50);
-}
-
-QSize ScopePlotter::sizeHint() const
-{
-    return QSize(180, 180);
-}
-
-*/
-
-
-
-
-
 
 //=================================================================
 
