@@ -58,7 +58,7 @@ m_DrawOverlay = true;
 
 m_MaxdB = -60;
 m_MindB = -160;
-m_dBStepSize = 10; //abs(m_MaxdB-m_MindB)/m_VerDivs;
+m_dBStepSize = 20; //abs(m_MaxdB-m_MindB)/m_VerDivs;
 
 m_Running = false;
 m_DrawOverlay = true;
@@ -85,11 +85,9 @@ void ScopePlotter::draw_trace(int * trace_buf,int left,int num_points)
 {
 QPoint LineBuf[MAX_SCREENSIZE];
 double LinePoint;
-int i,plot_width;
-int plot_height;
-int www,hhh;
+int i;
+int wide,high;
 double y_scale;
-//double ph;
 float inbuf[2048];
 int outbuf[2048];
 
@@ -99,25 +97,22 @@ if (m_DrawOverlay)
     m_DrawOverlay = false;
     }
    
-www = m_FftPixmap.width();
-hhh = m_FftPixmap.height();
+wide = m_FftPixmap.width();
+high = m_FftPixmap.height();
 
-if ((www != 0) || (hhh != 0))
+if ((wide != 0) || (high != 0))
     {
 	// redraw 2Dbitmap with overlay bitmap.
-  	m_FftPixmap = m_OverlayPixmap.copy(0,0,www,hhh);
-    m_WaterfallPixmap.scroll(0, 1, 0, 0, www, hhh); //scroll the wfall down
+  	m_FftPixmap = m_OverlayPixmap.copy(0,0,wide,high);
+    m_WaterfallPixmap.scroll(0, 1, 0, 0, wide, high); //scroll the wfall down
     QPainter painter_wf(&m_WaterfallPixmap);
     painter_wf.setPen(QColor(0x00,0x00,0x00));
 
     g_fftDataSize = num_points;
     
-    www = m_WaterfallPixmap.width(); 
-    plot_width = qMin(www, MAX_SCREENSIZE);
-    plot_height = qMin(hhh, MAX_SCREENSIZE)/2;
-
-
-    for(int i=0; i<1024;i++)
+    wide = m_WaterfallPixmap.width(); 
+ 
+    for(int i=0; i<num_points;i++)
         {
         inbuf[i] = (float) trace_buf[i]; //trace_buf is our input data main
         inbuf[i] *= -1; //units are half-dB
@@ -125,20 +120,24 @@ if ((www != 0) || (hhh != 0))
 
 //debugging test stairs
 //for(int i=0; i<1024;i++)
- //   inbuf[i] = (float)((i+102)/-102) * 25;
+//    inbuf[i] = (float)((i+102)/-102) * 25;
 
-
-    plot_height = g_fft_range; //Governed by the max resolution of FFT ampl of 255* 0.5dB
+inbuf[300] = -160;
+inbuf[301] = -160;
+inbuf[302] = -140;
+inbuf[303] = -140;
+inbuf[304] = -120;
+inbuf[305] = -120;
 
     int xmin,xmax;
-    getScreenIntegerFFTData(plot_height, plot_width,
-                        -30, -260 , //max and min dB
+    getScreenIntegerFFTData(g_fft_range, wide,
+                        -40, -260 , //max and min dB
                         g_sample_rate/-2,
                         g_sample_rate/2,
                         inbuf, outbuf,
                         &xmin,&xmax);
     
-    for (i = left; i < plot_width; i++)
+    for (i = left; i < wide; i++)
         {
         int inx = 50+outbuf[i]; //100+trace_buf[i];
         painter_wf.setPen(QColor(turbo[inx][0],turbo[inx][1],turbo[inx][2]));
@@ -148,44 +147,23 @@ if ((www != 0) || (hhh != 0))
     painter_wf.end();
 
     QPainter painter_fft(&m_FftPixmap);
-    y_scale = (double) hhh/g_fft_range;
+    y_scale = (double) high/g_fft_range;
     y_scale *= (float) m_Percent2DScreen/100;
     painter_fft.setPen(m_FftColor); //fft trace colour
-    for (i = left; i < plot_width; i++)
+    for (i = left; i < wide; i++)
         {
 		LinePoint = (float) outbuf[i]* y_scale;
         LineBuf[i].setX(i + left);
         LineBuf[i].setY((int)LinePoint); 
         show();
         }    
-    painter_fft.drawPolyline(LineBuf,plot_width); //paint a line with n points from LineBuf[n]
+    painter_fft.drawPolyline(LineBuf,wide); //paint a line with n points from LineBuf[n]
     painter_fft.end();
     }
 update(); // trigger a new paintEvent
 }
 
 //---
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // Called by QT when screen needs to be redrawn
 void ScopePlotter::paintEvent(QPaintEvent *)
@@ -195,15 +173,7 @@ painter.drawPixmap(0,0,m_FftPixmap);
 painter.drawPixmap(0, m_Percent2DScreen*m_Size.height()/100,m_WaterfallPixmap);
 }
 
-
-
-
-
-
-
-
-
-//-=-=-=-
+//---
 
 void ScopePlotter::resizeEvent(QResizeEvent* ) //recalculate bitmaps
 {
@@ -252,7 +222,7 @@ qint32 minbin, maxbin;
 qint32 m_BinMin, m_BinMax;
 qint32 m_FFTSize = g_fftDataSize;
 float *pFFTAveBuf = inBuf;
-float  dBGainFactor = ((float)plotHeight) / fabs(maxdB - mindB);
+float  dBGainFactor = 1.0; //((float)plotHeight) / fabs(maxdB - mindB); printf(" GFAC %f \n",dBGainFactor);
 auto* m_pTranslateTbl = new qint32[qMax(m_FFTSize, plotWidth)];
 
 /** FIXME: qint64 -> qint32 **/
@@ -516,7 +486,7 @@ void ScopePlotter::drawOverlay()
 {
 int pw = m_WaterfallPixmap.width();
 int ph = m_WaterfallPixmap.height() * 10;
-//int plot_height = PLOT_HEIGHT ; 
+
 int x,y;
 float horiz_Pixperdiv;
 float vert_Pixperdiv;
@@ -535,6 +505,7 @@ painter.initFrom(this);
 plot_VerDivs = m_VerDivs; //PLOT_VER_DIVS ; 
 plot_HorDivs = m_HorDivs ; //PLOT_HOR_DIVS ; 
 
+//CENTER LINE
 painter.setPen(QPen(QColor(0xF0,0xF0,0xF0,0x30), 1, Qt::DotLine));
 //Draw a centre line (later for cursor line)
   for (int i = 1; i < 500; i++)
@@ -600,19 +571,58 @@ for (int i = 1,x=pw/2   ; i < 6; i++)
     }
 
     //m_dBStepSize = abs(m_MaxdB-m_MindB)/(double)plot_VerDivs;
-    m_dBStepSize = 10;
-    
-    vert_Pixperdiv = (float)ph / (float)plot_VerDivs * (float) 85/100;
-    painter.setPen(QPen(QColor(0xF0,0xF0,0xF0,0x30), 1,Qt::DotLine));
-    for (int i = 1; i < plot_VerDivs; i++)
-    {
-        y = (int)((float) i*vert_Pixperdiv);
-//printf("percent: %d \n",m_Percent2DScreen);
 
+
+
+ // y_scale = (double) high/g_fft_range;
+ //   y_scale *= (float) m_Percent2DScreen/100;
+
+float fy;
+//HORIZONTAL GRID
+int high = m_FftPixmap.height();
+
+double y_scale = (double) high/g_fft_range;
+        y_scale *= (float) m_Percent2DScreen/100;
+
+    m_dBStepSize = 20;
+    
+  //  vert_Pixperdiv = (float)ph *(float) 85/100 /255 *20;                     ;
+    painter.setPen(QPen(QColor(0xF0,0xFf,0xFf,0xf0), 1,Qt::DotLine));
+  //  for (int i = 1; i < plot_VerDivs; i++)
+
+float aaa,bbb,ccc;
+aaa=130;
+bbb=110;
+ccc=90;
+
+
+int ia= (int) (aaa * y_scale);
+int ib= (int) (bbb * y_scale);
+int ic= (int) (ccc * y_scale);
+
+painter.drawLine(0,ia,1000,ia);
+
+painter.drawLine(0,ib,1000,ib);
+
+painter.drawLine(0,ic,1000,ic);
+
+/*
+for (int i = 1; i < 14; i++)
+    {
+
+        fy=  i*20*y_scale;
+        y = (int) fy;
+        printf("high: %d, i: %d, fy: %f ,y: %d \n",high,i,fy,y);
        // painter.drawLine(5*metrics.width("0",-1), y,m_FftPixmap.width(), y);
         painter.drawLine(5*metrics.horizontalAdvance("0",-1), y,m_FftPixmap.width(), y);
 
     }
+*/
+
+
+
+
+
 
     // draw amplitude values
     painter.setPen(QColor(0xD8,0xBA,0xA1,0xFF));
