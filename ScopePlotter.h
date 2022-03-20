@@ -60,6 +60,8 @@ private:
     void drawOverlay();
 
     bool isPointCloseTo(int x, int xr, int delta){return ((x > (xr-delta) ) && ( x<(xr+delta)) );}
+
+
 //	qint32 m_fftbuf[MAX_SCREENSIZE];
  //   qint32 dai_showbuf[MAX_SCREENSIZE];
 	int m_XAxisYCenter;
@@ -68,27 +70,28 @@ private:
     QPixmap m_FftPixmap;
     QPixmap m_OverlayPixmap;
     QPixmap m_WaterfallPixmap;
-    QColor m_ColorTbl[256];
+ //   QColor m_ColorTbl[256];
     QSize m_Size;
-    QString m_Str;
+ //   QString m_Str;
     QString m_HDivText[HORZ_DIVS_MAX+1];
     bool m_Running;
     bool m_DrawOverlay;
  
     int m_Percent2DScreen;
 
-    int m_FLowCmin;
-    int m_FLowCmax;
-    int m_FHiCmin;
-    int m_FHiCmax;
-    bool m_symetric;
+//    int m_FLowCmin;
+//    int m_FLowCmax;
+//    int m_FHiCmin;
+//    int m_FHiCmax;
+//    bool m_symetric;
 
     int    plot_HorDivs;   /*!< Current number of horizontal divisions. Calculated from width. */
     int    plot_VerDivs;   /*!< Current number of vertical divisions. Calculated from height. */
+
     double m_MaxdB;
     double m_MindB;
     qint32 m_dBStepSize;
-    qint32 m_FreqUnits;
+   qint32 m_FreqUnits;
 
     int m_FreqDigits;  /*!< Number of decimal digits in frequency strings. */
 
@@ -151,8 +154,8 @@ private:
 
     bool        m_PeakHoldActive;
     bool        m_PeakHoldValid;
-    quint8      m_wfbuf[MAX_SCREENSIZE]; // used for accumulating waterfall data at high time spans
-    qint32      m_fftPeakHoldBuf[MAX_SCREENSIZE];
+ //   quint8      m_wfbuf[MAX_SCREENSIZE]; // used for accumulating waterfall data at high time spans
+ //   qint32      m_fftPeakHoldBuf[MAX_SCREENSIZE];
     float      *m_fftData;     /*! pointer to incoming FFT data */
     float      *m_wfData;
     int         m_fftDataSize;
@@ -163,17 +166,17 @@ private:
     qint64      m_DemodCenterFreq;
     qint64      m_StartFreqAdj;
     qint64      m_FreqPerDiv;
-    bool        m_CenterLineEnabled;  /*!< Distinguish center line. */
-    bool        m_FilterBoxEnabled;   /*!< Draw filter box. */
-    bool        m_TooltipsEnabled;     /*!< Tooltips enabled */
-    bool        m_BookmarksEnabled;   /*!< Show/hide bookmarks on spectrum */
-    int         m_DemodHiCutFreq;
-    int         m_DemodLowCutFreq;
-    int         m_DemodFreqX;		//screen coordinate x position
-    int         m_DemodHiCutFreqX;	//screen coordinate x position
-    int         m_DemodLowCutFreqX;	//screen coordinate x position
-    int         m_CursorCaptureDelta;
-    int         m_GrabPosition;
+ //   bool        m_CenterLineEnabled;  /*!< Distinguish center line. */
+//    bool        m_FilterBoxEnabled;   /*!< Draw filter box. */
+//    bool        m_TooltipsEnabled;     /*!< Tooltips enabled */
+//    bool        m_BookmarksEnabled;   /*!< Show/hide bookmarks on spectrum */
+//    int         m_DemodHiCutFreq;
+ //   int         m_DemodLowCutFreq;
+ //   int         m_DemodFreqX;		//screen coordinate x position
+ //   int         m_DemodHiCutFreqX;	//screen coordinate x position
+//    int         m_DemodLowCutFreqX;	//screen coordinate x position
+//    int         m_CursorCaptureDelta;
+//    int         m_GrabPosition;
  
     int         m_HorDivs;   /*!< number of horizontal divisions. Calculated from width. */
     int         m_VerDivs;   /*!< number of vertical divisions. Calculated from height. */
@@ -186,7 +189,7 @@ private:
     qint64      m_Span;
     float       m_SampleFreq;    /*!< Sample rate. */
 
-    int         m_ClickResolution;
+//    int         m_ClickResolution;
     QFont       m_Font;         /*!< Font used for plotter (system font) */
     int         m_HdivDelta; /*!< Minimum distance in pixels between two horizontal grid lines (vertical division). */
 
