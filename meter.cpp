@@ -41,6 +41,7 @@ CMeter::~CMeter()
 {
 }
 
+/*
 QSize CMeter::minimumSizeHint() const
 {
     return QSize(20, 10);
@@ -50,6 +51,7 @@ QSize CMeter::sizeHint() const
 {
     return QSize(100, 30);
 }
+*/
 
 void CMeter::resizeEvent(QResizeEvent *)
 {

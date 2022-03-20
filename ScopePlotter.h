@@ -1,13 +1,9 @@
-#ifndef PLOTTER_H
-#define PLOTTER_H
+#pragma once
 
 #include <QtGui>
 #include <QFrame>
-#include <QImage>
-#include <vector>
-#include <QMap>
 
-#define HORZ_DIVS_MAX 50 //12
+#define HORZ_DIVS_MAX 50 
 #define MAX_SCREENSIZE 1920 //Max reolution of the monitor
 
 class ScopePlotter : public QFrame
@@ -18,19 +14,19 @@ public:
     explicit ScopePlotter(QWidget *parent = 0);
     ~ScopePlotter();
   
-    void draw_trace( qint32 *,int,int,int,int );	//call to draw new data onto screen plot
+    void draw_trace( qint32 *,int,int,int,int ); //draw new data onto screen plot
 	void updateOverlay() { drawOverlay(); }
-    void setFontSize(int points) { m_FontSize = points; }
-    void setHdivDelta(int delta) { HdivDelta = delta; }
-    void setVdivDelta(int delta) { m_VdivDelta = delta; }
-    void setFreqDigits(int digits) { m_FreqDigits = digits>=0 ? digits : 0; }
+ //   void setFontSize(int points) { m_FontSize = points; }
+//    void setHdivDelta(int delta) { HdivDelta = delta; }
+ //   void setVdivDelta(int delta) { m_VdivDelta = delta; }
+//    void setFreqDigits(int digits) { m_FreqDigits = digits>=0 ? digits : 0; }
 
 signals:
-    void newCenterFreq(qint64 f);
-    void newDemodFreq(qint64 freq, qint64 delta); /* delta is the offset from the center */
-    void newLowCutFreq(int f);
-    void newHighCutFreq(int f);
-    void newFilterFreq(int low, int high);  /* substute for NewLow / NewHigh */
+//    void newCenterFreq(qint64 f);
+ //   void newDemodFreq(qint64 freq, qint64 delta); /* delta is the offset from the center */
+ //   void newLowCutFreq(int f);
+//    void newHighCutFreq(int f);
+ //   void newFilterFreq(int low, int high);  /* substute for NewLow / NewHigh */
     void newFrequency(qint64 freq); // emitted when frequency has changed
 
 public slots:
@@ -38,9 +34,9 @@ public slots:
     void setCenterFreq(quint64 f);
     void setPeakDetection(bool enabled, float c);
     void setPeakHold(bool enabled);
-    void setFftRange(float min, float max);
-    void setPandapterRange(float min, float max);
-    void setWaterfallRange(float min, float max);
+//    void setFftRange(float min, float max);
+ //   void setPandapterRange(float min, float max);
+//    void setWaterfallRange(float min, float max);
     void moveToCenterFreq(void);
 
 protected:
@@ -142,7 +138,7 @@ private:
     void        makeFrequencyStrs();
     int         xFromFreq(qint64 freq);
     qint64      freqFromX(int x);
-    qint64      roundFreq(qint64 freq, int resolution);
+//    qint64      roundFreq(qint64 freq, int resolution);
     quint64     msecFromY(int y);
     void        clampDemodParameters();
 
@@ -151,7 +147,7 @@ private:
                                  qint64 startFreq, qint64 stopFreq,
                                  float *inBuf, qint32 *outBuf,
                                  qint32 *maxbin, qint32 *minbin)const;
-    void calcDivSize (qint64 low, qint64 high, int divswanted, qint64 &adjlow, qint64 &step, int& divs);
+ //   void calcDivSize (qint64 low, qint64 high, int divswanted, qint64 &adjlow, qint64 &step, int& divs);
 
     bool        m_PeakHoldActive;
     bool        m_PeakHoldValid;
@@ -203,7 +199,7 @@ private:
 
 
 
-#endif // PLOTTER_H
+
 
 
 

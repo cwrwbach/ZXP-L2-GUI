@@ -465,7 +465,7 @@ my = pt.y();
 freqFromX(mx);
 }
 
-
+/*
 // Round frequency to click resolution value
 qint64 ScopePlotter::roundFreq(qint64 freq, int resolution)
 {
@@ -476,19 +476,11 @@ qint64 ScopePlotter::roundFreq(qint64 freq, int resolution)
     else
         return (freq - (freq + delta_2) % delta - delta_2);
 }
+*/
 
 void ScopePlotter::setCenterFreq(quint64 f)
 {
 g_center_frequency = f;
-
-
- //   if((quint64)m_CenterFreq == f)
-  //      return;
- //   qint64 offset = m_CenterFreq - m_DemodCenterFreq;
- //   
- //   m_DemodCenterFreq = m_CenterFreq - offset;
- //   updateOverlay();
- //   m_PeakHoldValid = false;
 }
 
 // Called when a mouse button is released
@@ -520,12 +512,14 @@ my = pt.y();
 printf(" x: %d y: %d Ln: %d \n",mx,my,__LINE__);
 printf("Mouse wheelie workie \n");
 }
+/*
 void ScopePlotter::setFftRange(float min, float max)
 {
     setWaterfallRange(min, max);
     setPandapterRange(min, max);
 }
-
+*/
+/*
 void ScopePlotter::setPandapterRange(float min, float max)
 {
   //  if (out_of_range(min, max))
@@ -546,6 +540,7 @@ void ScopePlotter::setWaterfallRange(float min, float max)
     m_WfMaxdB = max;
     // no overlay change is necessary
 }
+*/
 
 /** Center FFT plot around 0 (corresponds to center freq). */
 void ScopePlotter::moveToCenterFreq(void)
@@ -707,7 +702,7 @@ m_YAxisWidth = metrics.horizontalAdvance("-999 ");
 //???
 //---
 
-
+/*
 void ScopePlotter::calcDivSize (qint64 low, qint64 high, int divswanted, qint64 &adjlow, qint64 &step, int& divs)
 {
 
@@ -738,7 +733,7 @@ void ScopePlotter::calcDivSize (qint64 low, qint64 high, int divswanted, qint64 
         adjlow += step;
 
 }
-
+*/
 
 void ScopePlotter::mouseMoveEvent(QMouseEvent* event)
 {

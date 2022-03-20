@@ -14,8 +14,8 @@ public:
                     QWidget *parent = 0);
     ~CMeter();
 
-    QSize minimumSizeHint() const;
-    QSize sizeHint() const;
+ //   QSize minimumSizeHint() const;
+//    QSize sizeHint() const;
 
     void setMin(float min_level);
     void setMax(float max_level);
