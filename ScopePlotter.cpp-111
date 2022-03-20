@@ -26,7 +26,6 @@
 int g_audio_sample_rate = 8000;
 int g_sample_rate = 512000;
 int g_fft_size = 1024;
-int g_fft_range = 255;
 int g_center_frequency=10000000;
 
 ///---
@@ -40,8 +39,6 @@ setAutoFillBackground(false);
 setAttribute(Qt::WA_OpaquePaintEvent, false);
 setAttribute(Qt::WA_NoSystemBackground, true);
 setMouseTracking(true);
-
-g_SampleFreq = 512000;
 
 m_FreqUnits = 100;
 m_StartFreqAdj = 5120000 - 256000; //Center - (FreqPerDiv * (HorDivs/2))
@@ -85,13 +82,12 @@ void ScopePlotter::draw_trace(int * trace_buf,int left,int num_points)
 {
 QPoint LineBuf[MAX_SCREENSIZE];
 double LinePoint;
-int i,plot_width;
+int i,l,plot_width;
 int plot_height;
-int www,hhh;
+int wxx;
+int hxx;
 double y_scale;
-//double ph;
-float inbuf[2048];
-int outbuf[2048];
+double ph,lw;
 
 if (m_DrawOverlay)
 	{
@@ -99,22 +95,29 @@ if (m_DrawOverlay)
     m_DrawOverlay = false;
     }
    
-www = m_FftPixmap.width();
-hhh = m_FftPixmap.height();
+wxx = m_FftPixmap.width();
+hxx = m_FftPixmap.height();
 
-if ((www != 0) || (hhh != 0))
+if ((wxx != 0) || (hxx != 0))
     {
 	// redraw 2Dbitmap with overlay bitmap.
-  	m_FftPixmap = m_OverlayPixmap.copy(0,0,www,hhh);
-    m_WaterfallPixmap.scroll(0, 1, 0, 0, www, hhh); //scroll the wfall down
+  	m_FftPixmap = m_OverlayPixmap.copy(0,0,wxx,hxx);
+    m_WaterfallPixmap.scroll(0, 1, 0, 0, wxx, hxx); //scroll the wfall down
+    
     QPainter painter_wf(&m_WaterfallPixmap);
     painter_wf.setPen(QColor(0x00,0x00,0x00));
 
     g_fftDataSize = num_points;
-    
-    www = m_WaterfallPixmap.width(); 
-    plot_width = qMin(www, MAX_SCREENSIZE);
-    plot_height = qMin(hhh, MAX_SCREENSIZE)/2;
+    g_SampleFreq = 512000;
+
+    float inbuf[4096];
+    int outbuf[4096];
+    int xmin,xmax;
+
+    wxx = m_WaterfallPixmap.width(); 
+    plot_width = qMin(wxx, MAX_SCREENSIZE);
+
+    plot_height = qMin(hxx, MAX_SCREENSIZE)/2;
 
 
     for(int i=0; i<1024;i++)
@@ -128,18 +131,21 @@ if ((www != 0) || (hhh != 0))
  //   inbuf[i] = (float)((i+102)/-102) * 25;
 
 
-    plot_height = g_fft_range; //Governed by the max resolution of FFT ampl of 255* 0.5dB
+    plot_height = 245; //245 works here but is a fudge
 
-    int xmin,xmax;
+
     getScreenIntegerFFTData(plot_height, plot_width,
                         -30, -260 , //max and min dB
                         g_sample_rate/-2,
                         g_sample_rate/2,
                         inbuf, outbuf,
                         &xmin,&xmax);
-    
-    for (i = left; i < plot_width; i++)
+
+     
+    l=0;
+    for (i = l; i < plot_width; i++)
         {
+
         int inx = 50+outbuf[i]; //100+trace_buf[i];
         painter_wf.setPen(QColor(turbo[inx][0],turbo[inx][1],turbo[inx][2]));
         painter_wf.drawPoint(i,0);
@@ -148,16 +154,27 @@ if ((www != 0) || (hhh != 0))
     painter_wf.end();
 
     QPainter painter_fft(&m_FftPixmap);
-    y_scale = (double) hhh/g_fft_range;
-    y_scale *= (float) m_Percent2DScreen/100;
+
+    xmin = 0; //the left-ist position on screen
+    ph=(double) hxx; //plot_height;
+    //lw=(double) lower-upper; 
+
+    lw=-1176;
+
+    y_scale =  ph/lw;
+
     painter_fft.setPen(m_FftColor); //fft trace colour
-    for (i = left; i < plot_width; i++)
+    l=left;         
+
+    for (i = l; i < plot_width; i++)
         {
-		LinePoint = (float) outbuf[i]* y_scale;
-        LineBuf[i].setX(i + left);
+		LinePoint = (float) outbuf[i] *5  ; //(double) trace_buf[i] * 10; //10
+        LinePoint = LinePoint * -y_scale;
+	    LineBuf[i].setX(i + xmin);
         LineBuf[i].setY((int)LinePoint); 
         show();
         }    
+ 
     painter_fft.drawPolyline(LineBuf,plot_width); //paint a line with n points from LineBuf[n]
     painter_fft.end();
     }

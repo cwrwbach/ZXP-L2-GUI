@@ -145,7 +145,7 @@ void Rxr::update_radio_rfg(int val)
 {
 buffer[RFG]= val;
 socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress(serv_addr),11361);
-printf("radio rfg: %d\n",val);
+//printf("radio rfg: %d\n",val);
 }
 
 
@@ -153,14 +153,14 @@ void Rxr::update_radio_afg(int val)
 {
 buffer[AFG]= val;
 socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress(serv_addr),11361);
-printf("radio afg: %d\n",val);
+//printf("radio afg: %d\n",val);
 };
 
 void Rxr::update_mir_gr(int val)
 {
 buffer[MIR_RSP_GR]= val;
 socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress(serv_addr),11361);
-printf("gr: %d\n",val);
+//printf("gr: %d\n",val);
 }
 
 

@@ -181,7 +181,7 @@ if(stream_flag ==true)
     ui->stat_5->setText(str_5);
     ui->stat_6->setText(str_6);
 */
-    ui->alpha_plotter->draw_trace(fft_video_buf,0,1024,-1500,-200); //(left,Num points,lower,upper)
+    ui->alpha_plotter->draw_trace(fft_video_buf,0,1024); //(left,Num points)
  //   printf(" After drawtrace %d\n",bug3++);
     }
 }

@@ -13,7 +13,7 @@ public:
     explicit ScopePlotter(QWidget *parent = 0);
     ~ScopePlotter();
   
-    void draw_trace( qint32 *,int,int,int,int ); //draw new data onto screen plot
+    void draw_trace( qint32 *,int,int ); //draw new data onto screen plot
 	void updateOverlay() { drawOverlay(); }
 
 signals:
@@ -80,18 +80,18 @@ private:
     {
         if (rate > 0.0)
         {
-            m_SampleFreq = rate;
+            g_SampleFreq = rate;
             drawOverlay();
         }
     }
 
     float getSampleRate(void)
     {
-        return m_SampleFreq;
+        return g_SampleFreq;
     }
 
     void setFftCenterFreq(qint64 f) {
-        qint64 limit = ((qint64)m_SampleFreq + m_Span) / 2 - 1;
+        qint64 limit = ((qint64)g_SampleFreq + m_Span) / 2 - 1;
         m_FftCenter = qBound(-limit, f, limit);
     }
 
@@ -110,7 +110,7 @@ private:
     bool        m_PeakHoldValid;
     float      *m_fftData;     /*! pointer to incoming FFT data */
     float      *m_wfData;
-    int         m_fftDataSize;
+    int         g_fftDataSize;
 
     eCapturetype    m_CursorCaptured;
  
@@ -125,7 +125,7 @@ private:
     float       m_WfMindB;
     float       m_WfMaxdB;
     qint64      m_Span;
-    float       m_SampleFreq;    /*!< Sample rate. */
+    float       g_SampleFreq;    /*!< Sample rate. */
     QFont       m_Font;         /*!< Font used for plotter (system font) */
     int         m_HdivDelta; /*!< Minimum distance in pixels between two horizontal grid lines (vertical division). */
     float       m_PeakDetection;
