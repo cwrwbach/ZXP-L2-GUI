@@ -98,8 +98,8 @@ private:
 
     QColor m_FftColor, m_FftCol0, m_FftCol1, m_PeakHoldColor;
 
-    QSize minimumSizeHint() const;
-    QSize sizeHint() const;
+ //   QSize minimumSizeHint() const;
+ //   QSize sizeHint() const;
 
     void draw();	//draw new fft data onto screen plot
     void setRunningState(bool running) { m_Running = running; }

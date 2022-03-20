@@ -760,7 +760,7 @@ void ScopePlotter::setPlotColor(const QColor color)
     m_PeakHoldColor.setAlpha(60);
 }
 
-
+/*
 QSize ScopePlotter::minimumSizeHint() const
 {
     return QSize(50, 50);
@@ -771,6 +771,7 @@ QSize ScopePlotter::sizeHint() const
     return QSize(180, 180);
 }
 
+*/
 
 
 
