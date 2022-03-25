@@ -69,6 +69,8 @@ m_Percent2DScreen = 85;	//FINDME  //percent of screen used for 2D display
 
 m_FontSize = 9;
 m_VdivDelta = 100;
+m_FreqDigits = 4;
+
 HdivDelta = 20;
 
 setPlotColor(QColor(0x00,0xff,0x00,0xff));
