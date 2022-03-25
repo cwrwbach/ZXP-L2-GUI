@@ -124,12 +124,7 @@ if ((wide != 0) || (high != 0))
 //for(int i=0; i<1024;i++)
 //    inbuf[i] = (float)((i+102)/-102) * 25;
 
-inbuf[300] = -160;
-inbuf[301] = -160;
-inbuf[302] = -140;
-inbuf[303] = -140;
-inbuf[304] = -120;
-inbuf[305] = -120;
+//inbuf[300]=-160;inbuf[301]=-160;inbuf[302]=-140;inbuf[303]=-140;inbuf[304]=-120;inbuf[305]=-120;
 
     int xmin,xmax;
     getScreenIntegerFFTData(g_fft_range, wide,
