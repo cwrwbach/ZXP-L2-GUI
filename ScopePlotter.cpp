@@ -486,15 +486,12 @@ void ScopePlotter::drawOverlay()
 {
 int pw = m_WaterfallPixmap.width();
 int ph = m_WaterfallPixmap.height() * 10;
-
 int x,y;
 float horiz_Pixperdiv;
 float vert_Pixperdiv;
-
 float pix_per_bin;
 float horiz_grid;
 int fred; 
-
 //if (m_OverlayPixmap.isNull())
 //	return;
 QRect rect;
@@ -527,115 +524,82 @@ pix_per_bin = (float) pw/1024;
 horiz_grid = pix_per_bin * 100;
 
 y = ph ; //plot_height ; 
-    
 painter.setPen(QPen(QColor(0xF0,0xF0,0xF0,0x30), 1, Qt::DotLine));
 
 m_YAxisWidth = metrics.horizontalAdvance("-999 ");
 
-    for (int i = 1,x=pw/2   ; i < 6; i++)
+//Draw freq grid from center to right
+for (int i = 1,x=pw/2 ; i < 6; i++)
     {
-        x += (int)horiz_grid;
-        painter.drawLine(x, 0, x, y);
-
-
- //rect.setRect(x, y, (int)horiz_Pixperdiv, ph/plot_VerDivs);
-//        painter.drawText(rect, Qt::AlignHCenter|Qt::AlignBottom, m_HDivText[i]);
-fred = 4242;
-rect.setRect(0, y-metrics.height()/2, m_YAxisWidth, metrics.height());
-        painter.drawText(rect, Qt::AlignRight|Qt::AlignVCenter, QString::number(fred));
-
-
+    x += (int)horiz_grid;
+    painter.drawLine(x, 0, x, y);
     }
 
+//draw freq grid from center to left
 for (int i = 1,x=pw/2   ; i < 6; i++)
     {
-        x -= (int)horiz_grid;
-        painter.drawLine(x, 0, x, y);
+    x -= (int)horiz_grid;
+    painter.drawLine(x, 0, x, y);
     }
 
+makeFrequencyStrs(); //make the freq strings
 
-//printf(" FREQUENCY STRINGS %d \n",__LINE__);
-    // draw frequency values
-    makeFrequencyStrs();
-
-    painter.setPen(QColor(0xD8,0xBA,0xA1,0xFF));
-    y = ph - (ph/plot_VerDivs);
-    m_XAxisYCenter = ph - metrics.height()/2;
-    for (int i = 1; i < plot_HorDivs; i++)
+//debug only
+for(int q = 1 ;q<6 ;q++)
     {
+    m_HDivText[q].setNum(5.432,'f', m_FreqDigits);
+    } 
 
-        x = (int)((float)i*horiz_Pixperdiv - horiz_Pixperdiv/2);
+//Draw freq values
+painter.setPen(QColor(0xD8,0xBA,0xA1,0xFF));
+y = ph - (ph/plot_VerDivs);
+m_XAxisYCenter = ph - metrics.height()/2;
+for (int i = 1; i < plot_HorDivs; i++)
+    {
+    x = (int)((float)i*horiz_Pixperdiv - horiz_Pixperdiv/2);
 
-        rect.setRect(x, y, (int)horiz_Pixperdiv, ph/plot_VerDivs);
-        painter.drawText(rect, Qt::AlignHCenter|Qt::AlignBottom, m_HDivText[i]);
+   // rect.setRect(x, y, (int)horiz_Pixperdiv, ph/plot_VerDivs);
+//just debug
+    rect.setRect(200+i*100, 200 ,50,50); // (int)horiz_Pixperdiv, ph/plot_VerDivs);
+    
+    painter.drawText(rect, Qt::AlignHCenter|Qt::AlignBottom, m_HDivText[i]);
     }
 
-    //m_dBStepSize = abs(m_MaxdB-m_MindB)/(double)plot_VerDivs;
-
-
-
- // y_scale = (double) high/g_fft_range;
- //   y_scale *= (float) m_Percent2DScreen/100;
-
-float fy;
-//HORIZONTAL GRID
+//Now amplitude stuff ...
 int high = m_FftPixmap.height();
-
 double y_scale = (double) high/g_fft_range;
-        y_scale *= (float) m_Percent2DScreen/100;
+y_scale *= (float) m_Percent2DScreen/100;
+m_dBStepSize = 10;
+painter.setPen(QPen(QColor(0xF0,0xFf,0xFf,0x30), 1,Qt::DotLine));
+float fy;
 
-    m_dBStepSize = 10;
-    
-  //  vert_Pixperdiv = (float)ph *(float) 85/100 /255 *20;                     ;
-    painter.setPen(QPen(QColor(0xF0,0xFf,0xFf,0x30), 1,Qt::DotLine));
-  //  for (int i = 1; i < plot_VerDivs; i++)
-
-//float aaa,bbb,ccc;
-//aaa=160;
-//bbb=140;
-//ccc=120;
-//int ia= (int) (aaa * y_scale);
-//int ib= (int) (bbb * y_scale);
-//int ic= (int) (ccc * y_scale);
-//painter.drawLine(0,ia,1000,ia);
-//painter.drawLine(0,ib,1000,ib);
-//painter.drawLine(0,ic,1000,ic);
-
-
+//draw amplitude grid
 for (int i = 1; i < 14; i++)
     {
-
-        fy=  i*20*y_scale;
-        y = (int) fy;
-       // printf("high: %d, i: %d, fy: %f ,y: %d \n",high,i,fy,y);
-       // painter.drawLine(5*metrics.width("0",-1), y,m_FftPixmap.width(), y);
-        painter.drawLine(5*metrics.horizontalAdvance("0",-1), y,m_FftPixmap.width(), y);
-
+    fy=  i*20*y_scale;
+    y = (int) fy;
+    // painter.drawLine(5*metrics.width("0",-1), y,m_FftPixmap.width(), y);
+    painter.drawLine(5*metrics.horizontalAdvance("0",-1), y,m_FftPixmap.width(), y);
     }
 
-
-    // draw amplitude values
-    painter.setPen(QColor(0xD8,0xBA,0xA1,0xFF));
-    //Font.setWeight(QFont::Light);
-    painter.setFont(Font);
-    int dB = m_MaxdB;
-   // m_YAxisWidth = metrics.width("-999 ");
+// draw amplitude values
+painter.setPen(QColor(0xD8,0xBA,0xA1,0xFF));
+//Font.setWeight(QFont::Light);
+painter.setFont(Font);
+int dB = m_MaxdB;
+// m_YAxisWidth = metrics.width("-999 ");
 m_YAxisWidth = metrics.horizontalAdvance("-999 ");
-	for (int i = 1; i < 14; i++)
-		{
-
-        fy=  i*20*y_scale;
-        y = (int) fy;
+for (int i = 1; i < 14; i++)
+    {
+    fy=  i*20*y_scale;
+    y = (int) fy;
 //		y = (int)((float)i*vert_Pixperdiv);
-
-
-        rect.setRect(0, y-metrics.height()/2, m_YAxisWidth, metrics.height());
-        painter.drawText(rect, Qt::AlignRight|Qt::AlignVCenter, QString::number(dB));
-        dB -= m_dBStepSize;  // move to end if want to include maxdb  
+    rect.setRect(0, y-metrics.height()/2, m_YAxisWidth, metrics.height());
+    painter.drawText(rect, Qt::AlignRight|Qt::AlignVCenter, QString::number(dB));
+    dB -= m_dBStepSize;  // move to end if want to include maxdb  
 	}
 		
-
-    if (!m_Running)
+if (!m_Running)
     {
         // if not running so is no data updates to draw to screen
         // copy into 2Dbitmap the overlay bitmap.
@@ -645,6 +609,7 @@ m_YAxisWidth = metrics.horizontalAdvance("-999 ");
     }
 }//drawOverLay
 
+//---
 
 void ScopePlotter::mouseMoveEvent(QMouseEvent* event)
 {
@@ -659,6 +624,8 @@ my = pt.y();
 //printf(" x: %d y: %d \n",mx,my);
 
 }
+
+//---
 
 void ScopePlotter::setPlotColor(const QColor color)
 {
