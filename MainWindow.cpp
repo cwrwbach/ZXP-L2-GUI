@@ -51,6 +51,13 @@ connect(ui->ar1, SIGNAL(clicked()), this, SLOT(set_ar1()));
 connect(ui->ar2, SIGNAL(clicked()), this, SLOT(set_ar2()));
 connect(ui->ar3, SIGNAL(clicked()), this, SLOT(set_ar3()));
 
+connect(ui->src16p1, SIGNAL(clicked()), this, SLOT(set_src16p1()));
+connect(ui->src16p2, SIGNAL(clicked()), this, SLOT(set_src16p2()));
+connect(ui->src14p1, SIGNAL(clicked()), this, SLOT(set_src14p1()));
+connect(ui->src14p2, SIGNAL(clicked()), this, SLOT(set_src14p2()));
+
+
+
 //connect(ui->ip0, SIGNAL(clicked()), this, SLOT(set_ip0()));
 //connect(ui->ip1, SIGNAL(clicked()), this, SLOT(set_ip1()));
 //connect(ui->ip2, SIGNAL(clicked()), this, SLOT(set_ip2()));
@@ -131,6 +138,33 @@ void MainWindow::set_ar3(){ radio_rx.update_radio_ar(3);}
 void MainWindow::set_dsb(){ radio_rx.update_radio_demod(1);}
 void MainWindow::set_usb(){ radio_rx.update_radio_demod(2);}
 void MainWindow::set_lsb(){ radio_rx.update_radio_demod(3);}
+
+void MainWindow::set_src16p1()
+{
+ 
+}
+
+void MainWindow::set_src16p2()
+{
+ 
+}
+
+void MainWindow::set_src14p1()
+{
+ 
+}
+
+void MainWindow::set_src14p2()
+{
+ 
+}
+
+
+
+
+
+
+
 
 void MainWindow::set_mir_dab_n(int state)
 {
