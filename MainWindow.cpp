@@ -141,22 +141,22 @@ void MainWindow::set_lsb(){ radio_rx.update_radio_demod(3);}
 
 void MainWindow::set_src16p1()
 {
- 
+radio_rx.update_radio_chan(1); 
 }
 
 void MainWindow::set_src16p2()
 {
- 
+radio_rx.update_radio_chan(2); 
 }
 
 void MainWindow::set_src14p1()
 {
- 
+radio_rx.update_radio_chan(1); 
 }
 
 void MainWindow::set_src14p2()
 {
- 
+radio_rx.update_radio_chan(2);
 }
 
 

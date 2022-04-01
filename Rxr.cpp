@@ -6,8 +6,8 @@
 #include <alsa/asoundlib.h>
 
 //#define SERV_ADDR "192.168.2.2"
-//#define SERV_ADDR "192.168.2.222"
-#define SERV_ADDR "192.168.2.242"
+#define SERV_ADDR "192.168.2.222"
+//#define SERV_ADDR "192.168.2.242"
 //#define SERV_ADDR "192.168.2.101"
 //#define SERV_ADDR "45.66.38.105"
 #define AUDIO_RATE 8000
@@ -155,6 +155,18 @@ buffer[AFG]= val;
 socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress(serv_addr),11361);
 //printf("radio afg: %d\n",val);
 };
+
+void Rxr::update_radio_chan(int val)
+{
+buffer[CHAN_SEL]= val;
+socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress(serv_addr),11361);
+//printf("radio afg: %d\n",val);
+};
+
+
+
+
+
 
 void Rxr::update_mir_gr(int val)
 {

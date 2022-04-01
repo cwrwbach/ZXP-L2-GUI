@@ -11,7 +11,9 @@
 #define AFG 8
 #define DMOD 9
 #define SSEL 10
-#define MIR_DECIM_CONTROL 11
+#define CHAN_SEL 11
+
+//this rsp stuff to be removed ??? FIXME
 #define MIR_BW 20
 #define MIR_IF 21
 #define MIR_AGC_ENABLE 30
@@ -35,6 +37,7 @@
 #define MIR_IQ_ENBL 55
 #define MIR_PPM_SET 60
 
+
 class Rxr : public QObject
 {
     Q_OBJECT
@@ -47,6 +50,7 @@ public:
     void setup_socket();
     void sendgram();
     void update_radio_demod(int);
+    void update_radio_chan(int);
     void update_radio_cf(int);
     void update_radio_sr(int);
     void update_radio_ar(int);
