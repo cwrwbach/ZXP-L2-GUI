@@ -51,7 +51,7 @@ private:
     QPixmap m_OverlayPixmap;
     QPixmap m_WaterfallPixmap;
     QSize m_Size;
-    QString m_HDivText[HORZ_DIVS_MAX+1];
+    QString m_HDivText[HORZ_DIVS_MAX];
     bool m_Running;
     bool m_DrawOverlay;
     int m_Percent2DScreen;
@@ -96,7 +96,7 @@ private:
     }
 
     int     getNearestPeak(QPoint pt);
-    void        makeFrequencyStrs();
+    void        makeFrequencyStrings();
     int         xFromFreq(qint64 freq);
     qint64      freqFromX(int x);
 

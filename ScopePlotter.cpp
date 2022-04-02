@@ -320,7 +320,7 @@ delete [] m_pTranslateTbl;
 // Keeps all strings the same fractional length
 //FIXME THIS IS ALL A BIG BODGE
 
-void ScopePlotter::makeFrequencyStrs()
+void ScopePlotter::makeFrequencyStrings()
 {
     qint64  StartFreq = m_StartFreqAdj;
     float   freq;
@@ -380,10 +380,9 @@ freq = 123456789;
 //m_HDivText[i].setNum(1234,'f', max); //FIXME BODGE
         StartFreq += m_FreqPerDiv;
     }
-}//make freq strs
+}//make freq strings
 
 //---
-
 
 // Convert from frequency to screen coordinate
 int ScopePlotter::xFromFreq(qint64 freq)
@@ -491,20 +490,20 @@ float horiz_Pixperdiv;
 float vert_Pixperdiv;
 float pix_per_bin;
 float horiz_grid;
-int fred; 
-//if (m_OverlayPixmap.isNull())
-//	return;
+int high = m_FftPixmap.height();
+double y_scale = (double) high/g_fft_range;
+y_scale *= (float) m_Percent2DScreen/100;
+
 QRect rect;
 QPainter painter(&m_OverlayPixmap);
 painter.initFrom(this);
 
-//Grids
 plot_VerDivs = m_VerDivs; //PLOT_VER_DIVS ; 
 plot_HorDivs = m_HorDivs ; //PLOT_HOR_DIVS ; 
 
 //CENTER LINE
 painter.setPen(QPen(QColor(0xF0,0xF0,0xF0,0x30), 1, Qt::DotLine));
-//Draw a centre line (later for cursor line)
+//Draw a centre line
   for (int i = 1; i < 500; i++)
     {
     x = m_WaterfallPixmap.width()/2; 
@@ -528,6 +527,8 @@ painter.setPen(QPen(QColor(0xF0,0xF0,0xF0,0x30), 1, Qt::DotLine));
 
 m_YAxisWidth = metrics.horizontalAdvance("-999 ");
 
+//***
+
 //Draw freq grid from center to right
 for (int i = 1,x=pw/2 ; i < 6; i++)
     {
@@ -542,33 +543,19 @@ for (int i = 1,x=pw/2   ; i < 6; i++)
     painter.drawLine(x, 0, x, y);
     }
 
-makeFrequencyStrs(); //make the freq strings
+//makeFrequencyStrings();
 
 //debug only
-for(int q = 1 ;q<6 ;q++)
+for(int q = 1 ;q<8 ;q++)
     {
-    m_HDivText[q].setNum(5.432,'f', m_FreqDigits);
+    m_HDivText[q].setNum((float) q * 0.1,'f', m_FreqDigits);
     } 
 
-//Draw freq values
-painter.setPen(QColor(0xD8,0xBA,0xA1,0xFF));
-y = ph - (ph/plot_VerDivs);
-m_XAxisYCenter = ph - metrics.height()/2;
-for (int i = 1; i < plot_HorDivs; i++)
-    {
-    x = (int)((float)i*horiz_Pixperdiv - horiz_Pixperdiv/2);
 
-   // rect.setRect(x, y, (int)horiz_Pixperdiv, ph/plot_VerDivs);
-//just debug
-    rect.setRect(200+i*100, 200 ,50,50); // (int)horiz_Pixperdiv, ph/plot_VerDivs);
-    
-    painter.drawText(rect, Qt::AlignHCenter|Qt::AlignBottom, m_HDivText[i]);
-    }
+//***
 
 //Now amplitude stuff ...
-int high = m_FftPixmap.height();
-double y_scale = (double) high/g_fft_range;
-y_scale *= (float) m_Percent2DScreen/100;
+
 m_dBStepSize = 10;
 painter.setPen(QPen(QColor(0xF0,0xFf,0xFf,0x30), 1,Qt::DotLine));
 float fy;
@@ -580,6 +567,28 @@ for (int i = 1; i < 14; i++)
     y = (int) fy;
     // painter.drawLine(5*metrics.width("0",-1), y,m_FftPixmap.width(), y);
     painter.drawLine(5*metrics.horizontalAdvance("0",-1), y,m_FftPixmap.width(), y);
+    }
+
+//Draw freq values
+painter.setPen(QColor(0xD8,0xBA,0xA1,0xFF));
+
+rect.setRect(pw/2-25,y-30 ,50,50); // (int)horiz_Pixperdiv, ph/plot_VerDivs);
+    painter.drawText(rect, Qt::AlignHCenter|Qt::AlignBottom, m_HDivText[2]);
+
+//Draw freq strings from center to right
+for (int i = 1,x=pw/2 ; i < 6; i++)
+    {
+    x += (int)horiz_grid;
+    rect.setRect(x-25,y-30,50,50); // (int)horiz_Pixperdiv, ph/plot_VerDivs);
+    painter.drawText(rect, Qt::AlignHCenter|Qt::AlignBottom, m_HDivText[i]);
+    }
+
+//draw freq strings from center to left
+for (int i = 1,x=pw/2   ; i < 6; i++)
+    {
+    x -= (int)horiz_grid;
+    rect.setRect(x-25,y-30 ,50,50); // (int)horiz_Pixperdiv, ph/plot_VerDivs);
+    painter.drawText(rect, Qt::AlignHCenter|Qt::AlignBottom, m_HDivText[i]);
     }
 
 // draw amplitude values
