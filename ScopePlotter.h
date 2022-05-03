@@ -96,7 +96,7 @@ private:
     }
 
     int     getNearestPeak(QPoint pt);
-    void        makeFrequencyStrings();
+//    void        makeFrequencyStrings();
     int         xFromFreq(qint64 freq);
     qint64      freqFromX(int x);
 
