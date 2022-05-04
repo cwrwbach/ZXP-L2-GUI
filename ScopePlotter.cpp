@@ -15,21 +15,13 @@
 // Colors of type QRgb in 0xAARRGGBB format (unsigned int)
 #define PLOTTER_BGD_COLOR           0xFF1F1F1D
 #define WFALL_BGD_COLOR             0xFF1f2F1D
-#define PLOTTER_GRID_COLOR          0xFF444242
-#define PLOTTER_TEXT_COLOR          0xFFDADADA
-#define PLOTTER_CENTER_LINE_COLOR   0xFF788296
-#define PLOTTER_FILTER_LINE_COLOR   0xFFFF7171
-#define PLOTTER_FILTER_BOX_COLOR    0xFFA0A0A4
 #define ROUNDING_VAL 1000
 
-
-int g_audio_sample_rate = 8000;
 int g_sample_rate = 512000;
-int g_fft_size = 1024;
 int g_fft_range = 255;
 int g_center_frequency=8000000;
 
-///---
+//---
 
 ScopePlotter::ScopePlotter(QWidget *parent) : QFrame(parent) //Constructor
 {
@@ -80,8 +72,7 @@ ScopePlotter::~ScopePlotter() //destructor
 {
 }
 
-///---
-
+//---
 
 void ScopePlotter::draw_trace(int * trace_buf,int left,int num_points)
 {
@@ -174,6 +165,8 @@ painter.drawPixmap(0, m_Percent2DScreen*m_Size.height()/100,m_WaterfallPixmap);
 
 void ScopePlotter::resizeEvent(QResizeEvent* ) //recalculate bitmaps
 {
+int height;
+
 if (!size().isValid())
     return;
 
@@ -185,7 +178,7 @@ if (m_Size != size()) //resize pixmaps to new screensize
     m_FftPixmap = QPixmap(m_Size.width(), m_Percent2DScreen*m_Size.height()/100);
     m_FftPixmap.fill(Qt::red); //???
 
-    int height = (100-m_Percent2DScreen)*m_Size.height()/100;
+    height = (100-m_Percent2DScreen)*m_Size.height()/100;
     if (m_WaterfallPixmap.isNull()) 
         {
         m_WaterfallPixmap = QPixmap(m_Size.width(), height);
@@ -219,7 +212,7 @@ qint32 minbin, maxbin;
 qint32 m_BinMin, m_BinMax;
 qint32 m_FFTSize = g_fftDataSize;
 float *pFFTAveBuf = inBuf;
-float  dBGainFactor = 1.0; //((float)plotHeight) / fabs(maxdB - mindB); printf(" GFAC %f \n",dBGainFactor);
+//float  dBGainFactor = 1.0; //((float)plotHeight) / fabs(maxdB - mindB); printf(" GFAC %f \n",dBGainFactor);
 auto* m_pTranslateTbl = new qint32[qMax(m_FFTSize, plotWidth)];
 
 /** FIXME: qint64 -> qint32 **/
@@ -312,81 +305,6 @@ delete [] m_pTranslateTbl;
 
 //---
 
-//---
-
-
-/*
-// Create frequency division strings based on start frequency, span frequency,
-// and frequency units.
-// Places in QString array m_HDivText
-// Keeps all strings the same fractional length
-//FIXME THIS IS ALL A BIG BODGE
-
-void ScopePlotter::makeFrequencyStrings()
-{
-    qint64  StartFreq = m_StartFreqAdj;
-    float   freq;
-    int     i,j;
-
-
-//printf(" StartFrq: %lld Units: %d h_divs: %d \n",StartFreq,m_FreqDigits,m_HorDivs);
-
-
-    if (0)//((1 == m_FreqUnits) || (m_FreqDigits == 0)) //FIXM BODGE
-    {
-        // if units is Hz then just output integer freq
-        for (int i = 0; i <= m_HorDivs; i++)
-        {
-            freq = (float)StartFreq/(float)m_FreqUnits;
-            m_HDivText[i].setNum((int)freq);
-            StartFreq += m_FreqPerDiv;
-        }
-        return;
-    }
-
-    // here if is fractional frequency values
-    // so create max sized text based on frequency units
-    for (int i = 0; i <= m_HorDivs; i++)
-    {
-        freq = (float)StartFreq / (float)1000000; //(float)m_FreqUnits;
-        m_HDivText[i].setNum(freq,'f', m_FreqDigits);
-        StartFreq += m_FreqPerDiv;
-    }
-    // now find the division text with the longest non-zero digit
-    // to the right of the decimal point.
-    int max = 0;
-    for (i = 0; i <= m_HorDivs; i++)
-    {
-        int dp = m_HDivText[i].indexOf('.');
-        int l = m_HDivText[i].length()-1;
-        for (j = l; j > dp; j--)
-        {
-            if (m_HDivText[i][j] != '0')
-                break;
-        }
-        if ((j - dp) > max)
-            max = j - dp;
-    } max = 3;
-
-
-//printf(" LLL %d : %d \n",m_HorDivs,__LINE__);
-    // truncate all strings to maximum fractional length
-    StartFreq = m_StartFreqAdj;
-    for (i = 0; i <= m_HorDivs; i++)
-    {
-        freq = (float)StartFreq/(float)m_FreqUnits;
-freq = 123456789;
-
-
-        m_HDivText[i].setNum(freq/10000,'f', max); //FIXME BODGE
-//m_HDivText[i].setNum(1234,'f', max); //FIXME BODGE
-        StartFreq += m_FreqPerDiv;
-    }
-}//make freq strings
-*/
-
-//---
-
 // Convert from frequency to screen coordinate
 int ScopePlotter::xFromFreq(qint64 freq)
 {
@@ -413,8 +331,6 @@ f_freq = ((float) g_sample_rate/width*x) +( float) start_freq;
 f_freq /=ROUNDING_VAL;
 freq = (int) roundf(f_freq);
 freq *=ROUNDING_VAL;
-//printf(" X: %d Freq: %d \n",x,freq); 
-
 emit    newFrequency(freq); //send to world
 return freq;
 }
@@ -423,12 +339,14 @@ return freq;
 
 void ScopePlotter::mousePressEvent(QMouseEvent * event)
 {
-int mx,my;
+
+int mx;
+//int my;
 QPoint pt = event->pos();
 mx = pt.x();
-my = pt.y();
+//my = pt.y();
 
-freqFromX(mx);
+freqFromX(mx); //updates the Freq from mouse x-pos
 }
 
 //---
@@ -458,10 +376,10 @@ else
 // Called when a mouse wheel is turned
 void ScopePlotter::wheelEvent(QWheelEvent * event)
 {
-int mx,my;	
-QPoint pt = event->pos();
-mx = pt.x();
-my = pt.y();
+//int mx,my;	
+//QPoint pt = event->pos();
+//mx = pt.x();
+//my = pt.y();
 //printf(" x: %d y: %d Ln: %d \n",mx,my,__LINE__);
 //printf("Mouse wheelie workie \n");
 }
@@ -489,14 +407,13 @@ void ScopePlotter::drawOverlay() //bitmap grid and text that doesn't need every 
 int pw = m_WaterfallPixmap.width();
 int ph = m_WaterfallPixmap.height() * 10;
 int x,y;
-float horiz_Pixperdiv;
-float vert_Pixperdiv;
 float pix_per_bin;
 float horiz_grid;
 int high = m_FftPixmap.height();
 double y_scale = (double) high/g_fft_range;
-y_scale *= (float) m_Percent2DScreen/100;
 float fy;
+
+y_scale *= (float) m_Percent2DScreen/100;
 
 QRect rect;
 QPainter painter(&m_OverlayPixmap);
@@ -505,8 +422,7 @@ painter.initFrom(this);
 plot_VerDivs = m_VerDivs;  
 plot_HorDivs = m_HorDivs; 
 
-// create Font to use for scales
-QFont Font("Arial");
+QFont Font("Arial"); // create Font to use for scales
 Font.setPointSize(m_FontSize);
 QFontMetrics metrics(Font);
 Font.setWeight(QFont::Normal);
@@ -519,7 +435,7 @@ y = ph ; //plot_height ;
 painter.setPen(QPen(QColor(0xF0,0xF0,0xF0,0x30), 1, Qt::DotLine));
 
 //Draw centre line
-  for (int i = 1; i < 500; i++)
+for (int i = 1; i < 500; i++)
     {
     x = m_WaterfallPixmap.width()/2; 
     y=500;
@@ -537,7 +453,6 @@ for (int i = 1,xl=pw/2, xr=pw/2; i < 6; i++)
 
 m_dBStepSize = 10;
 
-
 //draw amplitude grid
 for (int i = 1; i < 14; i++)
     {
@@ -545,7 +460,6 @@ for (int i = 1; i < 14; i++)
     y = (int) fy;
     painter.drawLine(5*metrics.horizontalAdvance("0",-1), y,m_FftPixmap.width(), y);
     }
-
 
 //Draw freq values
 painter.setPen(QColor(0xff,0xBA,0xA1,0xFF)); //d8,ba,a1
@@ -559,10 +473,8 @@ painter.drawText(rect, Qt::AlignHCenter|Qt::AlignBottom, m_HDivText[20]);
 for (int i = 1,x=pw/2 ; i < 6; i++)
     {
     x += (int)horiz_grid;
-
-m_HDivText[i].setNum((float) g_center_frequency/1000000 + i*0.1 ,'f', m_FreqDigits);
-
-    rect.setRect(x-25,y-30,50,50); // (int)horiz_Pixperdiv, ph/plot_VerDivs);
+    m_HDivText[i].setNum((float) g_center_frequency/1000000 + i*0.1 ,'f', m_FreqDigits);
+    rect.setRect(x-25,y-30,50,50); 
     painter.drawText(rect, Qt::AlignHCenter|Qt::AlignBottom, m_HDivText[i]);
     }
 
@@ -570,9 +482,8 @@ m_HDivText[i].setNum((float) g_center_frequency/1000000 + i*0.1 ,'f', m_FreqDigi
 for (int i = 1,x=pw/2   ; i < 6; i++)
     {
     x -= (int)horiz_grid;
-
-m_HDivText[i].setNum((float) g_center_frequency/1000000 - i * 0.1 ,'f', m_FreqDigits);
-    rect.setRect(x-25,y-30 ,50,50); // (int)horiz_Pixperdiv, ph/plot_VerDivs);
+    m_HDivText[i].setNum((float) g_center_frequency/1000000 - i * 0.1 ,'f', m_FreqDigits);
+    rect.setRect(x-25,y-30 ,50,50);
     painter.drawText(rect, Qt::AlignHCenter|Qt::AlignBottom, m_HDivText[i]);
     }
 
@@ -581,12 +492,11 @@ painter.setPen(QColor(0xD8,0xBA,0xA1,0xFF));
 painter.setFont(Font);
 int dB = m_MaxdB;
 
-m_YAxisWidth = metrics.horizontalAdvance("-999 ");
+m_YAxisWidth = metrics.horizontalAdvance("-999 "); //a dummy to get width of chars
 for (int i = 1; i < 14; i++)
     {
     fy=  i*20*y_scale;
     y = (int) fy;
-
     rect.setRect(0, y-metrics.height()/2, m_YAxisWidth, metrics.height());
     painter.drawText(rect, Qt::AlignRight|Qt::AlignVCenter, QString::number(dB));
     dB -= m_dBStepSize;  // move to end if want to include maxdb  
@@ -594,11 +504,8 @@ for (int i = 1; i < 14; i++)
 		
 if (!m_Running)
     {
-        // if not running so is no data updates to draw to screen
-        // copy into 2Dbitmap the overlay bitmap.
-        m_FftPixmap = m_OverlayPixmap.copy(0,0,pw,ph); //!!! //w = m_WaterfallPixmap.width();
-        // trigger a new paintEvent
-        update();
+    m_FftPixmap = m_OverlayPixmap.copy(0,0,pw,ph); //copy 2Dbitmap overlay bitmap.
+    update(); // trigger a new paintEvent
     }
 }//drawOverLay
 
@@ -606,16 +513,12 @@ if (!m_Running)
 
 void ScopePlotter::mouseMoveEvent(QMouseEvent* event)
 {
-int mx,my;	
-
+//int mx,my;	
 //return;
-
-QPoint pt = event->pos();
-mx = pt.x();
-my = pt.y();
-
+//QPoint pt = event->pos();
+//mx = pt.x();
+//my = pt.y();
 //printf(" x: %d y: %d \n",mx,my);
-
 }
 
 //---

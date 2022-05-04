@@ -20,8 +20,6 @@ extern int fft_video_buf[];
 int status[256]; //FIXME
 Rxr radio_rx;
 
-
-int bug2,bug3;
 //---
 
 MainWindow::MainWindow(const QString cfgfile, QWidget *parent) :
@@ -158,13 +156,6 @@ void MainWindow::set_src14p2()
 {
 radio_rx.update_radio_chan(2);
 }
-
-
-
-
-
-
-
 
 void MainWindow::set_mir_dab_n(int state)
 {
