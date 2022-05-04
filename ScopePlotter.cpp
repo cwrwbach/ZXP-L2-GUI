@@ -19,7 +19,7 @@
 
 int g_sample_rate = 512000;
 int g_fft_range = 255;
-int g_center_frequency=8000000;
+int g_center_frequency=9000000;
 
 //---
 
@@ -45,8 +45,8 @@ m_VerDivs = 13;
 m_PandMaxdB = m_WfMaxdB = 0.f;
 m_PandMindB = m_WfMindB = -150.f;
 
-m_Running = false;
-m_DrawOverlay = true;
+//m_Running = false;
+//m_DrawOverlay = true;
 
 m_MaxdB = -10;
 m_MindB = -160;
@@ -110,12 +110,6 @@ if ((wide != 0) || (high != 0))
         inbuf[i] = (float) trace_buf[i]; //trace_buf is our input data main
         inbuf[i] *= -1; //units are half-dB
         }    
-
-//debugging test stairs
-//for(int i=0; i<1024;i++)
-//    inbuf[i] = (float)((i+102)/-102) * 25;
-
-//inbuf[300]=-160;inbuf[301]=-160;inbuf[302]=-140;inbuf[303]=-140;inbuf[304]=-120;inbuf[305]=-120;
 
     int xmin,xmax;
     getScreenIntegerFFTData(g_fft_range, wide,
@@ -331,27 +325,22 @@ f_freq = ((float) g_sample_rate/width*x) +( float) start_freq;
 f_freq /=ROUNDING_VAL;
 freq = (int) roundf(f_freq);
 freq *=ROUNDING_VAL;
+
+g_center_frequency = freq; //???
+printf(" emit of freq %d %d \n",g_center_frequency,__LINE__);
 emit    newFrequency(freq); //send to world
 return freq;
 }
 
 //---
 
-void ScopePlotter::mousePressEvent(QMouseEvent * event)
-{
 
-int mx;
-//int my;
-QPoint pt = event->pos();
-mx = pt.x();
-//my = pt.y();
-
-freqFromX(mx); //updates the Freq from mouse x-pos
-}
 
 //---
 void ScopePlotter::setCenterFreq(quint64 f)
 {
+printf(" Set CF %d %d \n",f,__LINE__);
+m_DrawOverlay = true;
 g_center_frequency = f;
 }
 
@@ -373,16 +362,6 @@ else
 	}
 }
 
-// Called when a mouse wheel is turned
-void ScopePlotter::wheelEvent(QWheelEvent * event)
-{
-//int mx,my;	
-//QPoint pt = event->pos();
-//mx = pt.x();
-//my = pt.y();
-//printf(" x: %d y: %d Ln: %d \n",mx,my,__LINE__);
-//printf("Mouse wheelie workie \n");
-}
 
 /** Set peak hold on or off. */
 void ScopePlotter::setPeakHold(bool enabled)
@@ -416,6 +395,7 @@ float fy;
 y_scale *= (float) m_Percent2DScreen/100;
 
 QRect rect;
+QRect rect_c;
 QPainter painter(&m_OverlayPixmap);
 painter.initFrom(this);
 
@@ -461,13 +441,27 @@ for (int i = 1; i < 14; i++)
     painter.drawLine(5*metrics.horizontalAdvance("0",-1), y,m_FftPixmap.width(), y);
     }
 
+
 //Draw freq values
+
+
 painter.setPen(QColor(0xff,0xBA,0xA1,0xFF)); //d8,ba,a1
-rect.setRect(pw/2-25,y-30 ,50,50); // (int)horiz_Pixperdiv, ph/plot_VerDivs);
+rect_c.setRect(pw/2-25,y+10 ,50,15); // (int)horiz_Pixperdiv, ph/plot_VerDivs);
+
+
+painter.fillRect(rect_c,QColor(0,0,0,0xff));
+
 
 //center digit
 m_HDivText[20].setNum((float) g_center_frequency/1000000,'f', m_FreqDigits);
-painter.drawText(rect, Qt::AlignHCenter|Qt::AlignBottom, m_HDivText[20]);
+//painter.drawText(rect_c, Qt::AlignHCenter|Qt::AlignBottom, "    ");
+
+
+
+
+
+
+painter.drawText(rect_c, Qt::AlignHCenter|Qt::AlignBottom, m_HDivText[20]);
 
 //Draw freq strings from center to right
 for (int i = 1,x=pw/2 ; i < 6; i++)
@@ -511,6 +505,22 @@ if (!m_Running)
 
 //---
 
+
+void ScopePlotter::mousePressEvent(QMouseEvent * event)
+{
+
+int mx;
+//int my;
+QPoint pt = event->pos();
+mx = pt.x();
+//my = pt.y();
+
+freqFromX(mx); //updates the Freq from mouse x-pos
+}
+
+
+
+
 void ScopePlotter::mouseMoveEvent(QMouseEvent* event)
 {
 //int mx,my;	
@@ -522,6 +532,26 @@ void ScopePlotter::mouseMoveEvent(QMouseEvent* event)
 }
 
 //---
+
+
+// Called when a mouse wheel is turned
+void ScopePlotter::wheelEvent(QWheelEvent * event)
+{
+//int mx,my;	
+//QPoint pt = event->pos();
+//mx = pt.x();
+//my = pt.y();
+//printf(" x: %d y: %d Ln: %d \n",mx,my,__LINE__);
+//printf("Mouse wheelie workie \n");
+}
+
+
+
+
+
+
+
+
 
 void ScopePlotter::setPlotColor(const QColor color)
 {
