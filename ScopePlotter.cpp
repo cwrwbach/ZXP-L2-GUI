@@ -454,7 +454,7 @@ painter.drawText(rect_c, Qt::AlignHCenter|Qt::AlignCenter, m_HDivText[20]);
 for (int i = 1,x=pw/2 ; i < 6; i++)
     {
     x += (int)horiz_grid;
-    m_HDivText[i].setNum((float) g_center_frequency/1000000 + i*0.1 ,'f', m_FreqDigits);
+    m_HDivText[i].setNum((float) g_center_frequency/1000000 + i*0.05 ,'f', m_FreqDigits);
     rect.setRect(x-25,y+10,50,15); 
     painter.fillRect(rect,QColor(0,0,0,0xff));
     painter.drawText(rect, Qt::AlignHCenter|Qt::AlignCenter, m_HDivText[i]);
@@ -464,7 +464,7 @@ for (int i = 1,x=pw/2 ; i < 6; i++)
 for (int i = 1,x=pw/2   ; i < 6; i++)
     {
     x -= (int)horiz_grid;
-    m_HDivText[i].setNum((float) g_center_frequency/1000000 - i * 0.1 ,'f', m_FreqDigits);
+    m_HDivText[i].setNum((float) g_center_frequency/1000000 - i*0.05 ,'f', m_FreqDigits);
     rect.setRect(x-25,y+10 ,50,15);
     painter.fillRect(rect,QColor(0,0,0,0xff));
     painter.drawText(rect, Qt::AlignHCenter|Qt::AlignCenter, m_HDivText[i]);
