@@ -431,7 +431,7 @@ for (int i = 1,xl=pw/2, xr=pw/2; i < 6; i++)
     painter.drawLine(xl, 0, xl, y);
     }
 
-m_dBStepSize = 10;
+m_dBStepSize = 10; //FIXME
 
 //draw amplitude grid
 for (int i = 1; i < 14; i++)
@@ -441,35 +441,23 @@ for (int i = 1; i < 14; i++)
     painter.drawLine(5*metrics.horizontalAdvance("0",-1), y,m_FftPixmap.width(), y);
     }
 
-
 //Draw freq values
-
-
 painter.setPen(QColor(0xff,0xBA,0xA1,0xFF)); //d8,ba,a1
 rect_c.setRect(pw/2-25,y+10 ,50,15); // (int)horiz_Pixperdiv, ph/plot_VerDivs);
 
-
-painter.fillRect(rect_c,QColor(0,0,0,0xff));
-
-
 //center digit
+painter.fillRect(rect_c,QColor(0,0,0,0xff));
 m_HDivText[20].setNum((float) g_center_frequency/1000000,'f', m_FreqDigits);
-//painter.drawText(rect_c, Qt::AlignHCenter|Qt::AlignBottom, "    ");
-
-
-
-
-
-
-painter.drawText(rect_c, Qt::AlignHCenter|Qt::AlignBottom, m_HDivText[20]);
+painter.drawText(rect_c, Qt::AlignHCenter|Qt::AlignCenter, m_HDivText[20]);
 
 //Draw freq strings from center to right
 for (int i = 1,x=pw/2 ; i < 6; i++)
     {
     x += (int)horiz_grid;
     m_HDivText[i].setNum((float) g_center_frequency/1000000 + i*0.1 ,'f', m_FreqDigits);
-    rect.setRect(x-25,y-30,50,50); 
-    painter.drawText(rect, Qt::AlignHCenter|Qt::AlignBottom, m_HDivText[i]);
+    rect.setRect(x-25,y+10,50,15); 
+    painter.fillRect(rect,QColor(0,0,0,0xff));
+    painter.drawText(rect, Qt::AlignHCenter|Qt::AlignCenter, m_HDivText[i]);
     }
 
 //draw freq strings from center to left
@@ -477,8 +465,9 @@ for (int i = 1,x=pw/2   ; i < 6; i++)
     {
     x -= (int)horiz_grid;
     m_HDivText[i].setNum((float) g_center_frequency/1000000 - i * 0.1 ,'f', m_FreqDigits);
-    rect.setRect(x-25,y-30 ,50,50);
-    painter.drawText(rect, Qt::AlignHCenter|Qt::AlignBottom, m_HDivText[i]);
+    rect.setRect(x-25,y+10 ,50,15);
+    painter.fillRect(rect,QColor(0,0,0,0xff));
+    painter.drawText(rect, Qt::AlignHCenter|Qt::AlignCenter, m_HDivText[i]);
     }
 
 // draw amplitude values
