@@ -35,7 +35,6 @@ public slots:
 public:
 
 	
-//private:
     Ui::MainWindow *ui;
 private:
     QPointer<QSettings> m_settings;  /*!< Application wide settings. */
@@ -66,13 +65,6 @@ void set_usb();
 void set_lsb();
 void set_rfg(int);
 void set_afg(int);
-
-void set_mir_gr(int);
-void set_mir_dab_n(int);
-void set_mir_bc_n(int);
-void set_mir_lna(int);
-
-
 
 void set_src16p1();
 void set_src16p2();

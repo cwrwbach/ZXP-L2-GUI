@@ -115,11 +115,6 @@ void MainWindow::set_afg(int gain)
 radio_rx.update_radio_afg(gain);
 }
 
-void MainWindow::set_mir_gr(int gain)
-{
-printf(" MIR GR changes to: %d \n",gain);
-radio_rx.update_mir_gr(gain);
-}
 
 void MainWindow::set_sr0(){ radio_rx.update_radio_sr(0);}
 void MainWindow::set_sr1(){ radio_rx.update_radio_sr(1);}
@@ -155,24 +150,6 @@ radio_rx.update_radio_chan(1);
 void MainWindow::set_src14p2()
 {
 radio_rx.update_radio_chan(2);
-}
-
-void MainWindow::set_mir_dab_n(int state)
-{
-printf(" DAB notch %d \n",state);
-radio_rx.update_mir_dab_notch(state);
-}
-
-void MainWindow::set_mir_bc_n(int state)
-{ 
-printf(" BC notch %d \n",state);
-radio_rx.update_mir_bc_notch(state);
-}
-
-void MainWindow::set_mir_lna(int state)
-{ 
-printf(" LNA notch %d \n",state);
-radio_rx.update_mir_lna(state);
 }
 
 //---

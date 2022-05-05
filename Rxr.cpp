@@ -8,8 +8,7 @@
 //#define SERV_ADDR "192.168.2.2"
 //#define SERV_ADDR "192.168.2.222"
 #define SERV_ADDR "192.168.2.242"
-//#define SERV_ADDR "192.168.2.101"
-//#define SERV_ADDR "45.66.38.105"
+
 #define AUDIO_RATE 8000
 //#define AUDIO_RATE 11400 //11960 //7812  set to silly low rate for debugging
 
@@ -162,42 +161,5 @@ buffer[CHAN_SEL]= val;
 socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress(serv_addr),11361);
 //printf("radio afg: %d\n",val);
 };
-
-
-
-
-
-
-void Rxr::update_mir_gr(int val)
-{
-buffer[MIR_RSP_GR]= val;
-socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress(serv_addr),11361);
-//printf("gr: %d\n",val);
-}
-
-
-
-void Rxr::update_mir_dab_notch(int val)
-{
-buffer[MIR_DAB_NOTCH ]= val;
-socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress(serv_addr),11361);
-printf("dab %d\n",val);
-}
-
-
-void Rxr::update_mir_bc_notch(int val)
-{
-buffer[MIR_BC_NOTCH ]= val;
-socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress(serv_addr),11361);
-printf("bc %d\n",val);
-}
-
-void Rxr::update_mir_lna(int val)
-{
-buffer[MIR_LNA_STATE]= val;
-socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress(serv_addr),11361);
-printf("lna %d\n",val);
-}
-
 
 
