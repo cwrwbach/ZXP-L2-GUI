@@ -159,7 +159,7 @@ void Rxr::update_radio_chan(int val)
 {
 buffer[CHAN_SEL]= val;
 socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress(serv_addr),11361);
-//printf("radio afg: %d\n",val);
+printf("radio chan: %d\n",val);
 };
 
 

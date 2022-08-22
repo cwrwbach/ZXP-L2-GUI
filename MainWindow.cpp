@@ -59,6 +59,9 @@ connect(ui->src16p1, SIGNAL(clicked()), this, SLOT(set_src16p1()));
 connect(ui->src16p2, SIGNAL(clicked()), this, SLOT(set_src16p2()));
 connect(ui->src14p1, SIGNAL(clicked()), this, SLOT(set_src14p1()));
 connect(ui->src14p2, SIGNAL(clicked()), this, SLOT(set_src14p2()));
+connect(ui->srcRSP1a, SIGNAL(clicked()), this, SLOT(set_srcRSP1a()));
+
+
 
 
 
@@ -150,13 +153,19 @@ radio_rx.update_radio_chan(2);
 
 void MainWindow::set_src14p1()
 {
-radio_rx.update_radio_chan(1); 
+radio_rx.update_radio_chan(3); 
 }
 
 void MainWindow::set_src14p2()
 {
-radio_rx.update_radio_chan(2);
+radio_rx.update_radio_chan(4);
 }
+
+void MainWindow::set_srcRSP1a()
+{
+radio_rx.update_radio_chan(5);
+}
+
 
 //---
 
