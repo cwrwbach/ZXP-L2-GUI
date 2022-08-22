@@ -8,6 +8,9 @@
 QMAKE_CFLAGS += -fdiagnostics-color=auto
 QMAKE_CXXFLAGS += -fdiagnostics-color=auto
 
+GIT_VERSION = $$system(git describe )
+DEFINES += GIT_VERSION=\\\"$$GIT_VERSION\\\"
+
 QT += core gui
 QT += widgets
 QT += network

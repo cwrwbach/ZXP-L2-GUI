@@ -26,7 +26,13 @@ MainWindow::MainWindow(const QString cfgfile, QWidget *parent) :
     QMainWindow(parent),    ui(new Ui::MainWindow)
 {
 ui->setupUi(this);
-setWindowTitle(QString(VERSION));
+printf(" Starting GPIB \n");    
+printf("Version: %s\n", GIT_VERSION);
+printf(" Line %d \n",__LINE__);
+
+setWindowTitle(QString("ROBDOBSOB %1 ").arg(GIT_VERSION));
+
+//setWindowTitle(QString(VERSION));
 
 QObject::connect(ui->setupRsp, SIGNAL(clicked()), this, SLOT(hardware_setup()));
  
