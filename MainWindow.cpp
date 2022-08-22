@@ -30,7 +30,7 @@ printf(" Starting GPIB \n");
 printf("Version: %s\n", GIT_VERSION);
 printf(" Line %d \n",__LINE__);
 
-setWindowTitle(QString("ROBDOBSOB %1 ").arg(GIT_VERSION));
+setWindowTitle(QString("ZXP GUI %1 ").arg(GIT_VERSION));
 
 //setWindowTitle(QString(VERSION));
 
