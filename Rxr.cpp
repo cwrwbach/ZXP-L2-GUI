@@ -5,9 +5,9 @@
 #include <math.h>
 #include <alsa/asoundlib.h>
 
-//#define SERV_ADDR "192.168.2.2"
+#define SERV_ADDR "192.168.2.2" //Local loopback for development
 //#define SERV_ADDR "192.168.2.222"
-#define SERV_ADDR "192.168.2.242"
+//#define SERV_ADDR "192.168.2.242"
 
 #define AUDIO_RATE 8000
 //#define AUDIO_RATE 11400 //11960 //7812  set to silly low rate for debugging
