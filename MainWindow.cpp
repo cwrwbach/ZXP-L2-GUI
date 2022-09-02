@@ -62,6 +62,14 @@ connect(ui->src14p2, SIGNAL(clicked()), this, SLOT(set_src14p2()));
 connect(ui->srcRSP1a, SIGNAL(clicked()), this, SLOT(set_srcRSP1a()));
 
 
+connect(ui->LNA, SIGNAL(clicked(bool )), this, SLOT(set_lna(bool)));
+connect(ui->IQG, SIGNAL(clicked(bool )), this, SLOT(set_iqg(bool)));
+connect(ui->UC0, SIGNAL(clicked(bool )), this, SLOT(set_uc0(bool)));
+connect(ui->UC1, SIGNAL(clicked(bool )), this, SLOT(set_uc1(bool)));
+connect(ui->UC2, SIGNAL(clicked(bool )), this, SLOT(set_uc2(bool)));
+connect(ui->UC3, SIGNAL(clicked(bool )), this, SLOT(set_uc3(bool)));
+
+connect(ui->BBG, SIGNAL(valueChanged(int)), this, SLOT(set_bbg(int)));
 
 
 
@@ -123,6 +131,57 @@ void MainWindow::set_afg(int gain)
 {
 radio_rx.update_radio_afg(gain);
 }
+
+//---- msi 001 -->>
+void MainWindow::set_lna(bool chk)
+{
+radio_rx.update_radio_lna(chk);
+}
+
+void MainWindow::set_iqg(bool chk)
+{
+radio_rx.update_radio_iqg(chk);
+}
+
+void MainWindow::set_uc0(bool chk)
+{
+int val = 0x00;
+radio_rx.update_radio_afg(val);
+}
+
+void MainWindow::set_uc1(bool chk)
+{
+int val= 0x01;
+radio_rx.update_radio_afg(val);
+}
+
+void MainWindow::set_uc2(bool chk)
+{
+int val = 0x02;
+radio_rx.update_radio_afg(val);
+}
+
+void MainWindow::set_uc3(bool chk)
+{
+int val= 0x03;
+radio_rx.update_radio_afg(val);
+}
+
+void MainWindow::set_bbg(int gain)
+{
+radio_rx.update_radio_afg(gain);
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 void MainWindow::set_sr0(){ radio_rx.update_radio_sr(0);}

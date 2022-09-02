@@ -32,6 +32,12 @@ public:
     void update_radio_ar(int);
     void update_radio_rfg(int);
     void update_radio_afg(int);
+void update_radio_lna(int);
+void update_radio_iqg(int);
+void update_radio_ucg(int);
+void update_radio_bbg(int);
+
+
 
 public slots:    
     void processPendingDatagrams();

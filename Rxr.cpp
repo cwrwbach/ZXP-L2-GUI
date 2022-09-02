@@ -132,7 +132,7 @@ void Rxr::update_radio_demod(int val)
 printf("Demod %d\n",val);
 buffer[DMOD]= val;
 socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress(serv_addr),11361);
-};
+}
 
 
 void Rxr::start_server_stream(){};
@@ -160,6 +160,39 @@ void Rxr::update_radio_chan(int val)
 buffer[CHAN_SEL]= val;
 socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress(serv_addr),11361);
 printf("radio chan: %d\n",val);
-};
+}
+
+// -- MSI001 >>
+
+void Rxr::update_radio_lna(int val)
+{
+buffer[CHAN_SEL]= val;
+//socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress(serv_addr),11361);
+printf("LNA SET %d\n",val);
+}
+void Rxr::update_radio_iqg(int val)
+{
+buffer[CHAN_SEL]= val;
+//socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress(serv_addr),11361);
+printf("IQ Gain: %d\n",val);
+}
+
+void Rxr::update_radio_ucg(int val)
+{
+buffer[CHAN_SEL]= val;
+//socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress(serv_addr),11361);
+printf("UP Conv gain%d\n",val);
+}
+
+void Rxr::update_radio_bbg(int val)
+{
+buffer[CHAN_SEL]= val;
+//socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress(serv_addr),11361);
+printf("Base-Band gain: %d\n",val);
+}
+
+
+
+
 
 

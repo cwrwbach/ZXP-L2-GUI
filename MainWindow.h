@@ -72,6 +72,16 @@ void set_src14p1();
 void set_src14p2();
 void set_srcRSP1a();
 
+void set_lna(bool);
+void set_iqg(bool);
+void set_uc0(bool);
+void set_uc1(bool);
+void set_uc2(bool);
+void set_uc3(bool);
+
+
+
+void set_bbg(int);
 
 
 
