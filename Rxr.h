@@ -13,6 +13,12 @@
 #define SSEL 10
 #define CHAN_SEL 11
 
+#define LNA_GR 12
+#define IQ_GR 13
+#define MIX_GAIN 14
+#define BB_GAIN 15
+
+
 
 class Rxr : public QObject
 {

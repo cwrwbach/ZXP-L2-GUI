@@ -146,30 +146,30 @@ radio_rx.update_radio_iqg(chk);
 void MainWindow::set_uc0(bool chk)
 {
 int val = 0x00;
-radio_rx.update_radio_afg(val);
+radio_rx.update_radio_ucg(val);
 }
 
 void MainWindow::set_uc1(bool chk)
 {
 int val= 0x01;
-radio_rx.update_radio_afg(val);
+radio_rx.update_radio_ucg(val);
 }
 
 void MainWindow::set_uc2(bool chk)
 {
 int val = 0x02;
-radio_rx.update_radio_afg(val);
+radio_rx.update_radio_ucg(val);
 }
 
 void MainWindow::set_uc3(bool chk)
 {
 int val= 0x03;
-radio_rx.update_radio_afg(val);
+radio_rx.update_radio_ucg(val);
 }
 
 void MainWindow::set_bbg(int gain)
 {
-radio_rx.update_radio_afg(gain);
+radio_rx.update_radio_bbg(gain);
 }
 
 
