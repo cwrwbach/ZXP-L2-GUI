@@ -18,7 +18,9 @@
 #define MIX_GAIN 14
 #define BB_GAIN 15
 
-
+#define PAK_LEN 1280
+#define HEADER_LEN 256
+#define DATA_LEN 1024
 
 class Rxr : public QObject
 {

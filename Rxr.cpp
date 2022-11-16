@@ -5,12 +5,12 @@
 #include <math.h>
 #include <alsa/asoundlib.h>
 
-#define SERV_ADDR "192.168.2.2" //Local loopback for development
+//#define SERV_ADDR "192.168.2.2" //Local loopback for development
 //#define SERV_ADDR "192.168.2.222"
-//#define SERV_ADDR "192.168.2.242"
+#define SERV_ADDR "192.168.2.242"
 
-#define AUDIO_RATE 8000
-//#define AUDIO_RATE 11400 //11960 //7812  set to silly low rate for debugging
+//#define AUDIO_RATE 8000
+#define AUDIO_RATE 7812 //11960 //7812  set to silly low rate for debugging
 
 bool stream_flag;
 int fft_video_buf[1024];
@@ -60,35 +60,42 @@ socket->writeDatagram(buffer.data(), QHostAddress(serv_addr), 11361 );
 void Rxr::processPendingDatagrams()
  {
 int size;
+unsigned char id_type;
 QByteArray datagram;   
 QHostAddress sender;
 u_int16_t port;
+char audio_pak[1024];
 
 while (socket->hasPendingDatagrams())
     {
     size = socket->pendingDatagramSize(); 
     datagram.resize(socket->pendingDatagramSize());
     socket->readDatagram(datagram.data(),datagram.size(),&sender,&port);
-      
-    if(size == 1040) //FFT
+
+    id_type = datagram[0];
+ //printf("Size of pkt rxd %d Type: 0x%x \n",size,id_type);     
+    if(id_type == 0x42) //FFT
         { 
         //debug
         //printf(" Debug FFT: %d \n",debug_fft++);
         for(int i=0; i<1024;i++)
-            fft_video_buf[i] = (uint8_t) datagram[i];
+            fft_video_buf[i] = (uint8_t) datagram[i+HEADER_LEN];
         stream_flag = true;
         }
 
-    if(size == 1042) //G711
+    if(id_type == 0x69) //G711
         {
         //debug
-        //printf("snd_pcm_avail %d \n",snd_pcm_avail (audio_device));
-        int snd_err = snd_pcm_writei(audio_device, datagram, 1024);
+    for(int i=0; i<1024;i++)
+            audio_pak[i] = (char) datagram[i+HEADER_LEN];
 
+ //       printf("snd_pcm_avail %d \n",snd_pcm_avail (audio_device));
+        int snd_err = snd_pcm_writei(audio_device, audio_pak, 1024);
+//printf("Sound error %d \n",err);
         if(snd_err < 0 )
             {      
             //Debug
-          //  printf(" S err %d \n",snd_err);
+            printf(" S err %d \n",snd_err);
             snd_pcm_recover(audio_device, snd_err, 1); //catch underruns (silent flag set, or not)
             usleep(1000);
             }
