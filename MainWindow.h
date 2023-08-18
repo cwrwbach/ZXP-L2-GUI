@@ -47,7 +47,7 @@ private slots:
 void setNewFrequency(qint64 );
 void hardware_setup();
 void show_enable();
-
+/*
 void set_sr0();
 void set_sr1();
 void set_sr2();
@@ -63,15 +63,17 @@ void set_ar3();
 void set_dsb();
 void set_usb();
 void set_lsb();
-void set_rfg(int);
-void set_afg(int);
+//void set_rfg(int);
+//void set_afg(int);
 
 void set_src16p1();
 void set_src16p2();
 void set_src14p1();
 void set_src14p2();
 void set_srcRSP1a();
+*/
 
+/*
 void set_lna(bool);
 void set_iqg(bool);
 void set_uc0(bool);
@@ -83,7 +85,7 @@ void set_uc3(bool);
 
 void set_bbg(int);
 
-
+*/
 
 };
 

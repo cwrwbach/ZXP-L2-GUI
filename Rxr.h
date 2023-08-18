@@ -30,26 +30,26 @@ class Rxr : public QObject
     void setup_sound();
     char alsa_device[64];
 
-public:
-    void setup_socket();
-    void sendgram();
-    void update_radio_demod(int);
-    void update_radio_chan(int);
-    void update_radio_cf(int);
-    void update_radio_sr(int);
-    void update_radio_ar(int);
-    void update_radio_rfg(int);
-    void update_radio_afg(int);
-void update_radio_lna(int);
-void update_radio_iqg(int);
-void update_radio_ucg(int);
-void update_radio_bbg(int);
+//public:
+//    void setup_socket();
+//    void sendgram();
+ //   void update_radio_demod(int);
+//    void update_radio_chan(int);
+//    void update_radio_cf(int);
+//    void update_radio_sr(int);
+//    void update_radio_ar(int);
+ //   void update_radio_rfg(int);
+//    void update_radio_afg(int);
+//void update_radio_lna(int);
+//void update_radio_iqg(int);
+//void update_radio_ucg(int);
+//void update_radio_bbg(int);
 
 
 
 public slots:    
-    void processPendingDatagrams();
-    void start_server_stream();
+  //  void processPendingDatagrams();
+  //  void start_server_stream();
     
 };
 

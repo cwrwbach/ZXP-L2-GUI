@@ -20,13 +20,16 @@ extern int fft_video_buf[];
 int status[256]; //FIXME
 Rxr radio_rx;
 
+
+extern "C" void xxmain();
+extern char l2_video_buf[];
 //---
 
 MainWindow::MainWindow(const QString cfgfile, QWidget *parent) :
     QMainWindow(parent),    ui(new Ui::MainWindow)
 {
 ui->setupUi(this);
-printf(" Starting GPIB \n");    
+printf(" Starting ZXP \n");    
 printf("Version: %s\n", GIT_VERSION);
 printf(" Line %d \n",__LINE__);
 
@@ -34,11 +37,12 @@ setWindowTitle(QString("ZXP GUI %1 ").arg(GIT_VERSION));
 
 //setWindowTitle(QString(VERSION));
 
-QObject::connect(ui->setupRsp, SIGNAL(clicked()), this, SLOT(hardware_setup()));
+//QObject::connect(ui->setupRsp, SIGNAL(clicked()), this, SLOT(hardware_setup()));
  
 connect(ui->freqCtrl, SIGNAL(newFrequency(qint64)), this, SLOT(setNewFrequency(qint64)));
 connect(ui->alpha_plotter, SIGNAL(newFrequency(qint64)), this, SLOT(setNewFrequency(qint64)));
 
+/*
 connect(ui->dsb, SIGNAL(clicked()), this, SLOT(set_dsb()));
 connect(ui->usb, SIGNAL(clicked()), this, SLOT(set_usb()));
 connect(ui->lsb, SIGNAL(clicked()), this, SLOT(set_lsb()));
@@ -60,8 +64,8 @@ connect(ui->src16p2, SIGNAL(clicked()), this, SLOT(set_src16p2()));
 connect(ui->src14p1, SIGNAL(clicked()), this, SLOT(set_src14p1()));
 connect(ui->src14p2, SIGNAL(clicked()), this, SLOT(set_src14p2()));
 connect(ui->srcRSP1a, SIGNAL(clicked()), this, SLOT(set_srcRSP1a()));
-
-
+*/
+/*
 connect(ui->LNA, SIGNAL(clicked(bool )), this, SLOT(set_lna(bool)));
 connect(ui->IQG, SIGNAL(clicked(bool )), this, SLOT(set_iqg(bool)));
 connect(ui->UC0, SIGNAL(clicked(bool )), this, SLOT(set_uc0(bool)));
@@ -71,7 +75,7 @@ connect(ui->UC3, SIGNAL(clicked(bool )), this, SLOT(set_uc3(bool)));
 
 connect(ui->BBG, SIGNAL(valueChanged(int)), this, SLOT(set_bbg(int)));
 
-
+*/
 
 //connect(ui->ip0, SIGNAL(clicked()), this, SLOT(set_ip0()));
 //connect(ui->ip1, SIGNAL(clicked()), this, SLOT(set_ip1()));
@@ -80,8 +84,8 @@ connect(ui->BBG, SIGNAL(valueChanged(int)), this, SLOT(set_bbg(int)));
 //connect(ui->ip4, SIGNAL(clicked()), this, SLOT(set_ip4()));
 //connect(ui->ip5, SIGNAL(clicked()), this, SLOT(set_ip5()));
 
-connect(ui->rf_gain, SIGNAL(valueChanged(int)), this, SLOT(set_rfg(int)));
-connect(ui->af_gain, SIGNAL(valueChanged(int)), this, SLOT(set_afg(int)));
+//connect(ui->rf_gain, SIGNAL(valueChanged(int)), this, SLOT(set_rfg(int)));
+//connect(ui->af_gain, SIGNAL(valueChanged(int)), this, SLOT(set_afg(int)));
 
 //connect(ui->mir_gr, SIGNAL(valueChanged(int)), this, SLOT(set_mir_gr(int)));
 
@@ -94,6 +98,9 @@ connect(fft_timer, SIGNAL(timeout()), this, SLOT(show_enable()));
 fft_timer->start(200); //milli secs
 
 ui->Bar->setValue(128); // = 128;
+
+
+xxmain(); //start up Layer 2 socket
 }
 
 //---
@@ -110,18 +117,18 @@ delete ui;
 void MainWindow::hardware_setup()
 {
 printf("hardware setup started... \n");
-radio_rx.setup_socket();
+//radio_rx.setup_socket();
 usleep(200000);
 }	
 
 void MainWindow::setNewFrequency(qint64 newfreq)
 {
 int send_cf = newfreq;	
-ui->freqCtrl->setFrequency(newfreq);
-ui->alpha_plotter->setCenterFreq(send_cf);
-radio_rx.update_radio_cf(send_cf);
+//ui->freqCtrl->setFrequency(newfreq);
+//ui->alpha_plotter->setCenterFreq(send_cf);
+//radio_rx.update_radio_cf(send_cf);
 }
-
+/*
 void MainWindow::set_rfg(int gain)
 {
 radio_rx.update_radio_rfg(gain);
@@ -172,6 +179,7 @@ void MainWindow::set_bbg(int gain)
 radio_rx.update_radio_bbg(gain);
 }
 
+*/
 
 
 
@@ -182,8 +190,7 @@ radio_rx.update_radio_bbg(gain);
 
 
 
-
-
+/*
 void MainWindow::set_sr0(){ radio_rx.update_radio_sr(0);}
 void MainWindow::set_sr1(){ radio_rx.update_radio_sr(1);}
 void MainWindow::set_sr2(){ radio_rx.update_radio_sr(2);}
@@ -199,7 +206,11 @@ void MainWindow::set_ar3(){ radio_rx.update_radio_ar(3);}
 void MainWindow::set_dsb(){ radio_rx.update_radio_demod(1);}
 void MainWindow::set_usb(){ radio_rx.update_radio_demod(2);}
 void MainWindow::set_lsb(){ radio_rx.update_radio_demod(3);}
+*/
 
+
+
+/*
 void MainWindow::set_src16p1()
 {
 radio_rx.update_radio_chan(1); 
@@ -224,7 +235,7 @@ void MainWindow::set_srcRSP1a()
 {
 radio_rx.update_radio_chan(5);
 }
-
+*/
 
 //---
 
@@ -257,6 +268,9 @@ if(stream_flag ==true)
     ui->stat_5->setText(str_5);
     ui->stat_6->setText(str_6);
 */
+for(int b=0; b<1024;b++)
+    fft_video_buf[b] = ((int) l2_video_buf[b]*2);
+
     ui->alpha_plotter->draw_trace(fft_video_buf,0,1024); //(left,Num points)
  //   printf(" After drawtrace %d\n",bug3++);
     }

@@ -6,20 +6,20 @@
 #include <alsa/asoundlib.h>
 
 //#define SERV_ADDR "192.168.2.2" //Local loopback for development
-//#define SERV_ADDR "192.168.2.222"
-#define SERV_ADDR "192.168.2.242"
+#define SERV_ADDR "192.168.2.222"
+//#define SERV_ADDR "192.168.2.242"
 
-//#define AUDIO_RATE 8000
-#define AUDIO_RATE 7812 //11960 //7812  set to silly low rate for debugging
+#define AUDIO_RATE 8000
+//#define AUDIO_RATE 7812 //11960 //7812  set to silly low rate for debugging
 
-bool stream_flag;
+//bool stream_flag;
 int fft_video_buf[1024];
 QVector<quint32> buffer(256);
 
 char serv_addr[32];
 int debug_fft;
 //---
-
+/*
 void Rxr::setup_socket()
 {
 socket = new QUdpSocket(this);
@@ -102,7 +102,7 @@ while (socket->hasPendingDatagrams())
         }
     }   
 }
-
+*/
 void Rxr::setup_sound()
 {
 int err;
@@ -121,7 +121,7 @@ err=err;
  //latency in
 //printf("err %d %d\n",err,__LINE__);
 }
-
+/*
 void Rxr::update_radio_cf(int cf )
 {
 //QVector<quint32> buffer(256);
@@ -168,7 +168,9 @@ buffer[CHAN_SEL]= val;
 socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddress(serv_addr),11361);
 printf("radio chan: %d\n",val);
 }
+*/
 
+/*
 // -- MSI001 >>
 
 void Rxr::update_radio_lna(int val)
@@ -198,7 +200,7 @@ socket->writeDatagram((char*)buffer.data(),buffer.size()*sizeof(int),QHostAddres
 printf("Base-Band gain: %d\n",val);
 }
 
-
+*/
 
 
 
